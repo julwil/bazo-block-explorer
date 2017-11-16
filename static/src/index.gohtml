@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Bazo Explorer</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+  </head>
+  <body>
+
+    <header>
+      <div class="container">
+        <div id="page-title">
+          <h1 class="page-title"><a href="/">Bazo Explorer</a></h1>
+        </div>
+        <nav>
+          <ul>
+            <li>
+              <a href="/blocks">Blocks</a>
+            </li>
+            <li>
+              <a href="/transactions/funds">Transactions</a>
+            </li>
+            <li>
+              <a href="/accounts">Accounts</a>
+            </li>
+            <li>
+              <a href="/status">Status</a>
+            </li>
+            <li>
+              <a href="/login">Login</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="clr"></div>
+
+    {{template "searchBar"}}
+
+    <div class="clr"></div>
+
+    <section>
+      <div class="container">
+        <div class="table-title">
+          <h1>Latest Blocks</h1>
+        </div>
+        <div class="data-table" id="block-table">
+          <table>
+            <thead>
+              <tr id="header-row">
+                <th>Hash</th>
+                <th>Timestamp</th>
+                <th>NrFundsTX</th>
+                <th>NrAccTX</th>
+                <th>NrConfigTX</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{range .Blocks}}
+              <tr>
+                <td> <a href="/block/{{.Hash}}">{{.Hash}}</a></td>
+                <td>{{.Timestamp}}</td>
+                <td>{{.NrFundTx}}</td>
+                <td>{{.NrAccTx}}</td>
+                <td>{{.NrConfigTx}}</td>
+              </tr>
+              {{end}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <div class="clr"></div>
+
+    <section>
+      <div class="container">
+        <div class="table-title">
+          <h1>Latest Transactions (FundsTx)</h1>
+        </div>
+        <div class="data-table" id="transactions-table">
+          <table>
+            <thead>
+              <tr id="header-row">
+                <th>Hash</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Amount</th>
+                <th>Fee</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{range .Txs}}
+              <tr>
+                <td> <a href="/transactions/fundtx/{{.Hash}}">{{.Hash}}</a></td>
+                <td> <a href="/account/{{.From}}">{{.From}}</a></td>
+                <td> <a href="/account/{{.To}}">{{.To}}</a></td>
+                <td>{{.Amount}}</td>
+                <td>{{.Fee}}</td>
+              </tr>
+              {{end}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    {{template "footer"}}
+
+  </body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Bazo Explorer</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+  </head>
+  <body>
+
+    <header>
+      <div class="container">
+        <div id="page-title">
+          <h1 class="page-title"><a href="/">Bazo Explorer</a></h1>
+        </div>
+        <nav>
+          <ul>
+            <li>
+              <a href="/blocks">Blocks</a>
+            </li>
+            <li>
+              <a href="/transactions/funds">Transactions</a>
+            </li>
+            <li>
+              <a href="/accounts">Accounts</a>
+            </li>
+            <li>
+              <a href="/status">Status</a>
+            </li>
+            <li>
+              <a href="/login">Login</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="clr"></div>
+
+    {{template "searchBar"}}
+
+    <div class="clr"></div>
+    <section id="parameter-list">
+      <div class="container">
+        <h2>Change System Parameters</h2>
+          <ul>
+            <li>
+              <h3>Current {{.BSName}}: {{.BlockSize}}</h3>
+              <form class="config-form" action="/admin/blocksize" method="post">
+                <input type="number" name="new-blocksize" placeholder="Change the {{.BSName}}">
+                <input class="set-button" type="submit" value="Set">
+              </form>
+            </li>
+            <div class="clr"></div>
+            <li>
+              <h3>Current {{.DIName}}: {{.DiffInterval}}</h3>
+              <form class="config-form" action="/admin/diffinterval" method="post">
+                <input type="number" name="new-diffinterval" placeholder="Change the {{.DIName}}">
+                <input class="set-button" type="submit" value="Set">
+              </form>
+            </li>
+            <div class="clr"></div>
+            <li>
+              <h3>Current {{.MFName}}: {{.MinFee}}</h3>
+              <form class="config-form" action="/admin/minfee" method="post">
+                <input type="number" name="new-minfee" placeholder="Change the {{.MFName}}">
+                <input class="set-button" type="submit" value="Set">
+              </form>
+            </li>
+            <div class="clr"></div>
+            <li>
+              <h3>Current {{.BIName}}: {{.BlockInterval}}</h3>
+              <form class="congif-form" action="/admin/blockinterval" method="post">
+                <input type="number" name="new-blockinterval" placeholder="Change the {{.BIName}}">
+                <input class="set-button" type="submit" value="Set">
+              </form>
+            </li>
+            <div class="clr"></div>
+            <li>
+              <h3>Current {{.BRName}}: {{.BlockReward}}</h3>
+              <form class="config-form" action="/admin/blockreward" method="post">
+                <input type="number" name="new-blockreward" placeholder="Change the {{.BRName}}">
+                <input class="set-button" type="submit" value="Set">
+              </form>
+            </li>
+          </ul>
+        </div>
+    </section>
+
+    <div class="clr"></div>
+
+    {{template "footer"}}
+
+  </body>
+</html>

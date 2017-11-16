@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Transactions</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+  </head>
+  <body>
+
+    <header>
+      <div class="container">
+        <div id="page-title">
+          <h1 class="page-title"><a href="/">Bazo Explorer</a></h1>
+        </div>
+        <nav>
+          <ul>
+            <li>
+              <a href="/blocks">Blocks</a>
+            </li>
+            <li class="current">
+              <a href="/transactions/funds">Transactions</a>
+            </li>
+            <li>
+              <a href="/accounts">Accounts</a>
+            </li>
+            <li>
+              <a href="/status">Status</a>
+            </li>
+            <li>
+              <a href="/login">Login</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="clr"></div>
+
+    {{template "searchBar"}}
+
+    <div class="clr"></div>
+
+    <section>
+      <div class="container">
+        <div class="table-title">
+          <h1>Transaction {{.Hash}}</h1>
+        </div>
+        <div class="data-table" id="transactions-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Hash</th>
+                <td> <a href="/transactions/fundtx/{{.Hash}}">{{.Hash}}</a></td>
+              </tr>
+              <tr>
+                <th>From</th>
+                <td> <a href="/account/{{.From}}">{{.From}}</a></td>
+              </tr>
+              <tr>
+                <th>Transaction Count</th>
+                <td>{{.TxCount}}</td>
+              </tr>
+              <tr>
+                <th>To</th>
+                <td> <a href="/account/{{.To}}">{{.To}}</a></td>
+              </tr>
+              <tr>
+                <th>Amount</th>
+                <td>{{.Amount}}</td>
+              </tr>
+                <th>Fee</th>
+                <td>{{.Fee}}</td>
+              </tr>
+              <tr>
+                <th>Signature</th>
+                <td>{{.Signature}}</td>
+              </tr>
+            </thead>
+
+          </table>
+        </div>
+      </div>
+    </section>
+
+  {{template "footer"}}
+
+  </body>
+</html>

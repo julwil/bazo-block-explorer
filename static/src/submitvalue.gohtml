@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Bazo Explorer</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+  </head>
+  <body>
+
+    <header>
+      <div class="container">
+        <div id="page-title">
+          <h1 class="page-title"><a href="/">Bazo Explorer</a></h1>
+        </div>
+        <nav>
+          <ul>
+            <li>
+              <a href="/blocks">Blocks</a>
+            </li>
+            <li>
+              <a href="/transactions/funds">Transactions</a>
+            </li>
+            <li>
+              <a href="/accounts">Accounts</a>
+            </li>
+            <li>
+              <a href="/status">Status</a>
+            </li>
+            <li>
+              <a href="/login">Login</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="clr"></div>
+
+    {{template "searchBar"}}
+
+    <div class="clr"></div>
+
+    <section>
+      <div class="container">
+        <h2>Change the {{.BSName}}</h2>
+        <p>Current {{.BSName}}: {{.BlockSize}}</p>
+        <form class="blocksize-form" action="/admin/blocksize" method="post">
+          <input type="text" name="new-blocksize" value="">
+          <input type="submit" value="Set">
+        </form>
+
+      </div>
+    </section>
+
+    {{template "footer"}}
+
+  </body>
+</html>

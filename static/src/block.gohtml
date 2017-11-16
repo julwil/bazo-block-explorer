@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Block</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+  </head>
+  <body>
+
+    <header>
+      <div class="container">
+        <div id="page-title">
+          <h1 class="page-title"><a href="/">Bazo Explorer</a></h1>
+        </div>
+        <nav>
+          <ul>
+            <li class="current">
+              <a href="/blocks">Blocks</a>
+            </li>
+            <li>
+              <a href="/transactions/funds">Transactions</a>
+            </li>
+            <li>
+              <a href="/accounts">Accounts</a>
+            </li>
+            <li>
+              <a href="/status">Status</a>
+            </li>
+            <li>
+              <a href="/login">Login</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="clr"></div>
+
+    {{template "searchBar"}}
+
+    <div class="clr"></div>
+
+    <section>
+      <div class="container">
+        <div class="table-title">
+          <h1>Block {{.Hash}}</h1>
+        </div>
+        <div class="data-table" id="block-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Hash</th>
+                <td> <a href="/block/{{.Hash}}">{{.Hash}}</a></td>
+              </tr>
+              <tr>
+                <th>Previous Hash</th>
+                <td> <a href="/block/{{.PrevHash}}">{{.PrevHash}}</a></td>
+              </tr>
+                <th>Timestamp</th>
+                <td>{{.Timestamp}}</td>
+              </tr>
+              <tr>
+                <th>Merkle Root</th>
+                <td>{{.MerkleRoot}}</td>
+              </tr>
+              <tr>
+                <th>Beneficiary</th>
+                <td>{{.Beneficiary}}</td>
+              </tr>
+              <tr>
+                <th>NrFundsTX</th>
+                <td>{{.NrFundTx}}</td>
+              </tr>
+              <tr>
+                <th>NrAccTX</th>
+                <td>{{.NrAccTx}}</td>
+              </tr>
+              <tr>
+                <th>NrConfigTX</th>
+                <td>{{.NrConfigTx}}</td>
+              </tr>
+              {{range .FundsTxData}}
+              <tr>
+                <th>TransactionHash</th>
+                <td><a href="/transactions/fundtx/{{.}}">{{.}}</a></td>
+              </tr>
+              {{end}}
+            </thead>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  {{template "footer"}}
+
+  </body>
+</html>

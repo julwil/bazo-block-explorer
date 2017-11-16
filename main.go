@@ -32,12 +32,13 @@ func init() {
 
 func main() {
   router := httprouter.New()
+  router.GET("/", getIndex)
   router.GET("/blocks", getAllBlocks)
   router.GET("/block/:hash", getOneBlock)
   router.GET("/transactions/funds", getAllTransactions)
   router.GET("/transactions/fundtx/:hash", getOneTransaction)
+  router.GET("/account/:hash", getAccount)
   router.GET("/search/:hash", searchForHash)
-  router.GET("/", getIndex)
   router.GET("/adminpanel", adminfunc)
   router.GET("/admin/blocksize", blocksizeGet)
   router.POST("/admin/blocksize", blocksizePost)
@@ -51,6 +52,11 @@ func main() {
   router.POST("/admin/blockreward", blockrewardPost)
   router.ServeFiles("/static/*filepath", http.Dir("static"))
   http.ListenAndServe(":8080", router)
+}
+
+func getIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  returnedrows := ReturnBlocksAndTransactions(params)
+  tpl.ExecuteTemplate(w, "index.gohtml", returnedrows)
 }
 
 func getOneBlock(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -73,9 +79,9 @@ func getOneTransaction(w http.ResponseWriter, r *http.Request, params httprouter
   tpl.ExecuteTemplate(w, "fundstx.gohtml", returnedtx)
 }
 
-func getIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedrows := ReturnBlocksAndTransactions(params)
-  tpl.ExecuteTemplate(w, "index.gohtml", returnedrows)
+func getAccount(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+returnedaccount := ReturnAccount(params)
+tpl.ExecuteTemplate(w, "account.gohtml", returnedaccount)
 }
 
 func searchForHash(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

@@ -154,6 +154,37 @@ func ReturnAllTransactions(params httprouter.Params) []fundstx {
   return returnedrows
 }
 
+func ReturnAccount(params httprouter.Params) account {
+  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
+    host, port, user, dbname)
+  db, err := sql.Open("postgres", psqlInfo)
+  if err != nil {
+    panic(err)
+  }
+  defer db.Close()
+  err = db.Ping()
+  if err != nil {
+    panic(err)
+  }
+
+  sqlStatement := `SELECT address, balance, txcount FROM accounts WHERE address = $1;`
+  var returnedaccount account
+  row := db.QueryRow(sqlStatement, params.ByName("hash"))
+  switch err = row.Scan(&returnedaccount.Address, &returnedaccount.Balance, &returnedaccount.TxCount)
+  err {
+  case sql.ErrNoRows:
+    //on website 404 would be more suitable maybe
+    fmt.Printf("No rows returned!")
+  case nil:
+    return returnedaccount
+  default:
+    //on website 500 error maybe.
+    panic(err)
+  }
+  var account1 account
+  return account1
+}
+
 func ReturnSearchResult(params httprouter.Params) (block, fundstx) {
   psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
     host, port, user, dbname)

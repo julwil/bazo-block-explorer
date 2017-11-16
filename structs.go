@@ -15,6 +15,7 @@ type block struct {
   ConfigTxData []string
 }
 
+//Include bock hash maybe?
 type fundstx struct {
   Hash string
   Amount uint64
@@ -24,7 +25,17 @@ type fundstx struct {
   To string
   Signature string
 }
-
+//Include tx hashes mybe?
+type account struct {
+  Address string
+  Balance uint64
+  TxCount uint32
+  /*
+  FundsTxData []string
+  AccTxData []string
+  ConfigTxData []string
+  */
+}
 //change to map
 type systemparams struct {
   BSName string

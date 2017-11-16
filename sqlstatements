@@ -213,8 +213,11 @@ B'00000000',
 )
 
 create table accounts(
-hash char(32) primary key,
-address char(64) not null,
-balance bigint,
-txcount int
+address char(64) primary key,
+balance bigint not null,
+txcount int not null
+)
+
+insert into accounts(address, balance, txcount) values (
+
 )

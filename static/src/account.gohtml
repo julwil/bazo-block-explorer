@@ -21,7 +21,7 @@
             <li>
               <a href="/transactions/funds">Transactions</a>
             </li>
-            <li class="current">>
+            <li class="current">
               <a href="/accounts">Accounts</a>
             </li>
             <li>
@@ -44,36 +44,32 @@
     <section>
       <div class="container">
         <div class="table-title">
-          <h1>Latest Blocks</h1>
+          <h1>Account {{.Address}}</h1>
         </div>
-        <div class="data-table" id="block-table">
+        <div class="data-table">
           <table>
             <thead>
               <tr>
-                <th>Hash</th>
-                <th>Timestamp</th>
-                <th>NrFundsTX</th>
-                <th>NrAccTX</th>
-                <th>NrConfigTX</th>
+                <th>Address</th>
+                <td>{{.Address}}</td>
+              </tr>
+              </tr>
+                <th>Balance</th>
+                <td>{{.Balance}}</td>
+              </tr>
+              </tr>
+                <th>Transaction Count</th>
+                <td>{{.TxCount}}</td>
               </tr>
             </thead>
-            <tbody>
-              {{range .}}
-              <tr>
-                <td> <a href="/block/{{.Hash}}">{{.Hash}}</a></td>
-                <td>{{.Timestamp}}</td>
-                <td>{{.NrFundTx}}</td>
-                <td>{{.NrAccTx}}</td>
-                <td>{{.NrConfigTx}}</td>
-              </tr>
-              {{end}}
-            </tbody>
           </table>
         </div>
       </div>
     </section>
 
+    <div class="clr"></div>
+
     {{template "footer"}}
-    
+
   </body>
 </html>

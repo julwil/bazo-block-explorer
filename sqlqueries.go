@@ -3,7 +3,7 @@ package main
 import (
   _ "io"
   "fmt"
-  _ "net/http"
+  "net/http"
   _ "html/template"
   "database/sql"
   _ "github.com/lib/pq"
@@ -185,7 +185,7 @@ func ReturnAccount(params httprouter.Params) account {
   return account1
 }
 
-func ReturnSearchResult(params httprouter.Params) (block, fundstx) {
+func ReturnSearchResult(r *http.Request) (block, fundstx) {
   psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
     host, port, user, dbname)
   db, err := sql.Open("postgres", psqlInfo)
@@ -201,12 +201,12 @@ func ReturnSearchResult(params httprouter.Params) (block, fundstx) {
   sqlStatement := `SELECT hash, prevhash, timestamp, merkleroot, beneficiary, nrfundtx, nracctx, nrconfigtx, fundstxdata FROM blocks WHERE hash = $1;`
   var returnedblock block
   var returnedtx fundstx
-  row := db.QueryRow(sqlStatement, params.ByName("hash"))
+  row := db.QueryRow(sqlStatement, r.PostFormValue("search-value"))
   switch err = row.Scan(&returnedblock.Hash, &returnedblock.PrevHash, &returnedblock.Timestamp, &returnedblock.MerkleRoot, &returnedblock.Beneficiary, &returnedblock.NrFundTx, &returnedblock.NrAccTx, &returnedblock.NrConfigTx, &returnedblock.FundsTxDataString)
   err {
   case sql.ErrNoRows:
     sqlStatement = `SELECT hash, amount, fee, txcount, sender, recipient, signature FROM fundstx WHERE hash = $1;`
-    row2 := db.QueryRow(sqlStatement, params.ByName("hash"))
+    row2 := db.QueryRow(sqlStatement, r.PostFormValue("search-value"))
     err = row2.Scan(&returnedtx.Hash, &returnedtx.Amount, &returnedtx.Fee, &returnedtx.TxCount, &returnedtx.From, &returnedtx.To, &returnedtx.Signature)
     return returnedblock, returnedtx
   case nil:

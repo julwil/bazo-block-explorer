@@ -33,12 +33,13 @@ func init() {
 func main() {
   router := httprouter.New()
   router.GET("/", getIndex)
+  router.GET("/test", getTestPage)
   router.GET("/blocks", getAllBlocks)
   router.GET("/block/:hash", getOneBlock)
   router.GET("/transactions/funds", getAllTransactions)
   router.GET("/transactions/fundtx/:hash", getOneTransaction)
   router.GET("/account/:hash", getAccount)
-  router.GET("/search/:hash", searchForHash)
+  router.POST("/search/", searchForHash)
   router.GET("/adminpanel", adminfunc)
   router.GET("/admin/blocksize", blocksizeGet)
   router.POST("/admin/blocksize", blocksizePost)
@@ -80,13 +81,13 @@ func getOneTransaction(w http.ResponseWriter, r *http.Request, params httprouter
 }
 
 func getAccount(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-returnedaccount := ReturnAccount(params)
-tpl.ExecuteTemplate(w, "account.gohtml", returnedaccount)
+  returnedaccount := ReturnAccount(params)
+  tpl.ExecuteTemplate(w, "account.gohtml", returnedaccount)
 }
 
 func searchForHash(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   thing := 1
-  returnedblock, returnedtx := ReturnSearchResult(params)
+  returnedblock, returnedtx := ReturnSearchResult(r)
   if returnedblock.Hash == "" && returnedtx.Hash == "" {
     tpl.ExecuteTemplate(w, "noresult.gohtml", thing)
   } else if returnedblock.Hash != "" && returnedtx.Hash == "" {
@@ -96,6 +97,7 @@ func searchForHash(w http.ResponseWriter, r *http.Request, params httprouter.Par
   } else {
     tpl.ExecuteTemplate(w, "noresult.gohtml", thing)
   }
+
 }
 
 func adminfunc(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -165,4 +167,9 @@ func blockrewardPost(w http.ResponseWriter, r *http.Request, params httprouter.P
   }
   textinput := r.PostFormValue("new-blockreward")
   io.WriteString(w, textinput)
+}
+
+func getTestPage(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  thing := 1
+  tpl.ExecuteTemplate(w, "test.gohtml", thing)
 }

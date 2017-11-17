@@ -2,52 +2,30 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Bazo Explorer</title>
-    <link rel="stylesheet" href="/static/css/style.css">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> -->
   </head>
+  <style media="screen">
+  .footer {
+    width: 100%;
+    height: 60px;
+    line-height: 60px; /* Vertically center the text there */
+    background-color: #f5f5f5;
+}
+  </style>
   <body>
 
-    <header>
-      <div class="container">
-        <div id="page-title">
-          <h1 class="page-title"><a href="/">Bazo Explorer</a></h1>
-        </div>
-        <nav>
-          <ul>
-            <li>
-              <a href="/blocks">Blocks</a>
-            </li>
-            <li>
-              <a href="/transactions/funds">Transactions</a>
-            </li>
-            <li>
-              <a href="/accounts">Accounts</a>
-            </li>
-            <li>
-              <a href="/status">Status</a>
-            </li>
-            <li>
-              <a href="/login">Login</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </header>
-
-    <div class="clr"></div>
-
-    {{template "searchBar"}}
+    {{template "navBar"}}
 
     <div class="clr"></div>
 
     <section>
       <div class="container">
-        <div class="table-title">
-          <h1>Latest Blocks</h1>
-        </div>
+          <h3>Latest Blocks</h3>
         <div class="data-table" id="block-table">
-          <table>
+          <table class="table">
             <thead>
               <tr id="header-row">
                 <th>Hash</th>
@@ -77,11 +55,9 @@
 
     <section>
       <div class="container">
-        <div class="table-title">
-          <h1>Latest Transactions (FundsTx)</h1>
-        </div>
+          <h3>Latest Transactions (FundsTx)</h3>
         <div class="data-table" id="transactions-table">
-          <table>
+          <table class="table">
             <thead>
               <tr id="header-row">
                 <th>Hash</th>
@@ -106,8 +82,6 @@
         </div>
       </div>
     </section>
-
-    {{template "footer"}}
 
   </body>
 </html>

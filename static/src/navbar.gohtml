@@ -1,0 +1,37 @@
+{{define "navBar"}}
+
+    <nav class="navbar navbar-dark bg-dark justify-content-between">
+      <a class="navbar-brand text-white" href="/">Bazo Explorer</a>
+      <span class="text-muted">Version 3 (Bootstrap integrated)</span>
+      <ul class="nav">
+        <li class="nav-item">
+          <a class="nav-link active text-white" href="/blocks">Blocks</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="/transactions/funds">Transactions</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="/accounts">Accounts</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="/status">Status</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="/adminpanel">Admin</a>
+        </li>
+      </ul>
+    </nav>
+
+    <nav class="navbar navbar-light bg-light">
+      <form class="config-form" action="/search/" method="post">
+        <div class="input-group">
+          <input class="form-control" name="search-value" type="text" placeholder="Search through blocks, transactions and accounts..." aria-label="Search">
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="submit">Search</button>
+          </span>
+        </div>
+      </form>
+    </nav>
+    <br>
+
+{{end}}

@@ -2,94 +2,83 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Bazo Explorer</title>
-    <link rel="stylesheet" href="/static/css/style.css">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> -->
   </head>
+
   <body>
 
-    <header>
-      <div class="container">
-        <div id="page-title">
-          <h1 class="page-title"><a href="/">Bazo Explorer</a></h1>
-        </div>
-        <nav>
-          <ul>
-            <li>
-              <a href="/blocks">Blocks</a>
-            </li>
-            <li>
-              <a href="/transactions/funds">Transactions</a>
-            </li>
-            <li>
-              <a href="/accounts">Accounts</a>
-            </li>
-            <li>
-              <a href="/status">Status</a>
-            </li>
-            <li>
-              <a href="/login">Login</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </header>
-
-    <div class="clr"></div>
-
-    {{template "searchBar"}}
+    {{template "navBar"}}
 
     <div class="clr"></div>
     <section id="parameter-list">
       <div class="container">
-        <h2>Change System Parameters</h2>
-          <ul>
-            <li>
-              <h3>Current {{.BSName}}: {{.BlockSize}}</h3>
-              <form class="config-form" action="/admin/blocksize" method="post">
-                <input type="number" name="new-blocksize" placeholder="Change the {{.BSName}}">
-                <input class="set-button" type="submit" value="Set">
-              </form>
-            </li>
-            <div class="clr"></div>
-            <li>
-              <h3>Current {{.DIName}}: {{.DiffInterval}}</h3>
-              <form class="config-form" action="/admin/diffinterval" method="post">
-                <input type="number" name="new-diffinterval" placeholder="Change the {{.DIName}}">
-                <input class="set-button" type="submit" value="Set">
-              </form>
-            </li>
-            <div class="clr"></div>
-            <li>
-              <h3>Current {{.MFName}}: {{.MinFee}}</h3>
-              <form class="config-form" action="/admin/minfee" method="post">
-                <input type="number" name="new-minfee" placeholder="Change the {{.MFName}}">
-                <input class="set-button" type="submit" value="Set">
-              </form>
-            </li>
-            <div class="clr"></div>
-            <li>
-              <h3>Current {{.BIName}}: {{.BlockInterval}}</h3>
-              <form class="congif-form" action="/admin/blockinterval" method="post">
-                <input type="number" name="new-blockinterval" placeholder="Change the {{.BIName}}">
-                <input class="set-button" type="submit" value="Set">
-              </form>
-            </li>
-            <div class="clr"></div>
-            <li>
-              <h3>Current {{.BRName}}: {{.BlockReward}}</h3>
-              <form class="config-form" action="/admin/blockreward" method="post">
-                <input type="number" name="new-blockreward" placeholder="Change the {{.BRName}}">
-                <input class="set-button" type="submit" value="Set">
-              </form>
-            </li>
-          </ul>
-        </div>
+        <h3>Change System Parameters</h3>
+        <ul>
+          <li>
+            <h4>Current {{.BSName}}: {{.BlockSize}}</h4>
+            <form class="config-form" action="/admin/blocksize" method="post">
+              <div class="input-group">
+                <input class="form-control" type="number" name="new-blocksize" placeholder="Change the {{.BSName}}">
+                <span class="input-group-btn">
+                  <button class="btn btn-primary" type="submit">Set</button>
+                </span>
+              </div>
+            </form>
+          </li>
+          <div class="clr"></div>
+          <li>
+            <h4>Current {{.DIName}}: {{.DiffInterval}}</h4>
+            <form class="config-form" action="/admin/diffinterval" method="post">
+              <div class="input-group">
+                <input class="form-control" type="number" name="new-diffinterval" placeholder="Change the {{.DIName}}">
+                <span class="input-group-btn">
+                  <button class="btn btn-primary" type="submit">Set</button>
+                </span>
+              </div>
+            </form>
+          </li>
+          <div class="clr"></div>
+          <li>
+            <h4>Current {{.MFName}}: {{.MinFee}}</h4>
+            <form class="config-form" action="/admin/minfee" method="post">
+              <div class="input-group">
+                <input class="form-control" type="number" name="new-minfee" placeholder="Change the {{.MFName}}">
+                <span class="input-group-btn">
+                  <button class="btn btn-primary" type="submit">Set</button>
+                </span>
+              </div>
+            </form>
+          </li>
+          <div class="clr"></div>
+          <li>
+            <h4>Current {{.BIName}}: {{.BlockInterval}}</h4>
+            <form class="congif-form" action="/admin/blockinterval" method="post">
+              <div class="input-group">
+                <input class="form-control" type="number" name="new-blockinterval" placeholder="Change the {{.BIName}}">
+                <span class="input-group-btn">
+                  <button class="btn btn-primary" type="submit">Set</button>
+                </span>
+              </div>
+            </form>
+          </li>
+          <div class="clr"></div>
+          <li>
+            <h4>Current {{.BRName}}: {{.BlockReward}}</h4>
+            <form class="config-form" action="/admin/blockreward" method="post">
+              <div class="input-group">
+                <input class="form-control" type="number" name="new-blockreward" placeholder="Change the {{.BRName}}">
+                <span class="input-group-btn">
+                  <button class="btn btn-primary" type="submit">Set</button>
+                </span>
+              </div>
+            </form>
+          </li>
+        </ul>
+      </div>
     </section>
-
-    <div class="clr"></div>
-
-    {{template "footer"}}
 
   </body>
 </html>

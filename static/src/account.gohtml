@@ -2,52 +2,25 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Blocks</title>
-    <link rel="stylesheet" href="/static/css/style.css">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bazo Explorer</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> -->
   </head>
+
   <body>
 
-    <header>
-      <div class="container">
-        <div id="page-title">
-          <h1 class="page-title"><a href="/">Bazo Explorer</a></h1>
-        </div>
-        <nav>
-          <ul>
-            <li>
-              <a href="/blocks">Blocks</a>
-            </li>
-            <li>
-              <a href="/transactions/funds">Transactions</a>
-            </li>
-            <li class="current">
-              <a href="/accounts">Accounts</a>
-            </li>
-            <li>
-              <a href="/status">Status</a>
-            </li>
-            <li>
-              <a href="/login">Login</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </header>
-
-    <div class="clr"></div>
-
-    {{template "searchBar"}}
+    {{template "navBar"}}
 
     <div class="clr"></div>
 
     <section>
       <div class="container">
         <div class="table-title">
-          <h1>Account {{.Address}}</h1>
+          <h3>Account {{.Address}}</h3>
         </div>
         <div class="data-table">
-          <table>
+          <table class="table">
             <thead>
               <tr>
                 <th>Address</th>
@@ -68,8 +41,6 @@
     </section>
 
     <div class="clr"></div>
-
-    {{template "footer"}}
 
   </body>
 </html>

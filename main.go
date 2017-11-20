@@ -36,8 +36,12 @@ func main() {
   router.GET("/test", getTestPage)
   router.GET("/blocks", getAllBlocks)
   router.GET("/block/:hash", getOneBlock)
-  router.GET("/transactions/funds", getAllTransactions)
-  router.GET("/transactions/fundtx/:hash", getOneTransaction)
+  router.GET("/transactions/funds", getAllFundsTx)
+  router.GET("/transactions/fundtx/:hash", getOneFundsTx)
+  router.GET("/transactions/acc", getAllAccTx)
+  router.GET("/transactions/acc/:hash", getOneAccTx)
+  router.GET("/transactions/config", getAllConfigTx)
+  router.GET("/transactions/config/:hash", getOneConfigTx)
   router.GET("/account/:hash", getAccount)
   router.POST("/search/", searchForHash)
   router.GET("/adminpanel", adminfunc)
@@ -70,14 +74,34 @@ func getAllBlocks(w http.ResponseWriter, r *http.Request, params httprouter.Para
   tpl.ExecuteTemplate(w, "blocks.gohtml", returnedblocks)
 }
 
-func getAllTransactions(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedtxs := ReturnAllTransactions(params)
+func getOneFundsTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  returnedtx := ReturnOneFundsTx(params)
+  tpl.ExecuteTemplate(w, "fundstx.gohtml", returnedtx)
+}
+
+func getAllFundsTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  returnedtxs := ReturnAllFundsTx(params)
   tpl.ExecuteTemplate(w, "fundstxs.gohtml", returnedtxs)
 }
 
-func getOneTransaction(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedtx := ReturnOneTransaction(params)
-  tpl.ExecuteTemplate(w, "fundstx.gohtml", returnedtx)
+func getOneAccTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  returnedtx := ReturnOneAccTx(params)
+  tpl.ExecuteTemplate(w, "acctx.gohtml", returnedtx)
+}
+
+func getAllAccTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  returnedtxs := ReturnAllAccTx(params)
+  tpl.ExecuteTemplate(w, "acctxs.gohtml", returnedtxs)
+}
+
+func getOneConfigTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  returnedtx := ReturnOneConfigTx(params)
+  tpl.ExecuteTemplate(w, "configtx.gohtml", returnedtx)
+}
+
+func getAllConfigTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  returnedtxs := ReturnAllConfigTx(params)
+  tpl.ExecuteTemplate(w, "configtxs.gohtml", returnedtxs)
 }
 
 func getAccount(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

@@ -25,6 +25,23 @@ type fundstx struct {
   To string
   Signature string
 }
+
+type acctx struct {
+  Hash string
+  Issuer string
+  Fee uint64
+  PubKey string
+  Signature string
+}
+
+type configtx struct {
+  Hash string
+	Id uint8
+	Payload uint64
+	Fee uint64
+	TxCount uint8
+	Signature string
+}
 //Include tx hashes mybe?
 type account struct {
   Address string

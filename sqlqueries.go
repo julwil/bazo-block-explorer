@@ -88,7 +88,7 @@ func ReturnAllBlocks(params httprouter.Params) []block {
   return returnedrows
 }
 
-func ReturnOneTransaction(params httprouter.Params) fundstx {
+func ReturnOneFundsTx(params httprouter.Params) fundstx {
   psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
     host, port, user, dbname)
   db, err := sql.Open("postgres", psqlInfo)
@@ -119,7 +119,7 @@ func ReturnOneTransaction(params httprouter.Params) fundstx {
   return tx1
 }
 
-func ReturnAllTransactions(params httprouter.Params) []fundstx {
+func ReturnAllFundsTx(params httprouter.Params) []fundstx {
   psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
     host, port, user, dbname)
   db, err := sql.Open("postgres", psqlInfo)
@@ -152,6 +152,27 @@ func ReturnAllTransactions(params httprouter.Params) []fundstx {
     panic(err)
   }
   return returnedrows
+}
+
+func ReturnOneAccTx(params httprouter.Params) acctx {
+  var returnedtx acctx
+  return returnedtx
+
+}
+
+func ReturnAllAccTx(params httprouter.Params) []acctx {
+  var returnedtxs []acctx
+  return returnedtxs
+}
+
+func ReturnOneConfigTx(params httprouter.Params) configtx {
+  var returnedtx configtx
+  return returnedtx
+}
+
+func ReturnAllConfigTx(params httprouter.Params) []configtx {
+  var returnedtxs []configtx
+  return returnedtxs
 }
 
 func ReturnAccount(params httprouter.Params) account {

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Blocks</title>
+    <title>Bazo Explorer</title>
     <link rel="stylesheet" href="/static/css/bootstrap.css">
     <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> -->
   </head>
@@ -17,35 +17,42 @@
     <section>
       <div class="container">
         <div class="table-title">
-          <h3>Latest Blocks</h3>
+          <h3>Transaction {{.Hash}}</h3>
         </div>
-        <div class="data-table" id="block-table">
+        <div class="data-table" id="transactions-table">
           <table class="table">
             <thead>
-              <tr id="header-row">
+              <tr>
                 <th>Hash</th>
-                <th>Timestamp</th>
-                <th>NrFundsTX</th>
-                <th>NrAccTX</th>
-                <th>NrConfigTX</th>
+                <td> <a href="/transactions/acc/{{.Hash}}">{{.Hash}}</a></td>
+              </tr>
+              <tr>
+                <th>Id</th>
+                <td>{{.Id}}</td>
+              </tr>
+              <tr>
+                <th>Payload</th>
+                <td>{{.Payload}}</td>
+              </tr>
+              <tr>
+                <th>Fee</th>
+                <td>{{.Fee}}</td>
+              </tr>
+              <tr>
+                <th>TxCount</th>
+                <td>{{.TxCount}}</td>
+              </tr>
+              <tr>
+                <th>Signature</th>
+                <td>{{.Signature}}</td>
               </tr>
             </thead>
-            <tbody>
-              {{range .}}
-              <tr>
-                <td> <a href="/block/{{.Hash}}">{{.Hash}}</a></td>
-                <td>{{.Timestamp}}</td>
-                <td>{{.NrFundTx}}</td>
-                <td>{{.NrAccTx}}</td>
-                <td>{{.NrConfigTx}}</td>
-              </tr>
-              {{end}}
-            </tbody>
+
           </table>
         </div>
       </div>
     </section>
-    
+
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>

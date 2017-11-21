@@ -33,7 +33,7 @@
               <tr>
                 <td> <a href="/block/{{.Hash}}">{{.Hash}}</a></td>
                 <td>{{.Timestamp}}</td>
-                <td>{{.NrFundTx}}</td>
+                <td>{{.NrFundsTx}}</td>
                 <td>{{.NrAccTx}}</td>
                 <td>{{.NrConfigTx}}</td>
               </tr>
@@ -63,7 +63,7 @@
             <tbody>
               {{range .Txs}}
               <tr>
-                <td> <a href="/transactions/fundtx/{{.Hash}}">{{.Hash}}</a></td>
+                <td> <a href="/transactions/funds/{{.Hash}}">{{.Hash}}</a></td>
                 <td> <a href="/account/{{.From}}">{{.From}}</a></td>
                 <td> <a href="/account/{{.To}}">{{.To}}</a></td>
                 <td>{{.Amount}}</td>

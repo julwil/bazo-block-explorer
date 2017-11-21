@@ -6,7 +6,7 @@ type block struct {
   Timestamp string
   MerkleRoot string
   Beneficiary string
-  NrFundTx uint16
+  NrFundsTx uint16
   NrAccTx uint16
   NrConfigTx uint8
   FundsTxDataString string

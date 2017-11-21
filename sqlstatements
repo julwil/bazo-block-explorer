@@ -221,3 +221,43 @@ txcount int not null
 insert into accounts(address, balance, txcount) values (
 
 )
+
+create table acctx(
+header bit(8),
+hash char(32) primary key,
+issuer char(32) not null,
+fee bigint not null,
+pubkey char(32) not null,
+signature char(64) not null
+)
+
+insert into acctx(header, hash, issuer, fee, pubkey, signature)
+values (
+B'00000000',
+'acctransaction1_93j8jyk29gjrlcma',
+'rootaccount1_10fjhw8cjal4nflkrjd',
+0,
+'account5_pso4kjnidfv59hwdlvkjwdk',
+'sdfkjeordspi3983thjw94398cjwjc9rfjw9e8jw98ws98ser98jvsree8swevj',
+)
+
+create table configtx(
+header bit(8),
+hash char(32) primary key,
+id int not null,
+payload bigint not null,
+fee bigint not null,
+txcount int not null,
+signature char(64) not null
+)
+
+insert into configtx(header, hash, id, payload, fee, txcount, signature)
+values(
+B'00000000',
+'configtransaction1_sdfsdfsdfsdfd',
+1,
+300,
+0,
+1,
+'sv8093r0c340v3v92357heqrhqerifuh23oc3qihuhirfuiqu3chqiuhdhdhdhw'
+)

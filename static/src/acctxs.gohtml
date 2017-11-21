@@ -24,7 +24,7 @@
               <tr id="header-row">
                 <th>Hash</th>
                 <th>Issuer</th>
-                <th>PubKey</th>
+                <th>New PubKey</th>
                 <th>Fee</th>
               </tr>
             </thead>
@@ -33,7 +33,7 @@
               <tr>
                 <td> <a href="/transactions/acc/{{.Hash}}">{{.Hash}}</a></td>
                 <td> <a href="/account/{{.Issuer}}">{{.Issuer}}</a></td>
-                <td> <a href="/account/{{.Pubkey}}">{{.PubKey}}</a></td>
+                <td> <a href="/account/{{.PubKey}}">{{.PubKey}}</a></td>
                 <td>{{.Fee}}</td>
               </tr>
               {{end}}

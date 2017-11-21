@@ -37,7 +37,7 @@ func main() {
   router.GET("/blocks", getAllBlocks)
   router.GET("/block/:hash", getOneBlock)
   router.GET("/transactions/funds", getAllFundsTx)
-  router.GET("/transactions/fundtx/:hash", getOneFundsTx)
+  router.GET("/transactions/funds/:hash", getOneFundsTx)
   router.GET("/transactions/acc", getAllAccTx)
   router.GET("/transactions/acc/:hash", getOneAccTx)
   router.GET("/transactions/config", getAllConfigTx)

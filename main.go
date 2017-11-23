@@ -2,12 +2,11 @@ package main
 
 import (
   "io"
-  _ "fmt"
+  "fmt"
   "net/http"
   "html/template"
-  _ "database/sql"
-  _ "github.com/lib/pq"
   "github.com/julienschmidt/httprouter"
+  "github.com/dgrijalva/jwt-go"
   _ "strconv"
   _ "strings"
 )
@@ -31,9 +30,10 @@ func init() {
 }
 
 func main() {
+
   router := httprouter.New()
   router.GET("/", getIndex)
-  router.GET("/test", getTestPage)
+  router.GET("/get-token", getToken)
   router.GET("/blocks", getAllBlocks)
   router.GET("/block/:hash", getOneBlock)
   router.GET("/transactions/funds", getAllFundsTx)
@@ -44,6 +44,7 @@ func main() {
   router.GET("/transactions/config/:hash", getOneConfigTx)
   router.GET("/account/:hash", getAccount)
   router.POST("/search/", searchForHash)
+  router.POST("/login", loginFunc)
   router.GET("/adminpanel", adminfunc)
   router.GET("/admin/blocksize", blocksizeGet)
   router.POST("/admin/blocksize", blocksizePost)
@@ -57,6 +58,12 @@ func main() {
   router.POST("/admin/blockreward", blockrewardPost)
   router.ServeFiles("/static/*filepath", http.Dir("static"))
   http.ListenAndServe(":8080", router)
+}
+
+func getToken(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  cookie := CreateToken()
+  http.SetCookie(w, &cookie)
+  http.Redirect(w, r, "/", 307)
 }
 
 func getIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -125,7 +132,53 @@ func searchForHash(w http.ResponseWriter, r *http.Request, params httprouter.Par
 }
 
 func adminfunc(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  tpl.ExecuteTemplate(w, "admin.gohtml", values)
+  tokenCookie, err := ExtractCookie(r)
+	switch {
+	case err == http.ErrNoCookie:
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintln(w, "No cookie in request!")
+		return
+	case err != nil:
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintln(w, "Error while Parsing cookie!")
+		fmt.Fprintln(w, "Cookie parse error: %v\n")
+		return
+	}
+  token, err := ParseToken(tokenCookie)
+  switch err.(type) {
+	case nil: // no error
+		if !token.Valid { // but may still be invalid
+			w.WriteHeader(http.StatusUnauthorized)
+			fmt.Fprintln(w, "Invalid Token")
+			return
+		}
+
+		w.Header().Set("Content-Type", "text/html")
+		w.WriteHeader(http.StatusOK)
+    tpl.ExecuteTemplate(w, "admin.gohtml", values)
+
+	case *jwt.ValidationError: // something was wrong during the validation
+		vErr := err.(*jwt.ValidationError)
+
+		switch vErr.Errors {
+		case jwt.ValidationErrorExpired:
+			w.WriteHeader(http.StatusUnauthorized)
+			fmt.Fprintln(w, "Token Expired, get a new one.")
+			return
+
+		default:
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintln(w, "Error while Parsing Token!")
+			fmt.Printf("ValidationError error: %+v\n", vErr.Errors)
+			return
+		}
+
+	default: // something else went wrong
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintln(w, "Error while Parsing Token!")
+		fmt.Printf("Token parse error: %v\n", err)
+		return
+	}
 }
 
 func blocksizeGet(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -196,4 +249,12 @@ func blockrewardPost(w http.ResponseWriter, r *http.Request, params httprouter.P
 func getTestPage(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   thing := 1
   tpl.ExecuteTemplate(w, "test.gohtml", thing)
+}
+
+func loginFunc(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  if r.PostFormValue("root-key-field") == "123456" {
+    http.Redirect(w, r, "/get-token", 302)
+  } else {
+    http.Redirect(w, r, "/credentials-not-found", 302)
+  }
 }

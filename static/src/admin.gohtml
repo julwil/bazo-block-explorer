@@ -16,50 +16,50 @@
     <section id="parameter-list">
       <div class="container">
         <h3>Change System Parameters</h3>
-            <h4>Current {{.BSName}}: {{.BlockSize}}</h4>
+            <h5>Current {{.BSName}}: {{.BlockSize}} Bytes</h5>
             <form class="config-form" action="/admin/blocksize" method="post">
               <div class="input-group">
-                <input class="form-control" type="number" name="new-blocksize" placeholder="Change the {{.BSName}}">
+                <input class="form-control" type="number" name="new-blocksize" placeholder="Change the {{.BSName}} (in Bytes)">
                 <span class="input-group-btn">
                   <button class="btn btn-primary" type="submit">Set</button>
                 </span>
               </div>
             </form>
           <div class="clr"></div>
-            <h4>Current {{.DIName}}: {{.DiffInterval}}</h4>
+            <h5>Current {{.DIName}}: {{.DiffInterval}} Blocks</h5>
             <form class="config-form" action="/admin/diffinterval" method="post">
               <div class="input-group">
-                <input class="form-control" type="number" name="new-diffinterval" placeholder="Change the {{.DIName}}">
+                <input class="form-control" type="number" name="new-diffinterval" placeholder="Change the {{.DIName}} (Number of Blocks)">
                 <span class="input-group-btn">
                   <button class="btn btn-primary" type="submit">Set</button>
                 </span>
               </div>
             </form>
           <div class="clr"></div>
-            <h4>Current {{.MFName}}: {{.MinFee}}</h4>
+            <h5>Current {{.MFName}}: {{.MinFee}} Bazo Coins</h5>
             <form class="config-form" action="/admin/minfee" method="post">
               <div class="input-group">
-                <input class="form-control" type="number" name="new-minfee" placeholder="Change the {{.MFName}}">
+                <input class="form-control" type="number" name="new-minfee" placeholder="Change the {{.MFName}} (In Bazo Coins)">
                 <span class="input-group-btn">
                   <button class="btn btn-primary" type="submit">Set</button>
                 </span>
               </div>
             </form>
           <div class="clr"></div>
-            <h4>Current {{.BIName}}: {{.BlockInterval}}</h4>
+            <h5>Current {{.BIName}}: {{.BlockInterval}} Seconds</h5>
             <form class="congif-form" action="/admin/blockinterval" method="post">
               <div class="input-group">
-                <input class="form-control" type="number" name="new-blockinterval" placeholder="Change the {{.BIName}}">
+                <input class="form-control" type="number" name="new-blockinterval" placeholder="Change the {{.BIName}} (In Seconds)">
                 <span class="input-group-btn">
                   <button class="btn btn-primary" type="submit">Set</button>
                 </span>
               </div>
             </form>
           <div class="clr"></div>
-            <h4>Current {{.BRName}}: {{.BlockReward}}</h4>
+            <h5>Current {{.BRName}}: {{.BlockReward}} Bazo Coins</h5>
             <form class="config-form" action="/admin/blockreward" method="post">
               <div class="input-group">
-                <input class="form-control" type="number" name="new-blockreward" placeholder="Change the {{.BRName}}">
+                <input class="form-control" type="number" name="new-blockreward" placeholder="Change the {{.BRName}} (In Bazo Coins)">
                 <span class="input-group-btn">
                   <button class="btn btn-primary" type="submit">Set</button>
                 </span>

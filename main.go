@@ -23,15 +23,15 @@ const BLOCK_REWARD string = "5"
 
 func init() {
   tpl = template.Must(template.ParseGlob("static/src/*.gohtml"))
-  values.BlockSize = "X"
+  values.BlockSize = 0
   values.BSName = "Block Size"
-  values.DiffInterval = "X"
+  values.DiffInterval = 0
   values.DIName = "Difficulty Interval"
-  values.MinFee = "X"
+  values.MinFee = 0
   values.MFName = "Minimum Fee"
-  values.BlockInterval = "X"
+  values.BlockInterval = 0
   values.BIName = "Block Interval"
-  values.BlockReward = "X"
+  values.BlockReward = 0
   values.BRName = "Block Reward"
 }
 

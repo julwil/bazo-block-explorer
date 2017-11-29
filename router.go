@@ -165,8 +165,8 @@ func blocksizePost(w http.ResponseWriter, r *http.Request, params httprouter.Par
   if err != nil {
     panic(err)
   }
-  textinput := r.PostFormValue("new-blocksize")
-  cmd := exec.Command("bazo_client", "configTx", textinput)
+  payload := r.PostFormValue("new-blocksize")
+  cmd := exec.Command("bazo_client", "configTx", "0", "1", payload, "1", "1", "root")
   printCommand(cmd)
   output, err := cmd.CombinedOutput()
   printError(err)
@@ -183,8 +183,13 @@ func diffintervalPost(w http.ResponseWriter, r *http.Request, params httprouter.
   if err != nil {
     panic(err)
   }
-  textinput := r.PostFormValue("new-diffinterval")
-  io.WriteString(w, textinput)
+  payload := r.PostFormValue("new-diffinterval")
+  cmd := exec.Command("bazo_client", "configTx", "0", "2", payload, "1", "1", "root")
+  printCommand(cmd)
+  output, err := cmd.CombinedOutput()
+  printError(err)
+  printOutput(output)
+  io.WriteString(w, string(output))
 }
 
 func minfeeGet(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -196,8 +201,13 @@ func minfeePost(w http.ResponseWriter, r *http.Request, params httprouter.Params
   if err != nil {
     panic(err)
   }
-  textinput := r.PostFormValue("new-minfee")
-  io.WriteString(w, textinput)
+  payload := r.PostFormValue("new-minfee")
+  cmd := exec.Command("bazo_client", "configTx", "0", "3", payload, "1", "1", "root")
+  printCommand(cmd)
+  output, err := cmd.CombinedOutput()
+  printError(err)
+  printOutput(output)
+  io.WriteString(w, string(output))
 }
 
 func blockintervalGet(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -209,8 +219,13 @@ func blockintervalPost(w http.ResponseWriter, r *http.Request, params httprouter
   if err != nil {
     panic(err)
   }
-  textinput := r.PostFormValue("new-blockinterval")
-  io.WriteString(w, textinput)
+  payload := r.PostFormValue("new-blockinterval")
+  cmd := exec.Command("bazo_client", "configTx", "0", "4", payload, "1", "1", "root")
+  printCommand(cmd)
+  output, err := cmd.CombinedOutput()
+  printError(err)
+  printOutput(output)
+  io.WriteString(w, string(output))
 }
 
 func blockrewardGet(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -222,8 +237,13 @@ func blockrewardPost(w http.ResponseWriter, r *http.Request, params httprouter.P
   if err != nil {
     panic(err)
   }
-  textinput := r.PostFormValue("new-blockreward")
-  io.WriteString(w, textinput)
+  payload := r.PostFormValue("new-blockreward")
+  cmd := exec.Command("bazo_client", "configTx", "0", "5", payload, "1", "1", "root")
+  printCommand(cmd)
+  output, err := cmd.CombinedOutput()
+  printError(err)
+  printOutput(output)
+  io.WriteString(w, string(output))
 }
 
 func getTestPage(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

@@ -21,7 +21,7 @@ func initializeRouter() *httprouter.Router {
   router.GET("/transactions/acc/:hash", getOneAccTx)
   router.GET("/transactions/config", getAllConfigTx)
   router.GET("/transactions/config/:hash", getOneConfigTx)
-  router.GET("/account/:hash", getAccount)
+  //router.GET("/account/:hash", getAccount)
   router.POST("/search/", searchForHash)
   router.POST("/login", loginFunc)
   router.GET("/adminpanel", adminfunc)

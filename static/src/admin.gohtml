@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Bazo Explorer</title>
     <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/newstyle.css">
     <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> -->
   </head>
 
@@ -18,7 +19,7 @@
         <h3>Change System Parameters</h3>
             <h5>Current {{.BSName}}: {{.BlockSize}} Bytes</h5>
             <form class="config-form" action="/admin/blocksize" method="post">
-              <div class="input-group">
+              <div class="input-group" id="configInput">
                 <input class="form-control" type="number" name="new-blocksize" placeholder="Change the {{.BSName}} (in Bytes)">
                 <span class="input-group-btn">
                   <button class="btn btn-primary" type="submit">Set</button>

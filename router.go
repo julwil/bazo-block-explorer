@@ -12,7 +12,7 @@ import (
 func initializeRouter() *httprouter.Router {
   router := httprouter.New()
   router.GET("/", getIndex)
-  router.GET("/get-token", getToken)
+  //router.GET("/get-token", getToken)
   router.GET("/blocks", getAllBlocks)
   router.GET("/block/:hash", getOneBlock)
   router.GET("/transactions/funds", getAllFundsTx)
@@ -24,6 +24,7 @@ func initializeRouter() *httprouter.Router {
   //router.GET("/account/:hash", getAccount)
   router.POST("/search/", searchForHash)
   router.POST("/login", loginFunc)
+  router.GET("/login-failed", loginFail)
   router.GET("/adminpanel", adminfunc)
   router.POST("/admin/blocksize", blocksizePost)
   router.POST("/admin/diffinterval", diffintervalPost)
@@ -253,8 +254,16 @@ func getTestPage(w http.ResponseWriter, r *http.Request, params httprouter.Param
 
 func loginFunc(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   if r.PostFormValue("root-key-field") == "123456" {
-    http.Redirect(w, r, "/get-token", 302)
+    cookie := CreateToken()
+    http.SetCookie(w, &cookie)
+    http.Redirect(w, r, "/", 302)
+    //http.Redirect(w, r, "/get-token", 302)
   } else {
-    http.Redirect(w, r, "/credentials-not-found", 302)
+    http.Redirect(w, r, "/login-failed", 302)
   }
+}
+
+func loginFail(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  thing := 1
+  tpl.ExecuteTemplate(w, "loginfail.gohtml", thing)
 }

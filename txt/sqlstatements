@@ -17,18 +17,18 @@ create database BlockExplorerTest1;
 
 create table blocks (
 header bit(8),
-hash char(32) primary key,
-prevHash char(32) unique not null,
-nonce char(8) not null,
-timestamp timestamp not null,
-merkleRoot char(32) not null,
-beneficiary char(32) not null,
+hash char(64) primary key,
+prevHash char(64) not null,
+nonce char(16),
+timestamp bigint not null,
+merkleRoot char(64) not null,
+beneficiary char(64) not null,
 nrFundTx smallint not null,
 nrAccTx smallint not null,
 nrConfigTx smallint not null,
-fundsTxData char(32)[],
-accTxData char(32)[],
-configTxData char(32)[]
+fundsTxData char(64)[],
+accTxData char(64)[],
+configTxData char(64)[]
 )
 
 insert into blocks (

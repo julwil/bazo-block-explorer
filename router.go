@@ -7,12 +7,15 @@ import (
     "net/http"
     "github.com/julienschmidt/httprouter"
     "github.com/dgrijalva/jwt-go"
+    "github.com/mchetelat/bazo_miner/protocol"
 )
 
 func initializeRouter() *httprouter.Router {
   router := httprouter.New()
   router.GET("/", getIndex)
-  //router.GET("/get-token", getToken)
+  //router.GET("/get-token", getToken
+  router.GET("/testheader", testSPVHeader)
+  router.GET("/testblock", testBlock)
   router.GET("/blocks", getAllBlocks)
   router.GET("/block/:hash", getOneBlock)
   router.GET("/transactions/funds", getAllFundsTx)
@@ -34,6 +37,19 @@ func initializeRouter() *httprouter.Router {
   router.ServeFiles("/static/*filepath", http.Dir("static"))
 
   return router
+}
+
+func testBlock(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  genesishash := [32]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }
+  //goodhash := [32]byte{0, 150, 0, 136, 207, 21, 180, 43, 254, 227, 108, 39, 109, 134, 91, 202, 63, 109, 106, 145, 60, 123, 243, 208, 181, 172, 55, 24, 111, 185, 144, 57}
+  var block *protocol.Block = reqBlock(genesishash)
+  tpl.ExecuteTemplate(w, "realblock.gohtml", block)
+}
+
+func testSPVHeader(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  var header *protocol.SPVHeader = reqSPVHeader(nil)
+  fmt.Printf("%x\n", header.Hash)
+  tpl.ExecuteTemplate(w, "header.gohtml", header)
 }
 
 func getToken(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

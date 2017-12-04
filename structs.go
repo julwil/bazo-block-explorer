@@ -1,9 +1,10 @@
 package main
 
 type block struct {
+  Header string
   Hash string
   PrevHash string
-  Timestamp string
+  Timestamp int64
   MerkleRoot string
   Beneficiary string
   NrFundsTx uint16

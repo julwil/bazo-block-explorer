@@ -21,5 +21,8 @@
   * Data is sent to REST and returns Hash
   * User enters private key to sign Hash
   * Signature and Hash is sent to REST
-* Database Program
-  * tl:dr
+* Database Component
+  * Include tx hashes in blocks in db
+  * get tx data from hash for each block
+  * get account data from transactions after each block
+  * implement getNewBlocks (currently only getAllBLocks)

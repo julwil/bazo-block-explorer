@@ -1,12 +1,11 @@
-# Things that need a fixin'
-* 'fundtx' should be renamed to fundstx in DB
-* update search
-* refactor adminfunc
-* protect configTx POST methods
-* add IDs for configTx POST methods (constants)
-* better error handling (not panic)
-
-## Missing Components
+# Things to fix/add
+* Backend
+  * 'fundtx' should be renamed to fundstx in DB
+  * update search
+  * refactor adminfunc
+  * protect configTx POST methods
+  * add IDs for configTx POST methods (constants)
+  * better error handling (not panic)
 * JS login (client side)
   * User enters private key
   * encode JWT using private key

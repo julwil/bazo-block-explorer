@@ -40,9 +40,8 @@ func initializeRouter() *httprouter.Router {
 }
 
 func testBlock(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  genesishash := [32]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }
-  //goodhash := [32]byte{0, 150, 0, 136, 207, 21, 180, 43, 254, 227, 108, 39, 109, 134, 91, 202, 63, 109, 106, 145, 60, 123, 243, 208, 181, 172, 55, 24, 111, 185, 144, 57}
-  var block *protocol.Block = reqBlock(genesishash)
+  //genesishash := [32]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }
+  var block *protocol.Block = reqBlock(nil)
   tpl.ExecuteTemplate(w, "realblock.gohtml", block)
 }
 
@@ -219,7 +218,7 @@ func minfeePost(w http.ResponseWriter, r *http.Request, params httprouter.Params
     panic(err)
   }
   payload := r.PostFormValue("new-minfee")
-  cmd := exec.Command("bazo_client", "configTx", "0", "3", payload, "1", "2", "root")
+  cmd := exec.Command("bazo_client", "configTx", "0", "3", payload, "2", "4", "root")
   printCommand(cmd)
   output, err := cmd.CombinedOutput()
   printError(err)

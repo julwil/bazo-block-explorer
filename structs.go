@@ -1,5 +1,9 @@
 package main
 
+import (
+  "database/sql"
+)
+
 type block struct {
   Header string
   Hash string
@@ -10,9 +14,11 @@ type block struct {
   NrFundsTx uint16
   NrAccTx uint16
   NrConfigTx uint8
-  FundsTxDataString string
+  FundsTxDataString sql.NullString
   FundsTxData []string
+  AccTxDataString sql.NullString
   AccTxData []string
+  ConfigTxDataString sql.NullString
   ConfigTxData []string
 }
 

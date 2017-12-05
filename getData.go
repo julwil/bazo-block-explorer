@@ -69,15 +69,13 @@ func loadAllBlockHeaders() {
 }
 
 func loadAllBlocks() {
-  // copy hash from /testheader to get most recent one
-  goodhash := [32]byte{0, 115, 1, 136, 42, 47, 27, 96, 119, 30, 228, 141, 78, 1, 93, 196, 179, 199, 55, 118, 129, 131, 239, 133, 111, 216, 172, 55, 92, 82, 192, 206}
-  //genesishash := [32]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }
-  block := reqBlock(goodhash)
+  //genesishash := [32]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+  block := reqBlock(nil)
   allBlocks = append(allBlocks, block)
   prevHash := block.PrevHash
 
   for block.Hash != [32]byte{} {
-    block = reqBlock(prevHash)
+    block = reqBlock(prevHash[:])
     allBlocks = append(allBlocks, block)
     prevHash = block.PrevHash
   }
@@ -94,7 +92,7 @@ func Connect(connectionString string) (conn net.Conn) {
 	return conn
 }
 
-func reqBlock(blockHash [32]byte) (block *protocol.Block) {
+func reqBlock(blockHash []byte) (block *protocol.Block) {
 
 	conn := Connect(p2p.BOOTSTRAP_SERVER)
 
@@ -214,16 +212,19 @@ func ConvertBlock(unconvertedBlock *protocol.Block) block {
   convertedBlock.NrAccTx = unconvertedBlock.NrAccTx
   convertedBlock.NrConfigTx = unconvertedBlock.NrConfigTx
   for _, hash := range unconvertedBlock.FundsTxData {
-    convertedTxHash = fmt.Sprintf("%x", hash)
+    convertedTxHash = fmt.Sprintf("%x\n", hash)
     convertedBlock.FundsTxData = append(convertedBlock.FundsTxData, convertedTxHash)
   }
+  fmt.Printf("%s\n", convertedBlock.FundsTxData)
   for _, hash := range unconvertedBlock.AccTxData {
-    convertedTxHash = fmt.Sprintf("%x", hash)
+    convertedTxHash = fmt.Sprintf("%x\n", hash)
     convertedBlock.AccTxData = append(convertedBlock.AccTxData, convertedTxHash)
   }
-  for _, hash := range unconvertedBlock.FundsTxData {
-    convertedTxHash = fmt.Sprintf("%x", hash)
+  fmt.Printf("%s\n", convertedBlock.AccTxData)
+  for _, hash := range unconvertedBlock.ConfigTxData {
+    convertedTxHash = fmt.Sprintf("%x\n", hash)
     convertedBlock.ConfigTxData = append(convertedBlock.ConfigTxData, convertedTxHash)
   }
+  fmt.Printf("%s\n", convertedBlock.ConfigTxData)
   return convertedBlock
 }

@@ -21,7 +21,7 @@
   * User enters private key to sign Hash
   * Signature and Hash is sent to REST
 * Database Component
-  * Include tx hashes in blocks in db
+  * save unconverted hash(es) in db???
   * get tx data from hash for each block
   * get account data from transactions after each block
   * implement getNewBlocks (currently only getAllBLocks)

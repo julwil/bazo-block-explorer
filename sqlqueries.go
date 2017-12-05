@@ -6,7 +6,7 @@ import (
   "net/http"
   _ "html/template"
   "database/sql"
-  _ "github.com/lib/pq"
+  "github.com/lib/pq"
   "github.com/julienschmidt/httprouter"
   _ "strconv"
   "strings"
@@ -36,16 +36,24 @@ func ReturnOneBlock(params httprouter.Params) block {
     panic(err)
   }
 
-  sqlStatement = `SELECT hash, prevhash, timestamp, merkleroot, beneficiary, nrfundtx, nracctx, nrconfigtx FROM blocks WHERE hash = $1;`
+  sqlStatement := `SELECT hash, prevhash, timestamp, merkleroot, beneficiary, nrfundtx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata FROM blocks WHERE hash = $1;`
   var returnedblock block
   row := db.QueryRow(sqlStatement, params.ByName("hash"))
-  switch err := row.Scan(&returnedblock.Hash, &returnedblock.PrevHash, &returnedblock.Timestamp, &returnedblock.MerkleRoot, &returnedblock.Beneficiary, &returnedblock.NrFundsTx, &returnedblock.NrAccTx, &returnedblock.NrConfigTx)
+  switch err := row.Scan(&returnedblock.Hash, &returnedblock.PrevHash, &returnedblock.Timestamp, &returnedblock.MerkleRoot, &returnedblock.Beneficiary, &returnedblock.NrFundsTx, &returnedblock.NrAccTx, &returnedblock.NrConfigTx, &returnedblock.FundsTxDataString, &returnedblock.AccTxDataString, &returnedblock.ConfigTxDataString)
   err {
   case sql.ErrNoRows:
     //on website 404 would be more suitable maybe
     fmt.Printf("No rows returned!")
   case nil:
-    //returnedblock.FundsTxData = strings.Split(returnedblock.FundsTxDataString[1:len(returnedblock.FundsTxDataString)-1], ",")
+    if len(returnedblock.FundsTxDataString.String) > 0 {
+      returnedblock.FundsTxData = strings.Split(returnedblock.FundsTxDataString.String[2:len(returnedblock.FundsTxDataString.String)-2], ",")
+    }
+    if len(returnedblock.AccTxDataString.String) > 0 {
+      returnedblock.AccTxData = strings.Split(returnedblock.AccTxDataString.String[2:len(returnedblock.AccTxDataString.String)-2], ",")
+    }
+    if len(returnedblock.ConfigTxDataString.String) > 0 {
+      returnedblock.ConfigTxData = strings.Split(returnedblock.ConfigTxDataString.String[2:len(returnedblock.ConfigTxDataString.String)-2], ",")
+    }
     return returnedblock
   default:
     //on website 500 error maybe.
@@ -345,7 +353,9 @@ func ReturnSearchResult(r *http.Request) (block, fundstx) {
     err = row2.Scan(&returnedtx.Hash, &returnedtx.Amount, &returnedtx.Fee, &returnedtx.TxCount, &returnedtx.From, &returnedtx.To, &returnedtx.Signature)
     return returnedblock, returnedtx
   case nil:
-    returnedblock.FundsTxData = strings.Split(returnedblock.FundsTxDataString[1:len(returnedblock.FundsTxDataString)-1], ",")
+    if len(returnedblock.FundsTxDataString.String) > 0 {
+      returnedblock.FundsTxData = strings.Split(returnedblock.FundsTxDataString.String[1:len(returnedblock.FundsTxDataString.String)-1], ",")
+    }
     return returnedblock, returnedtx
   default:
     panic(err)
@@ -426,9 +436,9 @@ func WriteBlock(block block)  {
   }
 
   sqlStatement = `
-    INSERT INTO blocks (hash, prevhash, timestamp, merkleroot, beneficiary, nrfundtx, nracctx, nrconfigtx)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
-  _, err = db.Exec(sqlStatement, block.Hash, block.PrevHash, block.Timestamp, block.MerkleRoot, block.Beneficiary, block.NrFundsTx, block.NrAccTx, block.NrConfigTx)
+    INSERT INTO blocks (hash, prevhash, timestamp, merkleroot, beneficiary, nrfundtx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
+  _, err = db.Exec(sqlStatement, block.Hash, block.PrevHash, block.Timestamp, block.MerkleRoot, block.Beneficiary, block.NrFundsTx, block.NrAccTx, block.NrConfigTx, pq.Array(block.FundsTxData), pq.Array(block.AccTxData), pq.Array(block.ConfigTxData))
   if err != nil {
     panic(err)
   }

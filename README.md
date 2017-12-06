@@ -1,6 +1,5 @@
 # Things to fix/add
 * Backend
-  * 'fundtx' should be renamed to fundstx in DB
   * update search
   * refactor adminfunc
   * protect configTx POST methods
@@ -21,7 +20,4 @@
   * User enters private key to sign Hash
   * Signature and Hash is sent to REST
 * Database Component
-  * save unconverted hash(es) in db???
-  * get tx data from hash for each block
-  * get account data from transactions after each block
-  * implement getNewBlocks (currently only getAllBLocks)
+  * include transactions in refreshState 

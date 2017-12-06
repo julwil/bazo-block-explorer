@@ -36,7 +36,7 @@ func ReturnOneBlock(params httprouter.Params) block {
     panic(err)
   }
 
-  sqlStatement := `SELECT hash, prevhash, timestamp, merkleroot, beneficiary, nrfundtx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata FROM blocks WHERE hash = $1;`
+  sqlStatement := `SELECT hash, prevhash, timestamp, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata FROM blocks WHERE hash = $1;`
   var returnedblock block
   row := db.QueryRow(sqlStatement, params.ByName("hash"))
   switch err := row.Scan(&returnedblock.Hash, &returnedblock.PrevHash, &returnedblock.Timestamp, &returnedblock.MerkleRoot, &returnedblock.Beneficiary, &returnedblock.NrFundsTx, &returnedblock.NrAccTx, &returnedblock.NrConfigTx, &returnedblock.FundsTxDataString, &returnedblock.AccTxDataString, &returnedblock.ConfigTxDataString)
@@ -46,13 +46,13 @@ func ReturnOneBlock(params httprouter.Params) block {
     fmt.Printf("No rows returned!")
   case nil:
     if len(returnedblock.FundsTxDataString.String) > 0 {
-      returnedblock.FundsTxData = strings.Split(returnedblock.FundsTxDataString.String[2:len(returnedblock.FundsTxDataString.String)-2], ",")
+      returnedblock.FundsTxData = strings.Split(returnedblock.FundsTxDataString.String[:len(returnedblock.FundsTxDataString.String)], ",")
     }
     if len(returnedblock.AccTxDataString.String) > 0 {
-      returnedblock.AccTxData = strings.Split(returnedblock.AccTxDataString.String[2:len(returnedblock.AccTxDataString.String)-2], ",")
+      returnedblock.AccTxData = strings.Split(returnedblock.AccTxDataString.String[:len(returnedblock.AccTxDataString.String)], ",")
     }
     if len(returnedblock.ConfigTxDataString.String) > 0 {
-      returnedblock.ConfigTxData = strings.Split(returnedblock.ConfigTxDataString.String[2:len(returnedblock.ConfigTxDataString.String)-2], ",")
+      returnedblock.ConfigTxData = strings.Split(returnedblock.ConfigTxDataString.String[:len(returnedblock.ConfigTxDataString.String)], ",")
     }
     return returnedblock
   default:
@@ -76,7 +76,7 @@ func ReturnAllBlocks(params httprouter.Params) []block {
     panic(err)
   }
 
-  sqlStatement := `SELECT hash, timestamp, beneficiary, nrFundTx, nrAccTx, nrConfigTx FROM blocks`
+  sqlStatement := `SELECT hash, timestamp, beneficiary, nrFundsTx, nrAccTx, nrConfigTx FROM blocks`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -341,7 +341,7 @@ func ReturnSearchResult(r *http.Request) (block, fundstx) {
     panic(err)
   }
 
-  sqlStatement := `SELECT hash, prevhash, timestamp, merkleroot, beneficiary, nrfundtx, nracctx, nrconfigtx, fundstxdata FROM blocks WHERE hash = $1;`
+  sqlStatement := `SELECT hash, prevhash, timestamp, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, fundstxdata FROM blocks WHERE hash = $1;`
   var returnedblock block
   var returnedtx fundstx
   row := db.QueryRow(sqlStatement, r.PostFormValue("search-value"))
@@ -376,7 +376,7 @@ func ReturnBlocksAndTransactions(params httprouter.Params) blocksandtx {
     panic(err)
   }
 
-  sqlStatement := `SELECT hash, timestamp, beneficiary, nrFundTx, nrAccTx, nrConfigTx FROM blocks`
+  sqlStatement := `SELECT hash, timestamp, beneficiary, nrFundsTx, nrAccTx, nrConfigTx FROM blocks`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -436,9 +436,75 @@ func WriteBlock(block block)  {
   }
 
   sqlStatement = `
-    INSERT INTO blocks (hash, prevhash, timestamp, merkleroot, beneficiary, nrfundtx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata)
+    INSERT INTO blocks (hash, prevhash, timestamp, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
   _, err = db.Exec(sqlStatement, block.Hash, block.PrevHash, block.Timestamp, block.MerkleRoot, block.Beneficiary, block.NrFundsTx, block.NrAccTx, block.NrConfigTx, pq.Array(block.FundsTxData), pq.Array(block.AccTxData), pq.Array(block.ConfigTxData))
+  if err != nil {
+    panic(err)
+  }
+}
+
+func WriteFundsTx(tx fundstx) {
+  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
+    host, port, user, dbname)
+  db, err := sql.Open("postgres", psqlInfo)
+  if err != nil {
+    panic(err)
+  }
+  defer db.Close()
+  err = db.Ping()
+  if err != nil {
+    panic(err)
+  }
+
+  sqlStatement = `
+    INSERT INTO fundstx (hash, blockhash, amount, fee, txcount, sender, recipient, signature)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
+  _, err = db.Exec(sqlStatement, tx.Hash, tx.BlockHash, tx.Amount, tx.Fee, tx.TxCount, tx.From, tx.To, tx.Signature)
+  if err != nil {
+    panic(err)
+  }
+}
+
+func WriteAccTx(tx acctx) {
+  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
+    host, port, user, dbname)
+  db, err := sql.Open("postgres", psqlInfo)
+  if err != nil {
+    panic(err)
+  }
+  defer db.Close()
+  err = db.Ping()
+  if err != nil {
+    panic(err)
+  }
+
+  sqlStatement = `
+    INSERT INTO acctx (hash, blockhash, fee, issuer, pubkey, signature)
+    VALUES ($1, $2, $3, $4, $5, $6)`
+  _, err = db.Exec(sqlStatement, tx.Hash, tx.BlockHash, tx.Fee, tx.Issuer, tx.PubKey, tx.Signature)
+  if err != nil {
+    panic(err)
+  }
+}
+
+func WriteConfigTx(tx configtx) {
+  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
+    host, port, user, dbname)
+  db, err := sql.Open("postgres", psqlInfo)
+  if err != nil {
+    panic(err)
+  }
+  defer db.Close()
+  err = db.Ping()
+  if err != nil {
+    panic(err)
+  }
+
+  sqlStatement = `
+    INSERT INTO configtx (hash, blockhash, id, payload, fee, txcount, signature)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)`
+  _, err = db.Exec(sqlStatement, tx.Hash, tx.BlockHash, tx.Id, tx.Payload, tx.Fee, tx.TxCount, tx.Signature)
   if err != nil {
     panic(err)
   }

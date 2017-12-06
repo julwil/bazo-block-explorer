@@ -23,194 +23,46 @@ nonce char(16),
 timestamp bigint not null,
 merkleRoot char(64) not null,
 beneficiary char(64) not null,
-nrFundTx smallint not null,
+nrFundsTx smallint not null,
 nrAccTx smallint not null,
 nrConfigTx smallint not null,
-fundsTxData char(64)[],
-accTxData char(64)[],
-configTxData char(64)[]
-)
-
-insert into blocks (
-header, hash, prevhash, nonce, timestamp, merkleroot, beneficiary, nrfundtx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata
-) values (
-B'00000000',
-'blocknumber1_l9oweuhy0q1i24ow7iz',
-'blocknumber0_nohpu7xygwses9cnp89',
-'00000000',
-now(),
-'merkleroot1_fnohpu7xygwses9cnp89',
-'account1_f4gbpxs2o2bbm5joyz70i2i',
-6,
-0,
-0,
-'{
-"fundstransaction1_poamu9dgvfecfo",
-"fundstransaction2_atvp7jx2ns51pj",
-"fundstransaction3_jtqgsuqat8cvw1",
-"fundstransaction4_62gvlpq2lxo4re",
-"fundstransaction5_pmmvkicohk7iat",
-"fundstransaction6_lz1bmv5k7byy6z"
-}',
-'{}','{}'
-)
-
-insert into blocks (
-header, hash, prevhash, nonce, timestamp, merkleroot, beneficiary, nrfundtx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata
-) values (
-B'00000000',
-'blocknumber2_l86k7bsv0kvc9e1i59w',
-'blocknumber1_l9oweuhy0q1i24ow7iz',
-'00000000',
-now(),
-'merkleroot2_bcj90zvqd6bd6lai7ozr',
-'account2_kmms1e2t9ww9y8tlrnu7fts',
-7,
-0,
-0,
-'{
-"fundstransaction7_frswpa6esrlseg",
-"fundstransaction8_7aoegizovffm4f",
-"fundstransaction9_y72xq8n58ub0wf",
-"fundstransaction10_d8sroows0urf6",
-"fundstransaction11_frswpa6esrlse",
-"fundstransaction12_asy6ea3ckkqes",
-"fundstransaction13_arfug1kmq0o0s"
-}',
-'{}','{}'
-)
-
-insert into blocks (
-header, hash, prevhash, nonce, timestamp, merkleroot, beneficiary, nrfundtx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata
-) values (
-B'00000000',
-'blocknumber3_0m79xdpm23vkeixrw95',
-'blocknumber2_l86k7bsv0kvc9e1i59w',
-'00000000',
-now(),
-'merkleroot3_f61bgu31c807jqxjjdn3',
-'account3_112avk0s7om2id381kydwxa',
-7,
-0,
-0,
-'{
-"fundstransaction14_pn9k3dea8tlvd",
-"fundstransaction15_nxytv3ivdhyba",
-"fundstransaction16_dlqhu1h5gehzr",
-"fundstransaction17_kkipe8hk5tzol",
-"fundstransaction18_88kmncssvg8vi",
-"fundstransaction19_z93cn3ccqezab",
-"fundstransaction20_pi8p1r7illjjc"
-}',
-'{}','{}'
-)
+fundsTxData varchar(100)[],
+accTxData varchar(100)[],
+configTxData varchar(100)[]
+);
 
 create table fundstx (
 header bit(8),
-hash char(32) primary key,
+hash char(64) primary key,
+blockhash char(64) not null,
 amount bigint not null,
 fee bigint not null,
 txcount int not null,
-sender char(32) not null,
-recipient char(32) not null,
-signature char(64) not null
-)
+sender char(64) not null,
+recipient char(64) not null,
+signature char(128) not null
+);
 
-insert into fundstx (header, hash, amount, fee, txcount, sender, recipient, signature)
-values (
-B'00000000',
-'fundstransaction1_poamu9dgvfecfo',
-300,
-10,
-1,
-'account1_f4gbpxs2o2bbm5joyz70i2i',
-'account2_kmms1e2t9ww9y8tlrnu7fts',
-'l45f7ovgfo3i3sfqpfofg8n4igjkiwjpvq4jjxvcu9xkww0x52jddyjff4r41ggq'
-)
+create table acctx(
+header bit(8),
+hash char(64) primary key,
+blockhash char(64),
+issuer char(64) not null,
+fee bigint not null,
+pubkey char(128) not null,
+signature char(128) not null
+);
 
-insert into fundstx (header, hash, amount, fee, txcount, sender, recipient, signature)
-values (
-B'00000000',
-'fundstransaction2_atvp7jx2ns51pj',
-200,
-10,
-1,
-'account2_kmms1e2t9ww9y8tlrnu7fts',
-'account1_f4gbpxs2o2bbm5joyz70i2i',
-'0x97yc5ddci3zwbbyt88evp63g6fr3a6aell62edc0zgt9n1xsdxuzhss0tav3qm'
-)
-
-insert into fundstx (header, hash, amount, fee, txcount, sender, recipient, signature)
-values (
-B'00000000',
-'fundstransaction3_jtqgsuqat8cvw1',
-100,
-10,
-2,
-'account1_f4gbpxs2o2bbm5joyz70i2i',
-'account3_112avk0s7om2id381kydwxa',
-'hu8bxwfwoko0084vkmycytsmyt0rxeviqqi35a0ojcdpzoou38coxq63wqhrmbly'
-)
-
-insert into fundstx (header, hash, amount, fee, txcount, sender, recipient, signature)
-values (
-B'00000000',
-'fundstransaction4_62gvlpq2lxo4re',
-150,
-10,
-1,
-'account3_112avk0s7om2id381kydwxa',
-'account1_f4gbpxs2o2bbm5joyz70i2i',
-'lnr57mhcjpiauxkfy2pj84nzhjo4teox041e37j7546s9ht17zdj910oungkzzm6'
-)
-
-insert into fundstx (header, hash, amount, fee, txcount, sender, recipient, signature)
-values (
-B'00000000',
-'fundstransaction5_pmmvkicohk7iat',
-50,
-10,
-2,
-'account2_kmms1e2t9ww9y8tlrnu7fts',
-'account3_112avk0s7om2id381kydwxa',
-'1flz9ue5qmxtsln7w09wrvrt9qxwm46mdqw20bk9s216hpvjqwtgsmqz1tf3ylrm'
-)
-
-insert into fundstx (header, hash, amount, fee, txcount, sender, recipient, signature)
-values (
-B'00000000',
-'fundstransaction6_lz1bmv5k7byy6z',
-50,
-10,
-2,
-'account1_f4gbpxs2o2bbm5joyz70i2i',
-'account2_kmms1e2t9ww9y8tlrnu7fts',
-'dpcnbjioi9kdsz05j8cp8aissytq6zvrz1u2fxgu9975ic80ye2z78t5l6v9m611'
-)
-
-insert into fundstx (header, hash, amount, fee, txcount, sender, recipient, signature)
-values (
-B'00000000',
-'fundstransaction7_frswpa6esrlseg',
-100,
-10,
-3,
-'account1_f4gbpxs2o2bbm5joyz70i2i',
-'account2_kmms1e2t9ww9y8tlrnu7fts',
-'7h5rvv7t9ynghqm957znm0vmor40eh0c8syosx6e4fknqbaky7zor0dqowjbnh9j'
-)
-
-insert into fundstx (header, hash, amount, fee, txcount, sender, recipient, signature)
-values (
-B'00000000',
-'fundstransaction8_7aoegizovffm4f',
-100,
-10,
-4,
-'account1_f4gbpxs2o2bbm5joyz70i2i',
-'account2_kmms1e2t9ww9y8tlrnu7fts',
-'tg2aa1n7p77u4eqzk2pqp9jszthgts8p1kslw903pkaael70wfwi6etw6at58vhb'
-)
+create table configtx(
+header bit(8),
+hash char(64) primary key,
+blockhash char(64),
+id int not null,
+payload bigint not null,
+fee bigint not null,
+txcount int not null,
+signature char(128) not null
+);
 
 create table accounts(
 address char(64) primary key,
@@ -218,46 +70,7 @@ balance bigint not null,
 txcount int not null
 )
 
-insert into accounts(address, balance, txcount) values (
-
-)
-
-create table acctx(
-header bit(8),
-hash char(32) primary key,
-issuer char(32) not null,
-fee bigint not null,
-pubkey char(32) not null,
-signature char(64) not null
-)
-
-insert into acctx(header, hash, issuer, fee, pubkey, signature)
-values (
-B'00000000',
-'acctransaction1_93j8jyk29gjrlcma',
-'rootaccount1_10fjhw8cjal4nflkrjd',
-0,
-'account5_pso4kjnidfv59hwdlvkjwdk',
-'sdfkjeordspi3983thjw94398cjwjc9rfjw9e8jw98ws98ser98jvsree8swevj',
-)
-
-create table configtx(
-header bit(8),
-hash char(32) primary key,
-id int not null,
-payload bigint not null,
-fee bigint not null,
-txcount int not null,
-signature char(64) not null
-)
-
-insert into configtx(header, hash, id, payload, fee, txcount, signature)
-values(
-B'00000000',
-'configtransaction1_sdfsdfsdfsdfd',
-1,
-300,
-0,
-1,
-'sv8093r0c340v3v92357heqrhqerifuh23oc3qihuhirfuiqu3chqiuhdhdhdhw'
-)
+drop table blocks;
+drop table fundstx;
+drop table acctx;
+drop table configtx;

@@ -2,7 +2,7 @@ package main
 
 import (
   _ "io"
-  _ "fmt"
+  "fmt"
   _ "os/exec"
   "net/http"
   "html/template"
@@ -39,5 +39,6 @@ func main() {
   router := initializeRouter()
   //fill db with blocks, make sure to use empty table, otherwise you get an error
   initState()
+  fmt.Printf("Listening...")
   http.ListenAndServe(":8080", router)
 }

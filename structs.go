@@ -25,6 +25,7 @@ type block struct {
 //Include bock hash maybe?
 type fundstx struct {
   Hash string
+  BlockHash string
   Amount uint64
   Fee uint64
   TxCount uint32
@@ -35,6 +36,7 @@ type fundstx struct {
 
 type acctx struct {
   Hash string
+  BlockHash string
   Issuer string
   Fee uint64
   PubKey string
@@ -43,6 +45,7 @@ type acctx struct {
 
 type configtx struct {
   Hash string
+  BlockHash string
 	Id uint8
 	Payload uint64
 	Fee uint64

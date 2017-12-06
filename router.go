@@ -14,7 +14,7 @@ func initializeRouter() *httprouter.Router {
   router := httprouter.New()
   router.GET("/", getIndex)
   //router.GET("/get-token", getToken
-  router.GET("/testheader", testSPVHeader)
+  //router.GET("/testheader", testSPVHeader)
   router.GET("/testblock", testBlock)
   router.GET("/blocks", getAllBlocks)
   router.GET("/block/:hash", getOneBlock)
@@ -44,13 +44,13 @@ func testBlock(w http.ResponseWriter, r *http.Request, params httprouter.Params)
   var block *protocol.Block = reqBlock(nil)
   tpl.ExecuteTemplate(w, "realblock.gohtml", block)
 }
-
+/*
 func testSPVHeader(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   var header *protocol.SPVHeader = reqSPVHeader(nil)
   fmt.Printf("%x\n", header.Hash)
   tpl.ExecuteTemplate(w, "header.gohtml", header)
 }
-
+*/
 func getToken(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   cookie := CreateToken()
   http.SetCookie(w, &cookie)

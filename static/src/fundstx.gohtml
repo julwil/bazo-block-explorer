@@ -28,16 +28,20 @@
                 <td> <a href="/transactions/funds/{{.Hash}}">{{.Hash}}</a></td>
               </tr>
               <tr>
+                <th>Block</th>
+                <td> <a href="/block/{{.BlockHash}}">{{.BlockHash}}</a></td>
+              </tr>
+              <tr>
                 <th>From</th>
                 <td> <a href="/account/{{.From}}">{{.From}}</a></td>
               </tr>
               <tr>
-                <th>Transaction Count</th>
-                <td>{{.TxCount}}</td>
-              </tr>
-              <tr>
                 <th>To</th>
                 <td> <a href="/account/{{.To}}">{{.To}}</a></td>
+              </tr>
+              <tr>
+                <th>Transaction Count</th>
+                <td>{{.TxCount}}</td>
               </tr>
               <tr>
                 <th>Amount</th>

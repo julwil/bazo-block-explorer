@@ -112,10 +112,10 @@ func ReturnOneFundsTx(params httprouter.Params) fundstx {
     panic(err)
   }
 
-  sqlStatement := `SELECT hash, amount, fee, txcount, sender, recipient, signature FROM fundstx WHERE hash = $1;`
+  sqlStatement := `SELECT hash, blockhash, amount, fee, txcount, sender, recipient, signature FROM fundstx WHERE hash = $1;`
   var returnedrow fundstx
   row := db.QueryRow(sqlStatement, params.ByName("hash"))
-  switch err = row.Scan(&returnedrow.Hash, &returnedrow.Amount, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.From, &returnedrow.To, &returnedrow.Signature)
+  switch err = row.Scan(&returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Amount, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.From, &returnedrow.To, &returnedrow.Signature)
   err {
   case sql.ErrNoRows:
     //on website 404 would be more suitable maybe
@@ -178,10 +178,10 @@ func ReturnOneAccTx(params httprouter.Params) acctx {
     panic(err)
   }
 
-  sqlStatement := `SELECT hash, issuer, fee, pubkey, signature FROM acctx WHERE hash = $1;`
+  sqlStatement := `SELECT hash, blockhash, issuer, fee, pubkey, signature FROM acctx WHERE hash = $1;`
   var returnedrow acctx
   row := db.QueryRow(sqlStatement, params.ByName("hash"))
-  switch err = row.Scan(&returnedrow.Hash, &returnedrow.Issuer, &returnedrow.Fee, &returnedrow.PubKey, &returnedrow.Signature)
+  switch err = row.Scan(&returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Issuer, &returnedrow.Fee, &returnedrow.PubKey, &returnedrow.Signature)
   err {
   case sql.ErrNoRows:
     //on website 404 would be more suitable maybe
@@ -244,10 +244,10 @@ func ReturnOneConfigTx(params httprouter.Params) configtx {
     panic(err)
   }
 
-  sqlStatement := `SELECT hash, id, payload, fee, txcount, signature FROM configtx WHERE hash = $1;`
+  sqlStatement := `SELECT hash, blockhash, id, payload, fee, txcount, signature FROM configtx WHERE hash = $1;`
   var returnedrow configtx
   row := db.QueryRow(sqlStatement, params.ByName("hash"))
-  switch err = row.Scan(&returnedrow.Hash, &returnedrow.Id, &returnedrow.Payload, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.Signature)
+  switch err = row.Scan(&returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Id, &returnedrow.Payload, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.Signature)
   err {
   case sql.ErrNoRows:
     //on website 404 would be more suitable maybe

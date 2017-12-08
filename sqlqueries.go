@@ -76,7 +76,7 @@ func ReturnAllBlocks(params httprouter.Params) []block {
     panic(err)
   }
 
-  sqlStatement := `SELECT hash, timestamp, beneficiary, nrFundsTx, nrAccTx, nrConfigTx FROM blocks`
+  sqlStatement := `SELECT hash, timestamp, beneficiary, nrFundsTx, nrAccTx, nrConfigTx FROM blocks ORDER BY timestamp DESC LIMIT 100`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -508,4 +508,34 @@ func WriteConfigTx(tx configtx) {
   if err != nil {
     panic(err)
   }
+}
+
+func checkEmptyDB() bool {
+  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
+    host, port, user, dbname)
+  db, err := sql.Open("postgres", psqlInfo)
+  if err != nil {
+    panic(err)
+  }
+  defer db.Close()
+  err = db.Ping()
+  if err != nil {
+    panic(err)
+  }
+
+  sqlStatement := `SELECT CASE WHEN EXISTS (SELECT * FROM blocks LIMIT 1) THEN 1 ELSE 0 END`
+  var notEmpty bool
+  row := db.QueryRow(sqlStatement)
+  switch err := row.Scan(&notEmpty)
+  err {
+  case sql.ErrNoRows:
+    //on website 404 would be more suitable maybe
+    fmt.Printf("No rows returned!")
+  case nil:
+    return notEmpty
+  default:
+    //on website 500 error maybe.
+    panic(err)
+  }
+  return true
 }

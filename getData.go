@@ -20,36 +20,73 @@ var logger *log.Logger
 
 var block1 *protocol.Block
 
-/*
-func main()  {
-  initState()
+func runDB() {
+  if !checkEmptyDB() {
+    fmt.Println("The database is empty!")
+    fmt.Println("Loading all blocks and saving them to the database...")
+    loadAllBlocks()
+    fmt.Println("All blocks loaded and saved to the database!")
+  } else {
+    fmt.Println("The database is not empty!")
+    fmt.Println("Loading all blocks without saving them to the database...")
+    loadAllBlocksWithoutWrite()
+    fmt.Println("All blocks loaded!")
+  }
+  for 0 < 1 {
+    time.Sleep(time.Second * 30)
+    fmt.Println("Refreshing State...")
+    refreshState()
+    fmt.Println("State refreshed!")
+  }
 }
-*/
-func initState() {
-  loadAllBlocks()
-  /*
-  duration := time.Minute * 2
-  time.Sleep(duration)
 
-  refreshState()
+func loadAllBlocksWithoutWrite() {
+  block := reqBlock(nil)
+  allBlocks = append(allBlocks, block)
+  prevHash := block.PrevHash
 
-  duration = time.Second * 1
-  time.Sleep(duration)
-  */
-  refreshState()
-  //allBlocks = invertBlockArray(allBlocks)
+  for block.Hash != [32]byte{} {
+    block = reqBlock(prevHash[:])
+    allBlocks = append(allBlocks, block)
+    prevHash = block.PrevHash
+  }
+
+  allBlocks = invertBlockArray(allBlocks)
 }
 
-//Update allBlockHeaders to the latest header
 func refreshState() {
 	var newBlocks []*protocol.Block
 	newBlocks = getNewBlocks(reqBlock(nil), allBlocks[len(allBlocks)-1], newBlocks)
 
-  newBlocks = invertBlockArray(newBlocks)
+  //newBlocks = invertBlockArray(newBlocks)
 
-  for _, block := range newBlocks{
+  for _, oneBlock := range newBlocks{
+
+    for _, fundsTxHash := range oneBlock.FundsTxData{
+      fundsTx := reqTx(p2p.FUNDSTX_REQ, fundsTxHash)
+      convertedTx := ConvertFundsTransaction(fundsTx.(*protocol.FundsTx), oneBlock.Hash, fundsTxHash)
+
+      fmt.Printf("Writing Transaction: %s\n", convertedTx.Hash)
+      WriteFundsTx(convertedTx)
+    }
+
+    for _, accTxHash := range oneBlock.AccTxData{
+      accTx := reqTx(p2p.ACCTX_REQ, accTxHash)
+      convertedTx := ConvertAccTransaction(accTx.(*protocol.AccTx), oneBlock.Hash, accTxHash)
+
+      fmt.Printf("Writing Transaction: %s\n", convertedTx.Hash)
+      WriteAccTx(convertedTx)
+    }
+
+    for _, configTxHash := range oneBlock.ConfigTxData{
+      configTx := reqTx(p2p.CONFIGTX_REQ, configTxHash)
+      convertedTx := ConvertConfigTransaction(configTx.(*protocol.ConfigTx), oneBlock.Hash, configTxHash)
+
+      fmt.Printf("Writing Transaction: %s\n", convertedTx.Hash)
+      WriteConfigTx(convertedTx)
+    }
     //convert block
-    convertedBlock := ConvertBlock(block)
+    convertedBlock := ConvertBlock(oneBlock)
     //write to db here
     fmt.Printf("Writing Block: %s\n", convertedBlock.Hash)
     WriteBlock(convertedBlock)

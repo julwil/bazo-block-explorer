@@ -20,4 +20,4 @@
   * User enters private key to sign Hash
   * Signature and Hash is sent to REST
 * Database Component
-  * include transactions in refreshState 
+  * Account Management

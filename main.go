@@ -37,8 +37,9 @@ func init() {
 
 func main() {
   router := initializeRouter()
-  //fill db with blocks, make sure to use empty table, otherwise you get an error
-  //initState()
-  fmt.Printf("Listening...")
+
+  go runDB()
+
+  fmt.Println("Listening...")
   http.ListenAndServe(":8080", router)
 }

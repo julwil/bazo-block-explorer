@@ -624,3 +624,38 @@ func ReturnOneAccount(params httprouter.Params) account {
   var account1 account
   return account1
 }
+
+func ReturnTopAccounts(params httprouter.Params) []account {
+  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
+    host, port, user, dbname)
+  db, err := sql.Open("postgres", psqlInfo)
+  if err != nil {
+    panic(err)
+  }
+  defer db.Close()
+  err = db.Ping()
+  if err != nil {
+    panic(err)
+  }
+
+  sqlStatement := `SELECT hash, address, balance, txcount FROM accounts ORDER BY balance DESC LIMIT 10`
+  rows, err := db.Query(sqlStatement)
+  if err != nil {
+    panic(err)
+  }
+  defer rows.Close()
+  returnedrows := make([]account, 0)
+  for rows.Next() {
+    var returnedrow account
+    err = rows.Scan(&returnedrow.Hash, &returnedrow.Address, &returnedrow.Balance, &returnedrow.TxCount)
+    if err != nil {
+      panic(err)
+    }
+    returnedrows = append(returnedrows, returnedrow)
+  }
+  err = rows.Err()
+  if err != nil {
+    panic(err)
+  }
+  return returnedrows
+}

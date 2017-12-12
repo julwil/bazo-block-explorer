@@ -25,6 +25,7 @@ func initializeRouter() *httprouter.Router {
   router.GET("/transactions/config", getAllConfigTx)
   router.GET("/transactions/config/:hash", getOneConfigTx)
   router.GET("/account/:hash", getAccount)
+  router.GET("/accounts", getTopAccounts)
   router.POST("/search/", searchForHash)
   router.POST("/login", loginFunc)
   router.GET("/login-failed", loginFail)
@@ -290,4 +291,9 @@ func loginFail(w http.ResponseWriter, r *http.Request, params httprouter.Params)
 func getAccount(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   returnedaccount := ReturnOneAccount(params)
   tpl.ExecuteTemplate(w, "account.gohtml", returnedaccount)
+}
+
+func getTopAccounts(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  returnedaccounts := ReturnTopAccounts(params)
+  tpl.ExecuteTemplate(w, "accounts.gohtml", returnedaccounts)
 }

@@ -32,8 +32,8 @@
             <tbody>
               {{range .}}
               <tr>
-                <td>{{.Hash}}</td>
-                <td>{{.Address}}</td>
+                <td><a href="/account/{{.Hash}}">{{.Hash}}</a></td>
+                <td></td>
                 <td>{{.Balance}}</td>
                 <td>{{.TxCount}}</td>
               </tr>

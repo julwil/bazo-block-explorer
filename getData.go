@@ -9,6 +9,7 @@ import (
   "time"
   "errors"
   "bufio"
+  "math/big"
   _ "github.com/mchetelat/bazo_miner/miner"
 	"github.com/mchetelat/bazo_miner/p2p"
 	"github.com/mchetelat/bazo_miner/protocol"
@@ -125,6 +126,7 @@ func loadAllBlocks() {
       convertedTx := ConvertFundsTransaction(fundsTx.(*protocol.FundsTx), oneBlock.Hash, fundsTxHash)
 
       fmt.Printf("Writing Transaction: %s\n", convertedTx.Hash)
+      WriteAccountData(convertedTx)
       WriteFundsTx(convertedTx)
     }
 
@@ -275,6 +277,18 @@ func ConvertBlock(unconvertedBlock *protocol.Block) block {
   return convertedBlock
 }
 
+func FetchOpenTx(txHash string){
+  //sampleHash := [32]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+  var txByteHash [32]byte
+
+  txHashInt, _ := new(big.Int).SetString(txHash, 16)
+  copy(txByteHash[:], txHashInt.Bytes())
+
+  openTx := reqTx(p2p.FUNDSTX_REQ, txByteHash)
+  convertedTx := ConvertOpenFundsTransaction(openTx.(*protocol.FundsTx), txByteHash)
+  WriteOpenFundsTx(convertedTx)
+}
+
 func ConvertFundsTransaction(unconvertedTx *protocol.FundsTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte) fundstx {
   var convertedTx fundstx
   //convertedTx.Header = fmt.Sprintf("%x", unconvertedTx.Header)
@@ -312,6 +326,20 @@ func ConvertConfigTransaction(unconvertedTx *protocol.ConfigTx, unconvertedBlock
   convertedTx.Fee = unconvertedTx.Fee
   convertedTx.Payload = unconvertedTx.Payload
   convertedTx.TxCount = unconvertedTx.TxCnt
+  convertedTx.Signature = fmt.Sprintf("%x", unconvertedTx.Sig)
+
+  return convertedTx
+}
+
+func ConvertOpenFundsTransaction(unconvertedTx *protocol.FundsTx, unconvertedTxHash [32]byte) fundstx {
+  var convertedTx fundstx
+  //convertedTx.Header = fmt.Sprintf("%x", unconvertedTx.Header)
+  convertedTx.Hash = fmt.Sprintf("%x", unconvertedTxHash)
+  convertedTx.Amount = unconvertedTx.Amount
+  convertedTx.Fee = unconvertedTx.Fee
+  convertedTx.TxCount = unconvertedTx.TxCnt
+  convertedTx.From = fmt.Sprintf("%x", unconvertedTx.From)
+  convertedTx.To = fmt.Sprintf("%x", unconvertedTx.To)
   convertedTx.Signature = fmt.Sprintf("%x", unconvertedTx.Sig)
 
   return convertedTx

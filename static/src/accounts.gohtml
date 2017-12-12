@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="/static/css/newstyle.css">
     <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> -->
   </head>
-
   <body>
 
     {{template "navBar"}}
@@ -18,34 +17,32 @@
     <section>
       <div class="container">
         <div class="table-title">
-          <h3>Account {{.Hash}}</h3>
+          <h3>Top Accounts</h3>
         </div>
         <div class="data-table">
           <table class="table">
             <thead>
-              <tr>
+              <tr id="header-row">
                 <th>Hash</th>
-                <td>{{.Hash}}</td>
-              </tr>
-              <tr>
                 <th>Address</th>
-                <td>{{.Address}}</td>
-              </tr>
-              </tr>
                 <th>Balance</th>
-                <td>{{.Balance}}</td>
-              </tr>
-              </tr>
-                <th>Transaction Count</th>
-                <td>{{.TxCount}}</td>
+                <th>TxCount</th>
               </tr>
             </thead>
+            <tbody>
+              {{range .}}
+              <tr>
+                <td>{{.Hash}}</td>
+                <td>{{.Address}}</td>
+                <td>{{.Balance}}</td>
+                <td>{{.TxCount}}</td>
+              </tr>
+              {{end}}
+            </tbody>
           </table>
         </div>
       </div>
     </section>
-
-    <div class="clr"></div>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>

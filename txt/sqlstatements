@@ -15,6 +15,13 @@ db.createUser({
 
 create database BlockExplorerTest1;
 
+drop table blocks;
+drop table fundstx;
+drop table acctx;
+drop table configtx;
+drop table accounts;
+drop table openfundstx;
+
 create table blocks (
 header bit(8),
 hash char(64) primary key,
@@ -43,6 +50,18 @@ recipient char(64) not null,
 signature char(128) not null
 );
 
+create table openfundstx (
+header bit(8),
+hash char(64) primary key,
+amount bigint not null,
+fee bigint not null,
+txcount int not null,
+sender char(64) not null,
+recipient char(64) not null,
+signature char(128) not null
+);
+
+
 create table acctx(
 header bit(8),
 hash char(64) primary key,
@@ -65,12 +84,8 @@ signature char(128) not null
 );
 
 create table accounts(
-address char(64) primary key,
+hash char(64) primary key,
+address char(128),
 balance bigint not null,
 txcount int not null
-)
-
-drop table blocks;
-drop table fundstx;
-drop table acctx;
-drop table configtx;
+);

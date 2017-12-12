@@ -24,7 +24,7 @@ func initializeRouter() *httprouter.Router {
   router.GET("/transactions/acc/:hash", getOneAccTx)
   router.GET("/transactions/config", getAllConfigTx)
   router.GET("/transactions/config/:hash", getOneConfigTx)
-  //router.GET("/account/:hash", getAccount)
+  router.GET("/account/:hash", getAccount)
   router.POST("/search/", searchForHash)
   router.POST("/login", loginFunc)
   router.GET("/login-failed", loginFail)
@@ -74,6 +74,15 @@ func getAllBlocks(w http.ResponseWriter, r *http.Request, params httprouter.Para
 
 func getOneFundsTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   returnedtx := ReturnOneFundsTx(params)
+  /*
+  fmt.Println(returnedtx.Hash)
+  if returnedtx.Hash == "" {
+    fmt.Println("trying to copy opentx from network")
+    txHash := params.ByName("hash")
+    FetchOpenTx(txHash)
+    returnedtx = ReturnOpenFundsTx(params)
+  }
+  */
   tpl.ExecuteTemplate(w, "fundstx.gohtml", returnedtx)
 }
 
@@ -100,11 +109,6 @@ func getOneConfigTx(w http.ResponseWriter, r *http.Request, params httprouter.Pa
 func getAllConfigTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   returnedtxs := ReturnAllConfigTx(params)
   tpl.ExecuteTemplate(w, "configtxs.gohtml", returnedtxs)
-}
-
-func getAccount(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedaccount := ReturnAccount(params)
-  tpl.ExecuteTemplate(w, "account.gohtml", returnedaccount)
 }
 
 func searchForHash(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -281,4 +285,9 @@ func loginFunc(w http.ResponseWriter, r *http.Request, params httprouter.Params)
 func loginFail(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   thing := 1
   tpl.ExecuteTemplate(w, "loginfail.gohtml", thing)
+}
+
+func getAccount(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  returnedaccount := ReturnOneAccount(params)
+  tpl.ExecuteTemplate(w, "account.gohtml", returnedaccount)
 }

@@ -54,9 +54,10 @@ type configtx struct {
 }
 //Include tx hashes mybe?
 type account struct {
+  Hash string
   Address string
-  Balance uint64
-  TxCount uint32
+  Balance int64
+  TxCount int32
   /*
   FundsTxData []string
   AccTxData []string

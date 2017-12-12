@@ -38,8 +38,8 @@ func init() {
 func main() {
   router := initializeRouter()
 
-  go runDB()
-
+  //go runDB()
+  //loadAllBlocks()
   fmt.Println("Listening...")
   http.ListenAndServe(":8080", router)
 }

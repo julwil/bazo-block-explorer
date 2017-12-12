@@ -119,7 +119,7 @@ func ReturnOneFundsTx(params httprouter.Params) fundstx {
   err {
   case sql.ErrNoRows:
     //on website 404 would be more suitable maybe
-    fmt.Printf("No rows returned!")
+    return returnedrow
   case nil:
     return returnedrow
   default:
@@ -295,37 +295,6 @@ func ReturnAllConfigTx(params httprouter.Params) []configtx {
     panic(err)
   }
   return returnedrows
-}
-
-func ReturnAccount(params httprouter.Params) account {
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
-  defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
-
-  sqlStatement := `SELECT address, balance, txcount FROM accounts WHERE address = $1;`
-  var returnedaccount account
-  row := db.QueryRow(sqlStatement, params.ByName("hash"))
-  switch err = row.Scan(&returnedaccount.Address, &returnedaccount.Balance, &returnedaccount.TxCount)
-  err {
-  case sql.ErrNoRows:
-    //on website 404 would be more suitable maybe
-    fmt.Printf("No rows returned!")
-  case nil:
-    return returnedaccount
-  default:
-    //on website 500 error maybe.
-    panic(err)
-  }
-  var account1 account
-  return account1
 }
 
 func ReturnSearchResult(r *http.Request) (block, fundstx) {
@@ -538,4 +507,120 @@ func checkEmptyDB() bool {
     panic(err)
   }
   return true
+}
+
+func WriteOpenFundsTx(tx fundstx) {
+  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
+    host, port, user, dbname)
+  db, err := sql.Open("postgres", psqlInfo)
+  if err != nil {
+    panic(err)
+  }
+  defer db.Close()
+  err = db.Ping()
+  if err != nil {
+    panic(err)
+  }
+
+  sqlStatement = `
+    INSERT INTO openfundstx (hash, amount, fee, txcount, sender, recipient, signature)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)`
+  _, err = db.Exec(sqlStatement, tx.Hash, tx.Amount, tx.Fee, tx.TxCount, tx.From, tx.To, tx.Signature)
+  if err != nil {
+    panic(err)
+  }
+}
+
+func ReturnOpenFundsTx(params httprouter.Params) fundstx {
+  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
+    host, port, user, dbname)
+  db, err := sql.Open("postgres", psqlInfo)
+  if err != nil {
+    panic(err)
+  }
+  defer db.Close()
+  err = db.Ping()
+  if err != nil {
+    panic(err)
+  }
+
+  sqlStatement := `SELECT hash, amount, fee, txcount, sender, recipient, signature FROM openfundstx WHERE hash = $1;`
+  var returnedrow fundstx
+  row := db.QueryRow(sqlStatement, params.ByName("hash"))
+  switch err = row.Scan(&returnedrow.Hash, &returnedrow.Amount, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.From, &returnedrow.To, &returnedrow.Signature)
+  err {
+  case sql.ErrNoRows:
+    //on website 404 would be more suitable maybe
+    fmt.Printf("Transaction could not be found!")
+  case nil:
+    return returnedrow
+  default:
+    //on website 500 error maybe.
+    panic(err)
+  }
+  var tx1 fundstx
+  return tx1
+}
+
+func WriteAccountData(tx fundstx) {
+  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
+    host, port, user, dbname)
+  db, err := sql.Open("postgres", psqlInfo)
+  if err != nil {
+    panic(err)
+  }
+  defer db.Close()
+  err = db.Ping()
+  if err != nil {
+    panic(err)
+  }
+
+  sqlStatement := `INSERT INTO accounts (hash, address, balance, txcount)
+                    VALUES ($1, $2, $3, $4)
+                    ON CONFLICT (hash) DO UPDATE SET balance = accounts.balance - $3, txcount = accounts.txcount + 1`
+  emptyString := ""
+  totalAmount := tx.Amount + tx.Fee
+  totalCount := tx.TxCount + 1
+  _, err = db.Exec(sqlStatement, tx.From, emptyString, totalAmount, totalCount)
+  if err != nil {
+    panic(err)
+  }
+  sqlStatement = `INSERT INTO accounts (hash, address, balance, txcount)
+                    VALUES ($1, $2, $3, 0)
+                    ON CONFLICT (hash) DO UPDATE SET balance = accounts.balance + $3`
+  _, err = db.Exec(sqlStatement, tx.To, emptyString, tx.Amount)
+  if err != nil {
+    panic(err)
+  }
+}
+
+func ReturnOneAccount(params httprouter.Params) account {
+  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
+    host, port, user, dbname)
+  db, err := sql.Open("postgres", psqlInfo)
+  if err != nil {
+    panic(err)
+  }
+  defer db.Close()
+  err = db.Ping()
+  if err != nil {
+    panic(err)
+  }
+
+  sqlStatement := `SELECT hash, address, balance, txcount FROM accounts WHERE hash = $1;`
+  var returnedrow account
+  row := db.QueryRow(sqlStatement, params.ByName("hash"))
+  switch err = row.Scan(&returnedrow.Hash, &returnedrow.Address, &returnedrow.Balance, &returnedrow.TxCount)
+  err {
+  case sql.ErrNoRows:
+    //on website 404 would be more suitable maybe
+    return returnedrow
+  case nil:
+    return returnedrow
+  default:
+    //on website 500 error maybe.
+    panic(err)
+  }
+  var account1 account
+  return account1
 }

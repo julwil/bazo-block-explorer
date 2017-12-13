@@ -594,7 +594,9 @@ func WriteAccountData(tx fundstx) {
   }
 }
 
-func ReturnOneAccount(params httprouter.Params) account {
+func ReturnOneAccount(params httprouter.Params) accountwithtxs {
+  var returnedData accountwithtxs
+
   psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
     host, port, user, dbname)
   db, err := sql.Open("postgres", psqlInfo)
@@ -608,21 +610,43 @@ func ReturnOneAccount(params httprouter.Params) account {
   }
 
   sqlStatement := `SELECT hash, address, balance, txcount FROM accounts WHERE hash = $1;`
-  var returnedrow account
+  var returnedaccount account
   row := db.QueryRow(sqlStatement, params.ByName("hash"))
-  switch err = row.Scan(&returnedrow.Hash, &returnedrow.Address, &returnedrow.Balance, &returnedrow.TxCount)
+  switch err = row.Scan(&returnedaccount.Hash, &returnedaccount.Address, &returnedaccount.Balance, &returnedaccount.TxCount)
   err {
   case sql.ErrNoRows:
     //on website 404 would be more suitable maybe
-    return returnedrow
+    //return fitting type
+    returnedData.Account = returnedaccount
+    return returnedData
   case nil:
-    return returnedrow
+    sqlStatement = `SELECT hash, amount, fee, txcount, sender, recipient FROM fundstx WHERE sender = $1 OR recipient = $1`
+    rows, err := db.Query(sqlStatement, params.ByName("hash"))
+    if err != nil {
+      panic(err)
+    }
+    defer rows.Close()
+    returnedrows := make([]fundstx, 0)
+    for rows.Next() {
+      var returnedrow fundstx
+      err = rows.Scan(&returnedrow.Hash, &returnedrow.Amount, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.From, &returnedrow.To)
+      if err != nil {
+        panic(err)
+      }
+      returnedrows = append(returnedrows, returnedrow)
+    }
+    err = rows.Err()
+    if err != nil {
+      panic(err)
+    }
+    returnedData.Account = returnedaccount
+    returnedData.Txs = returnedrows
+    return returnedData
   default:
     //on website 500 error maybe.
     panic(err)
   }
-  var account1 account
-  return account1
+  return returnedData
 }
 
 func ReturnTopAccounts(params httprouter.Params) []account {

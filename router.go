@@ -7,7 +7,6 @@ import (
     "net/http"
     "github.com/julienschmidt/httprouter"
     "github.com/dgrijalva/jwt-go"
-    "github.com/mchetelat/bazo_miner/protocol"
 )
 
 func initializeRouter() *httprouter.Router {
@@ -15,7 +14,6 @@ func initializeRouter() *httprouter.Router {
   router.GET("/", getIndex)
   //router.GET("/get-token", getToken
   //router.GET("/testheader", testSPVHeader)
-  router.GET("/testblock", testBlock)
   router.GET("/blocks", getAllBlocks)
   router.GET("/block/:hash", getOneBlock)
   router.GET("/transactions/funds", getAllFundsTx)
@@ -40,18 +38,6 @@ func initializeRouter() *httprouter.Router {
   return router
 }
 
-func testBlock(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  //genesishash := [32]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }
-  var block *protocol.Block = reqBlock(nil)
-  tpl.ExecuteTemplate(w, "realblock.gohtml", block)
-}
-/*
-func testSPVHeader(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  var header *protocol.SPVHeader = reqSPVHeader(nil)
-  fmt.Printf("%x\n", header.Hash)
-  tpl.ExecuteTemplate(w, "header.gohtml", header)
-}
-*/
 func getToken(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   cookie := CreateToken()
   http.SetCookie(w, &cookie)
@@ -289,8 +275,8 @@ func loginFail(w http.ResponseWriter, r *http.Request, params httprouter.Params)
 }
 
 func getAccount(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedaccount := ReturnOneAccount(params)
-  tpl.ExecuteTemplate(w, "account.gohtml", returnedaccount)
+  returnedaccountwithtxs := ReturnOneAccount(params)
+  tpl.ExecuteTemplate(w, "account.gohtml", returnedaccountwithtxs)
 }
 
 func getTopAccounts(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

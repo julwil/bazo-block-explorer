@@ -58,11 +58,7 @@ type account struct {
   Address string
   Balance int64
   TxCount int32
-  /*
   FundsTxData []string
-  AccTxData []string
-  ConfigTxData []string
-  */
 }
 //change to map
 type systemparams struct {
@@ -81,4 +77,9 @@ type systemparams struct {
 type blocksandtx struct {
   Blocks []block
   Txs []fundstx
+}
+
+type accountwithtxs struct {
+  Account account
+  Txs []fundstx 
 }

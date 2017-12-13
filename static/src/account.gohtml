@@ -18,28 +18,60 @@
     <section>
       <div class="container">
         <div class="table-title">
-          <h3>Account {{.Hash}}</h3>
+          <h3>Account {{.Account.Hash}}</h3>
         </div>
         <div class="data-table">
           <table class="table">
             <thead>
               <tr>
                 <th>Hash</th>
-                <td>{{.Hash}}</td>
+                <td>{{.Account.Hash}}</td>
               </tr>
               <tr>
                 <th>Address</th>
-                <td>{{.Address}}</td>
+                <td>{{.Account.Address}}</td>
               </tr>
               </tr>
                 <th>Balance</th>
-                <td>{{.Balance}}</td>
+                <td>{{.Account.Balance}}</td>
               </tr>
               </tr>
                 <th>Transaction Count</th>
-                <td>{{.TxCount}}</td>
+                <td>{{.Account.TxCount}}</td>
               </tr>
             </thead>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="table-title">
+          <h3>Transactions for this Account</h3>
+        </div>
+        <div class="data-table">
+          <table class="table">
+            <thead>
+              <tr id="header-row">
+                <th>Hash</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Amount</th>
+                <th>Fee</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{range .Txs}}
+              <tr>
+                <td> <a href="/transactions/funds/{{.Hash}}">{{.Hash}}</a></td>
+                <td> <a href="/account/{{.From}}">{{.From}}</a></td>
+                <td> <a href="/account/{{.To}}">{{.To}}</a></td>
+                <td>{{.Amount}}</td>
+                <td>{{.Fee}}</td>
+              </tr>
+              {{end}}
+            </tbody>
           </table>
         </div>
       </div>

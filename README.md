@@ -21,3 +21,4 @@
   * Signature and Hash is sent to REST
 * Database Component
   * Addresses for Hashes (low prio)
+  * 

@@ -5,6 +5,17 @@
 #configInput input[type=number] {
   width: 10px !important;
 }
+
+.table {
+  table-layout: fixed !important;
+}
+
+.table td {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
 /*
 .data-table#transactions-table {
   font-size: 12px; !important;

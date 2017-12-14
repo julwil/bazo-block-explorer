@@ -24,16 +24,16 @@
             <thead>
               <tr id="header-row">
                 <th>Hash</th>
-                <th>Address</th>
-                <th>Balance</th>
-                <th>TxCount</th>
+                <th style="width: 10%;">Address</th>
+                <th style="width: 10%;">Balance</th>
+                <th style="width: 10%;">TxCount</th>
               </tr>
             </thead>
             <tbody>
               {{range .}}
               <tr>
                 <td><a href="/account/{{.Hash}}">{{.Hash}}</a></td>
-                <td></td>
+                <td>...</td>
                 <td>{{.Balance}}</td>
                 <td>{{.TxCount}}</td>
               </tr>

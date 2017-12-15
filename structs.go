@@ -81,5 +81,5 @@ type blocksandtx struct {
 
 type accountwithtxs struct {
   Account account
-  Txs []fundstx 
+  Txs []fundstx
 }

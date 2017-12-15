@@ -10,6 +10,9 @@ import (
   "errors"
   "bufio"
   "math/big"
+  "bytes"
+  "encoding/binary"
+  "golang.org/x/crypto/sha3"
   _ "github.com/mchetelat/bazo_miner/miner"
 	"github.com/mchetelat/bazo_miner/p2p"
 	"github.com/mchetelat/bazo_miner/protocol"
@@ -63,20 +66,20 @@ func refreshState() {
 
   for _, oneBlock := range newBlocks{
 
-    for _, fundsTxHash := range oneBlock.FundsTxData{
-      fundsTx := reqTx(p2p.FUNDSTX_REQ, fundsTxHash)
-      convertedTx := ConvertFundsTransaction(fundsTx.(*protocol.FundsTx), oneBlock.Hash, fundsTxHash)
-
-      fmt.Printf("Writing Transaction: %s\n", convertedTx.Hash)
-      WriteFundsTx(convertedTx)
-    }
-
     for _, accTxHash := range oneBlock.AccTxData{
       accTx := reqTx(p2p.ACCTX_REQ, accTxHash)
       convertedTx := ConvertAccTransaction(accTx.(*protocol.AccTx), oneBlock.Hash, accTxHash)
 
       fmt.Printf("Writing Transaction: %s\n", convertedTx.Hash)
       WriteAccTx(convertedTx)
+    }
+
+    for _, fundsTxHash := range oneBlock.FundsTxData{
+      fundsTx := reqTx(p2p.FUNDSTX_REQ, fundsTxHash)
+      convertedTx := ConvertFundsTransaction(fundsTx.(*protocol.FundsTx), oneBlock.Hash, fundsTxHash)
+
+      fmt.Printf("Writing Transaction: %s\n", convertedTx.Hash)
+      WriteFundsTx(convertedTx)
     }
 
     for _, configTxHash := range oneBlock.ConfigTxData{
@@ -121,21 +124,24 @@ func loadAllBlocks() {
 
   for _, oneBlock := range allBlocks{
 
+    for _, accTxHash := range oneBlock.AccTxData{
+      accTx := reqTx(p2p.ACCTX_REQ, accTxHash)
+      convertedTx := ConvertAccTransaction(accTx.(*protocol.AccTx), oneBlock.Hash, accTxHash)
+      accountHashBytes := SerializeHashContent(accTx.(*protocol.AccTx).PubKey)
+      accountHash := fmt.Sprintf("%x", accountHashBytes)
+
+      fmt.Printf("Writing Transaction: %s\n", convertedTx.Hash)
+      WriteAccountWithAddress(convertedTx, accountHash)
+      WriteAccTx(convertedTx)
+    }
+
     for _, fundsTxHash := range oneBlock.FundsTxData{
       fundsTx := reqTx(p2p.FUNDSTX_REQ, fundsTxHash)
       convertedTx := ConvertFundsTransaction(fundsTx.(*protocol.FundsTx), oneBlock.Hash, fundsTxHash)
 
       fmt.Printf("Writing Transaction: %s\n", convertedTx.Hash)
-      WriteAccountData(convertedTx)
+      UpdateAccountData(convertedTx)
       WriteFundsTx(convertedTx)
-    }
-
-    for _, accTxHash := range oneBlock.AccTxData{
-      accTx := reqTx(p2p.ACCTX_REQ, accTxHash)
-      convertedTx := ConvertAccTransaction(accTx.(*protocol.AccTx), oneBlock.Hash, accTxHash)
-
-      fmt.Printf("Writing Transaction: %s\n", convertedTx.Hash)
-      WriteAccTx(convertedTx)
     }
 
     for _, configTxHash := range oneBlock.ConfigTxData{
@@ -343,4 +349,11 @@ func ConvertOpenFundsTransaction(unconvertedTx *protocol.FundsTx, unconvertedTxH
   convertedTx.Signature = fmt.Sprintf("%x", unconvertedTx.Sig)
 
   return convertedTx
+}
+
+func SerializeHashContent(data interface{}) (hash [32]byte) {
+
+	var buf bytes.Buffer
+	binary.Write(&buf, binary.BigEndian, data)
+	return sha3.Sum256(buf.Bytes())
 }

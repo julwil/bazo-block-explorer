@@ -345,7 +345,7 @@ func ReturnBlocksAndTransactions(params httprouter.Params) blocksandtx {
     panic(err)
   }
 
-  sqlStatement := `SELECT hash, timestamp, beneficiary, nrFundsTx, nrAccTx, nrConfigTx FROM blocks`
+  sqlStatement := `SELECT hash, timestamp, beneficiary, nrFundsTx, nrAccTx, nrConfigTx FROM blocks ORDER BY timestamp DESC LIMIT 10`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -562,7 +562,34 @@ func ReturnOpenFundsTx(params httprouter.Params) fundstx {
   return tx1
 }
 
-func WriteAccountData(tx fundstx) {
+func UpdateAccountData(tx fundstx) {
+  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
+    host, port, user, dbname)
+  db, err := sql.Open("postgres", psqlInfo)
+  if err != nil {
+    panic(err)
+  }
+  defer db.Close()
+  err = db.Ping()
+  if err != nil {
+    panic(err)
+  }
+
+  sqlStatement := `UPDATE accounts SET balance = accounts.balance - $2, txcount = accounts.txcount + 1 WHERE hash = $1`
+  totalAmount := tx.Amount + tx.Fee
+  //totalCount := tx.TxCount + 1
+  _, err = db.Exec(sqlStatement, tx.From, totalAmount)
+  if err != nil {
+    panic(err)
+  }
+  sqlStatement = `UPDATE accounts SET balance = accounts.balance + $2 WHERE hash = $1`
+  _, err = db.Exec(sqlStatement, tx.To, tx.Amount)
+  if err != nil {
+    panic(err)
+  }
+}
+
+func WriteAccountWithAddress(tx acctx, accountHash string) {
   psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
     host, port, user, dbname)
   db, err := sql.Open("postgres", psqlInfo)
@@ -576,19 +603,9 @@ func WriteAccountData(tx fundstx) {
   }
 
   sqlStatement := `INSERT INTO accounts (hash, address, balance, txcount)
-                    VALUES ($1, $2, $3, $4)
-                    ON CONFLICT (hash) DO UPDATE SET balance = accounts.balance - $3, txcount = accounts.txcount + 1`
-  emptyString := ""
-  totalAmount := tx.Amount + tx.Fee
-  totalCount := tx.TxCount + 1
-  _, err = db.Exec(sqlStatement, tx.From, emptyString, totalAmount, totalCount)
-  if err != nil {
-    panic(err)
-  }
-  sqlStatement = `INSERT INTO accounts (hash, address, balance, txcount)
-                    VALUES ($1, $2, $3, 0)
-                    ON CONFLICT (hash) DO UPDATE SET balance = accounts.balance + $3`
-  _, err = db.Exec(sqlStatement, tx.To, emptyString, tx.Amount)
+                    VALUES ($1, $2, $3, $4)`
+
+  _, err = db.Exec(sqlStatement, accountHash, tx.PubKey, 0, 0)
   if err != nil {
     panic(err)
   }
@@ -609,7 +626,7 @@ func ReturnOneAccount(params httprouter.Params) accountwithtxs {
     panic(err)
   }
 
-  sqlStatement := `SELECT hash, address, balance, txcount FROM accounts WHERE hash = $1;`
+  sqlStatement := `SELECT hash, address, balance, txcount FROM accounts WHERE hash = $1 OR address = $1`
   var returnedaccount account
   row := db.QueryRow(sqlStatement, params.ByName("hash"))
   switch err = row.Scan(&returnedaccount.Hash, &returnedaccount.Address, &returnedaccount.Balance, &returnedaccount.TxCount)

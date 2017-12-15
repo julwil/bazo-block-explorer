@@ -1,5 +1,7 @@
 #navSearchInput input[type=text] {
+  /*
   width: 600px !important;
+  */
 }
 
 #configInput input[type=number] {

@@ -33,14 +33,16 @@
     </nav>
 
     <nav class="navbar navbar-light bg-light">
-      <form id="navSearch" action="/search/" method="post">
-          <div class="input-group" id="navSearchInput">
-            <input class="form-control" name="search-value" type="text" placeholder="Search through blocks, transactions and accounts..." aria-label="Search">
-            <span class="input-group-btn">
-              <button class="btn btn-primary" type="submit">Search</button>
-            </span>
-          </div>
-      </form>
+      <div class="row">
+        <form class="col-sm-12" id="navSearch" action="/search/" method="post">
+            <div class="input-group" id="navSearchInput">
+              <input class="form-control" name="search-value" type="text" placeholder="Search through blocks, transactions and accounts..." aria-label="Search">
+              <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit">Search</button>
+              </span>
+            </div>
+        </form>
+      </div>
     </nav>
     <br>
 

@@ -22,19 +22,25 @@ const (
 )
 
 var sqlStatement string
+var db *sql.DB
+var err error
 
-func ReturnOneBlock(params httprouter.Params) block {
+func connectToDB() {
   psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
     host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
+  db, err = sql.Open("postgres", psqlInfo)
   if err != nil {
     panic(err)
   }
-  defer db.Close()
   err = db.Ping()
   if err != nil {
     panic(err)
   }
+}
+
+func ReturnOneBlock(params httprouter.Params) block {
+  connectToDB()
+  defer db.Close()
 
   sqlStatement := `SELECT hash, prevhash, timestamp, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata FROM blocks WHERE hash = $1;`
   var returnedblock block
@@ -64,17 +70,8 @@ func ReturnOneBlock(params httprouter.Params) block {
 }
 
 func ReturnAllBlocks(params httprouter.Params) []block {
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
+  connectToDB()
   defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
 
   sqlStatement := `SELECT hash, timestamp, beneficiary, nrFundsTx, nrAccTx, nrConfigTx FROM blocks ORDER BY timestamp DESC LIMIT 100`
   rows, err := db.Query(sqlStatement)
@@ -100,17 +97,8 @@ func ReturnAllBlocks(params httprouter.Params) []block {
 }
 
 func ReturnOneFundsTx(params httprouter.Params) fundstx {
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
+  connectToDB()
   defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
 
   sqlStatement := `SELECT hash, blockhash, amount, fee, txcount, sender, recipient, signature FROM fundstx WHERE hash = $1;`
   var returnedrow fundstx
@@ -131,17 +119,8 @@ func ReturnOneFundsTx(params httprouter.Params) fundstx {
 }
 
 func ReturnAllFundsTx(params httprouter.Params) []fundstx {
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
+  connectToDB()
   defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
 
   sqlStatement := `SELECT hash, amount, fee, txcount, sender, recipient, signature FROM fundstx`
   rows, err := db.Query(sqlStatement)
@@ -166,17 +145,8 @@ func ReturnAllFundsTx(params httprouter.Params) []fundstx {
 }
 
 func ReturnOneAccTx(params httprouter.Params) acctx {
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
+  connectToDB()
   defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
 
   sqlStatement := `SELECT hash, blockhash, issuer, fee, pubkey, signature FROM acctx WHERE hash = $1;`
   var returnedrow acctx
@@ -197,17 +167,8 @@ func ReturnOneAccTx(params httprouter.Params) acctx {
 }
 
 func ReturnAllAccTx(params httprouter.Params) []acctx {
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
+  connectToDB()
   defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
 
   sqlStatement := `SELECT hash, issuer, fee, pubkey FROM acctx`
   rows, err := db.Query(sqlStatement)
@@ -232,17 +193,8 @@ func ReturnAllAccTx(params httprouter.Params) []acctx {
 }
 
 func ReturnOneConfigTx(params httprouter.Params) configtx {
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
+  connectToDB()
   defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
 
   sqlStatement := `SELECT hash, blockhash, id, payload, fee, txcount, signature FROM configtx WHERE hash = $1;`
   var returnedrow configtx
@@ -263,17 +215,8 @@ func ReturnOneConfigTx(params httprouter.Params) configtx {
 }
 
 func ReturnAllConfigTx(params httprouter.Params) []configtx {
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
+  connectToDB()
   defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
 
   sqlStatement := `SELECT hash, id, payload, fee, txcount FROM configtx`
   rows, err := db.Query(sqlStatement)
@@ -298,17 +241,8 @@ func ReturnAllConfigTx(params httprouter.Params) []configtx {
 }
 
 func ReturnSearchResult(r *http.Request) (block, fundstx) {
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
+  connectToDB()
   defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
 
   sqlStatement := `SELECT hash, prevhash, timestamp, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, fundstxdata FROM blocks WHERE hash = $1;`
   var returnedblock block
@@ -333,19 +267,10 @@ func ReturnSearchResult(r *http.Request) (block, fundstx) {
 
 func ReturnBlocksAndTransactions(params httprouter.Params) blocksandtx {
   var returnedBlocksAndTxs blocksandtx
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
+  connectToDB()
   defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
 
-  sqlStatement := `SELECT hash, timestamp, beneficiary, nrFundsTx, nrAccTx, nrConfigTx FROM blocks ORDER BY timestamp DESC LIMIT 10`
+  sqlStatement := `SELECT hash, timestamp, beneficiary, nrFundsTx, nrAccTx, nrConfigTx FROM blocks ORDER BY timestamp DESC LIMIT 6`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -392,17 +317,8 @@ func ReturnBlocksAndTransactions(params httprouter.Params) blocksandtx {
 }
 
 func WriteBlock(block block)  {
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
+  connectToDB()
   defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
 
   sqlStatement = `
     INSERT INTO blocks (hash, prevhash, timestamp, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata)
@@ -414,17 +330,8 @@ func WriteBlock(block block)  {
 }
 
 func WriteFundsTx(tx fundstx) {
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
+  connectToDB()
   defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
 
   sqlStatement = `
     INSERT INTO fundstx (hash, blockhash, amount, fee, txcount, sender, recipient, signature)
@@ -436,17 +343,8 @@ func WriteFundsTx(tx fundstx) {
 }
 
 func WriteAccTx(tx acctx) {
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
+  connectToDB()
   defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
 
   sqlStatement = `
     INSERT INTO acctx (hash, blockhash, fee, issuer, pubkey, signature)
@@ -458,17 +356,8 @@ func WriteAccTx(tx acctx) {
 }
 
 func WriteConfigTx(tx configtx) {
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
+  connectToDB()
   defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
 
   sqlStatement = `
     INSERT INTO configtx (hash, blockhash, id, payload, fee, txcount, signature)
@@ -480,17 +369,8 @@ func WriteConfigTx(tx configtx) {
 }
 
 func checkEmptyDB() bool {
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
+  connectToDB()
   defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
 
   sqlStatement := `SELECT CASE WHEN EXISTS (SELECT * FROM blocks LIMIT 1) THEN 1 ELSE 0 END`
   var notEmpty bool
@@ -510,17 +390,8 @@ func checkEmptyDB() bool {
 }
 
 func WriteOpenFundsTx(tx fundstx) {
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
+  connectToDB()
   defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
 
   sqlStatement = `
     INSERT INTO openfundstx (hash, amount, fee, txcount, sender, recipient, signature)
@@ -532,17 +403,8 @@ func WriteOpenFundsTx(tx fundstx) {
 }
 
 func ReturnOpenFundsTx(params httprouter.Params) fundstx {
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
+  connectToDB()
   defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
 
   sqlStatement := `SELECT hash, amount, fee, txcount, sender, recipient, signature FROM openfundstx WHERE hash = $1;`
   var returnedrow fundstx
@@ -563,17 +425,8 @@ func ReturnOpenFundsTx(params httprouter.Params) fundstx {
 }
 
 func UpdateAccountData(tx fundstx) {
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
+  connectToDB()
   defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
 
   sqlStatement := `UPDATE accounts SET balance = accounts.balance - $2, txcount = accounts.txcount + 1 WHERE hash = $1`
   totalAmount := tx.Amount + tx.Fee
@@ -590,17 +443,8 @@ func UpdateAccountData(tx fundstx) {
 }
 
 func WriteAccountWithAddress(tx acctx, accountHash string) {
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
+  connectToDB()
   defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
 
   sqlStatement := `INSERT INTO accounts (hash, address, balance, txcount)
                     VALUES ($1, $2, $3, $4)`
@@ -614,17 +458,8 @@ func WriteAccountWithAddress(tx acctx, accountHash string) {
 func ReturnOneAccount(params httprouter.Params) accountwithtxs {
   var returnedData accountwithtxs
 
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
+  connectToDB()
   defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
 
   sqlStatement := `SELECT hash, address, balance, txcount FROM accounts WHERE hash = $1 OR address = $1`
   var returnedaccount account
@@ -667,17 +502,8 @@ func ReturnOneAccount(params httprouter.Params) accountwithtxs {
 }
 
 func ReturnTopAccounts(params httprouter.Params) []account {
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
-  db, err := sql.Open("postgres", psqlInfo)
-  if err != nil {
-    panic(err)
-  }
+  connectToDB()
   defer db.Close()
-  err = db.Ping()
-  if err != nil {
-    panic(err)
-  }
 
   sqlStatement := `SELECT hash, address, balance, txcount FROM accounts ORDER BY balance DESC LIMIT 10`
   rows, err := db.Query(sqlStatement)

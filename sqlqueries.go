@@ -2,10 +2,8 @@ package main
 
 import (
   "fmt"
-  "net/http"
   "database/sql"
   "github.com/lib/pq"
-  "github.com/julienschmidt/httprouter"
   "strings"
 )
 
@@ -35,18 +33,17 @@ func connectToDB() {
   }
 }
 
-func ReturnOneBlock(params httprouter.Params) block {
+func ReturnOneBlock(UrlHash string) block {
   connectToDB()
   defer db.Close()
 
   sqlStatement := `SELECT hash, prevhash, timestamp, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata FROM blocks WHERE hash = $1;`
   var returnedblock block
-  row := db.QueryRow(sqlStatement, params.ByName("hash"))
+  row := db.QueryRow(sqlStatement, UrlHash)
   switch err := row.Scan(&returnedblock.Hash, &returnedblock.PrevHash, &returnedblock.Timestamp, &returnedblock.MerkleRoot, &returnedblock.Beneficiary, &returnedblock.NrFundsTx, &returnedblock.NrAccTx, &returnedblock.NrConfigTx, &returnedblock.FundsTxDataString, &returnedblock.AccTxDataString, &returnedblock.ConfigTxDataString)
   err {
   case sql.ErrNoRows:
     //on website 404 would be more suitable maybe
-    fmt.Printf("No rows returned!")
   case nil:
     if len(returnedblock.FundsTxDataString.String) > 0 {
       returnedblock.FundsTxData = strings.Split(returnedblock.FundsTxDataString.String[1:len(returnedblock.FundsTxDataString.String)-1], ",")
@@ -66,7 +63,7 @@ func ReturnOneBlock(params httprouter.Params) block {
   return block1
 }
 
-func ReturnAllBlocks(params httprouter.Params) []block {
+func ReturnAllBlocks(UrlHash string) []block {
   connectToDB()
   defer db.Close()
 
@@ -93,18 +90,17 @@ func ReturnAllBlocks(params httprouter.Params) []block {
   return returnedrows
 }
 
-func ReturnOneFundsTx(params httprouter.Params) fundstx {
+func ReturnOneFundsTx(UrlHash string) fundstx {
   connectToDB()
   defer db.Close()
 
   sqlStatement := `SELECT hash, blockhash, amount, fee, txcount, sender, recipient, signature FROM fundstx WHERE hash = $1;`
   var returnedrow fundstx
-  row := db.QueryRow(sqlStatement, params.ByName("hash"))
+  row := db.QueryRow(sqlStatement, UrlHash)
   switch err = row.Scan(&returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Amount, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.From, &returnedrow.To, &returnedrow.Signature)
   err {
   case sql.ErrNoRows:
     //on website 404 would be more suitable maybe
-    return returnedrow
   case nil:
     return returnedrow
   default:
@@ -115,7 +111,7 @@ func ReturnOneFundsTx(params httprouter.Params) fundstx {
   return tx1
 }
 
-func ReturnAllFundsTx(params httprouter.Params) []fundstx {
+func ReturnAllFundsTx(UrlHash string) []fundstx {
   connectToDB()
   defer db.Close()
 
@@ -141,18 +137,17 @@ func ReturnAllFundsTx(params httprouter.Params) []fundstx {
   return returnedrows
 }
 
-func ReturnOneAccTx(params httprouter.Params) acctx {
+func ReturnOneAccTx(UrlHash string) acctx {
   connectToDB()
   defer db.Close()
 
   sqlStatement := `SELECT hash, blockhash, issuer, fee, pubkey, signature FROM acctx WHERE hash = $1;`
   var returnedrow acctx
-  row := db.QueryRow(sqlStatement, params.ByName("hash"))
+  row := db.QueryRow(sqlStatement, UrlHash)
   switch err = row.Scan(&returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Issuer, &returnedrow.Fee, &returnedrow.PubKey, &returnedrow.Signature)
   err {
   case sql.ErrNoRows:
     //on website 404 would be more suitable maybe
-    fmt.Printf("No rows returned!")
   case nil:
     return returnedrow
   default:
@@ -163,7 +158,7 @@ func ReturnOneAccTx(params httprouter.Params) acctx {
   return tx1
 }
 
-func ReturnAllAccTx(params httprouter.Params) []acctx {
+func ReturnAllAccTx(UrlHash string) []acctx {
   connectToDB()
   defer db.Close()
 
@@ -189,18 +184,17 @@ func ReturnAllAccTx(params httprouter.Params) []acctx {
   return returnedrows
 }
 
-func ReturnOneConfigTx(params httprouter.Params) configtx {
+func ReturnOneConfigTx(UrlHash string) configtx {
   connectToDB()
   defer db.Close()
 
   sqlStatement := `SELECT hash, blockhash, id, payload, fee, txcount, signature FROM configtx WHERE hash = $1;`
   var returnedrow configtx
-  row := db.QueryRow(sqlStatement, params.ByName("hash"))
+  row := db.QueryRow(sqlStatement, UrlHash)
   switch err = row.Scan(&returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Id, &returnedrow.Payload, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.Signature)
   err {
   case sql.ErrNoRows:
     //on website 404 would be more suitable maybe
-    fmt.Printf("No rows returned!")
   case nil:
     return returnedrow
   default:
@@ -211,7 +205,7 @@ func ReturnOneConfigTx(params httprouter.Params) configtx {
   return tx1
 }
 
-func ReturnAllConfigTx(params httprouter.Params) []configtx {
+func ReturnAllConfigTx(UrlHash string) []configtx {
   connectToDB()
   defer db.Close()
 
@@ -237,32 +231,7 @@ func ReturnAllConfigTx(params httprouter.Params) []configtx {
   return returnedrows
 }
 
-func ReturnSearchResult(r *http.Request) (block, fundstx) {
-  connectToDB()
-  defer db.Close()
-
-  sqlStatement := `SELECT hash, prevhash, timestamp, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, fundstxdata FROM blocks WHERE hash = $1;`
-  var returnedblock block
-  var returnedtx fundstx
-  row := db.QueryRow(sqlStatement, r.PostFormValue("search-value"))
-  switch err = row.Scan(&returnedblock.Hash, &returnedblock.PrevHash, &returnedblock.Timestamp, &returnedblock.MerkleRoot, &returnedblock.Beneficiary, &returnedblock.NrFundsTx, &returnedblock.NrAccTx, &returnedblock.NrConfigTx, &returnedblock.FundsTxDataString)
-  err {
-  case sql.ErrNoRows:
-    sqlStatement = `SELECT hash, amount, fee, txcount, sender, recipient, signature FROM fundstx WHERE hash = $1;`
-    row2 := db.QueryRow(sqlStatement, r.PostFormValue("search-value"))
-    err = row2.Scan(&returnedtx.Hash, &returnedtx.Amount, &returnedtx.Fee, &returnedtx.TxCount, &returnedtx.From, &returnedtx.To, &returnedtx.Signature)
-    return returnedblock, returnedtx
-  case nil:
-    if len(returnedblock.FundsTxDataString.String) > 0 {
-      returnedblock.FundsTxData = strings.Split(returnedblock.FundsTxDataString.String[1:len(returnedblock.FundsTxDataString.String)-1], ",")
-    }
-    return returnedblock, returnedtx
-  default:
-    panic(err)
-  }
-}
-
-func ReturnBlocksAndTransactions(params httprouter.Params) blocksandtx {
+func ReturnBlocksAndTransactions(UrlHash string) blocksandtx {
   var returnedBlocksAndTxs blocksandtx
   connectToDB()
   defer db.Close()
@@ -399,13 +368,13 @@ func WriteOpenFundsTx(tx fundstx) {
   }
 }
 
-func ReturnOpenFundsTx(params httprouter.Params) fundstx {
+func ReturnOpenFundsTx(UrlHash string) fundstx {
   connectToDB()
   defer db.Close()
 
   sqlStatement := `SELECT hash, amount, fee, txcount, sender, recipient, signature FROM openfundstx WHERE hash = $1;`
   var returnedrow fundstx
-  row := db.QueryRow(sqlStatement, params.ByName("hash"))
+  row := db.QueryRow(sqlStatement, UrlHash)
   switch err = row.Scan(&returnedrow.Hash, &returnedrow.Amount, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.From, &returnedrow.To, &returnedrow.Signature)
   err {
   case sql.ErrNoRows:
@@ -452,7 +421,7 @@ func WriteAccountWithAddress(tx acctx, accountHash string) {
   }
 }
 
-func ReturnOneAccount(params httprouter.Params) accountwithtxs {
+func ReturnOneAccount(UrlHash string) accountwithtxs {
   var returnedData accountwithtxs
 
   connectToDB()
@@ -460,7 +429,7 @@ func ReturnOneAccount(params httprouter.Params) accountwithtxs {
 
   sqlStatement := `SELECT hash, address, balance, txcount FROM accounts WHERE hash = $1 OR address = $1`
   var returnedaccount account
-  row := db.QueryRow(sqlStatement, params.ByName("hash"))
+  row := db.QueryRow(sqlStatement, UrlHash)
   switch err = row.Scan(&returnedaccount.Hash, &returnedaccount.Address, &returnedaccount.Balance, &returnedaccount.TxCount)
   err {
   case sql.ErrNoRows:
@@ -498,7 +467,7 @@ func ReturnOneAccount(params httprouter.Params) accountwithtxs {
   return returnedData
 }
 
-func ReturnTopAccounts(params httprouter.Params) []account {
+func ReturnTopAccounts(UrlHash string) []account {
   connectToDB()
   defer db.Close()
 

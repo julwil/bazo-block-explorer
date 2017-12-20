@@ -1,8 +1,8 @@
 # Things to fix/add
 * Backend
-  * update search
   * refactor adminfunc
   * better error handling (not panic)
+  * open transactions
 * JS login (client side)
   * User enters private key
   * encode JWT using private key

@@ -12,7 +12,6 @@ func initializeRouter() *httprouter.Router {
 
   router.GET("/", getIndex)
   //router.GET("/get-token", getToken
-  //router.GET("/testheader", testSPVHeader)
   router.GET("/blocks", getAllBlocks)
   router.GET("/block/:hash", getOneBlock)
   router.GET("/transactions/funds", getAllFundsTx)
@@ -39,72 +38,84 @@ func getToken(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 }
 
 func getIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedrows := ReturnBlocksAndTransactions(params)
+  returnedrows := ReturnBlocksAndTransactions(params.ByName("hash"))
   tpl.ExecuteTemplate(w, "index.gohtml", returnedrows)
 }
 
 func getOneBlock(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedblock := ReturnOneBlock(params)
+  returnedblock := ReturnOneBlock(params.ByName("hash"))
   tpl.ExecuteTemplate(w, "block.gohtml", returnedblock)
 
 }
 func getAllBlocks(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedblocks := ReturnAllBlocks(params)
+  returnedblocks := ReturnAllBlocks(params.ByName("hash"))
   tpl.ExecuteTemplate(w, "blocks.gohtml", returnedblocks)
 }
 
 func getOneFundsTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedtx := ReturnOneFundsTx(params)
+  returnedtx := ReturnOneFundsTx(params.ByName("hash"))
   /*
   fmt.Println(returnedtx.Hash)
   if returnedtx.Hash == "" {
     fmt.Println("trying to copy opentx from network")
     txHash := params.ByName("hash")
     FetchOpenTx(txHash)
-    returnedtx = ReturnOpenFundsTx(params)
+    returnedtx = ReturnOpenFundsTx(params.ByName("hash"))
   }
   */
   tpl.ExecuteTemplate(w, "fundstx.gohtml", returnedtx)
 }
 
 func getAllFundsTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedtxs := ReturnAllFundsTx(params)
+  returnedtxs := ReturnAllFundsTx(params.ByName("hash"))
   tpl.ExecuteTemplate(w, "fundstxs.gohtml", returnedtxs)
 }
 
 func getOneAccTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedtx := ReturnOneAccTx(params)
+  returnedtx := ReturnOneAccTx(params.ByName("hash"))
   tpl.ExecuteTemplate(w, "acctx.gohtml", returnedtx)
 }
 
 func getAllAccTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedtxs := ReturnAllAccTx(params)
+  returnedtxs := ReturnAllAccTx(params.ByName("hash"))
   tpl.ExecuteTemplate(w, "acctxs.gohtml", returnedtxs)
 }
 
 func getOneConfigTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedtx := ReturnOneConfigTx(params)
+  returnedtx := ReturnOneConfigTx(params.ByName("hash"))
   tpl.ExecuteTemplate(w, "configtx.gohtml", returnedtx)
 }
 
 func getAllConfigTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedtxs := ReturnAllConfigTx(params)
+  returnedtxs := ReturnAllConfigTx(params.ByName("hash"))
   tpl.ExecuteTemplate(w, "configtxs.gohtml", returnedtxs)
 }
 
 func searchForHash(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  thing := 1
-  returnedblock, returnedtx := ReturnSearchResult(r)
-  if returnedblock.Hash == "" && returnedtx.Hash == "" {
-    tpl.ExecuteTemplate(w, "noresult.gohtml", thing)
-  } else if returnedblock.Hash != "" && returnedtx.Hash == "" {
+  returnedblock := ReturnOneBlock(r.PostFormValue("search-value"))
+  if returnedblock.Hash != "" {
     tpl.ExecuteTemplate(w, "block.gohtml", returnedblock)
-  } else if returnedblock.Hash == "" && returnedtx.Hash != "" {
-    tpl.ExecuteTemplate(w, "fundstx.gohtml", returnedtx)
-  } else {
-    tpl.ExecuteTemplate(w, "noresult.gohtml", thing)
   }
 
+  returnedfundstx := ReturnOneFundsTx(r.PostFormValue("search-value"))
+  if returnedfundstx.Hash != "" {
+    tpl.ExecuteTemplate(w, "fundstx.gohtml", returnedfundstx)
+  }
+
+  returnedacctx := ReturnOneAccTx(r.PostFormValue("search-value"))
+  if returnedacctx.Hash != "" {
+    tpl.ExecuteTemplate(w, "acctx.gohtml", returnedacctx)
+  }
+
+  returnedconfigtx := ReturnOneConfigTx(r.PostFormValue("search-value"))
+  if returnedconfigtx.Hash != "" {
+    tpl.ExecuteTemplate(w, "configtx.gohtml", returnedconfigtx)
+  }
+
+  returnedaccountwithtxs := ReturnOneAccount(r.PostFormValue("search-value"))
+  if returnedaccountwithtxs.Account.Hash != "" {
+    tpl.ExecuteTemplate(w, "account.gohtml", returnedaccountwithtxs)
+  }
 }
 
 func adminfunc(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -174,11 +185,11 @@ func loginFail(w http.ResponseWriter, r *http.Request, params httprouter.Params)
 }
 
 func getAccount(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedaccountwithtxs := ReturnOneAccount(params)
+  returnedaccountwithtxs := ReturnOneAccount(params.ByName("hash"))
   tpl.ExecuteTemplate(w, "account.gohtml", returnedaccountwithtxs)
 }
 
 func getTopAccounts(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedaccounts := ReturnTopAccounts(params)
+  returnedaccounts := ReturnTopAccounts(params.ByName("hash"))
   tpl.ExecuteTemplate(w, "accounts.gohtml", returnedaccounts)
 }

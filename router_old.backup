@@ -1,7 +1,10 @@
+
 package main
 
 import (
+    "io"
     "fmt"
+    "os/exec"
     "net/http"
     "github.com/julienschmidt/httprouter"
     "github.com/dgrijalva/jwt-go"
@@ -9,7 +12,6 @@ import (
 
 func initializeRouter() *httprouter.Router {
   router := httprouter.New()
-
   router.GET("/", getIndex)
   //router.GET("/get-token", getToken
   //router.GET("/testheader", testSPVHeader)
@@ -27,6 +29,11 @@ func initializeRouter() *httprouter.Router {
   router.POST("/login", loginFunc)
   router.GET("/login-failed", loginFail)
   router.GET("/adminpanel", adminfunc)
+  router.POST("/admin/blocksize", blocksizePost)
+  router.POST("/admin/diffinterval", diffintervalPost)
+  router.POST("/admin/minfee", minfeePost)
+  router.POST("/admin/blockinterval", blockintervalPost)
+  router.POST("/admin/blockreward", blockrewardPost)
   router.ServeFiles("/static/*filepath", http.Dir("static"))
 
   return router
@@ -64,6 +71,7 @@ func getOneFundsTx(w http.ResponseWriter, r *http.Request, params httprouter.Par
     returnedtx = ReturnOpenFundsTx(params)
   }
   */
+
   tpl.ExecuteTemplate(w, "fundstx.gohtml", returnedtx)
 }
 
@@ -128,7 +136,7 @@ func adminfunc(w http.ResponseWriter, r *http.Request, params httprouter.Params)
 			fmt.Fprintln(w, "Invalid Token")
 			return
 		}
-    values := 1
+
 		w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(http.StatusOK)
     tpl.ExecuteTemplate(w, "admin.gohtml", values)
@@ -155,6 +163,101 @@ func adminfunc(w http.ResponseWriter, r *http.Request, params httprouter.Params)
 		fmt.Printf("Token parse error: %v\n", err)
 		return
 	}
+}
+
+func blocksizeGet(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  tpl.ExecuteTemplate(w, "blocksize.gohtml", values)
+}
+
+func blocksizePost(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  err := r.ParseForm()
+  if err != nil {
+    panic(err)
+  }
+  payload := r.PostFormValue("new-blocksize")
+  cmd := exec.Command("bazo_client", "configTx", "0", "1", payload, "1", "2", "root")
+  printCommand(cmd)
+  output, err := cmd.CombinedOutput()
+  printError(err)
+  printOutput(output)
+  io.WriteString(w, string(output))
+}
+
+func diffintervalGet(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  tpl.ExecuteTemplate(w, "difficulty.gohtml", values)
+}
+
+func diffintervalPost(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  err := r.ParseForm()
+  if err != nil {
+    panic(err)
+  }
+  payload := r.PostFormValue("new-diffinterval")
+  cmd := exec.Command("bazo_client", "configTx", "0", "2", payload, "1", "2", "root")
+  printCommand(cmd)
+  output, err := cmd.CombinedOutput()
+  printError(err)
+  printOutput(output)
+  io.WriteString(w, string(output))
+}
+
+func minfeeGet(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  tpl.ExecuteTemplate(w, "minfee.gohtml", values)
+}
+
+func minfeePost(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  err := r.ParseForm()
+  if err != nil {
+    panic(err)
+  }
+  payload := r.PostFormValue("new-minfee")
+  cmd := exec.Command("bazo_client", "configTx", "0", "3", payload, "2", "4", "root")
+  printCommand(cmd)
+  output, err := cmd.CombinedOutput()
+  printError(err)
+  printOutput(output)
+  io.WriteString(w, string(output))
+}
+
+func blockintervalGet(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  tpl.ExecuteTemplate(w, "blockinterval.gohtml", values)
+}
+
+func blockintervalPost(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  err := r.ParseForm()
+  if err != nil {
+    panic(err)
+  }
+  payload := r.PostFormValue("new-blockinterval")
+  cmd := exec.Command("bazo_client", "configTx", "0", "4", payload, "1", "2", "root")
+  printCommand(cmd)
+  output, err := cmd.CombinedOutput()
+  printError(err)
+  printOutput(output)
+  io.WriteString(w, string(output))
+}
+
+func blockrewardGet(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  tpl.ExecuteTemplate(w, "blockreward.gohtml", values)
+}
+
+func blockrewardPost(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  err := r.ParseForm()
+  if err != nil {
+    panic(err)
+  }
+  payload := r.PostFormValue("new-blockreward")
+  cmd := exec.Command("bazo_client", "configTx", "0", "5", payload, "1", "2", "root")
+  printCommand(cmd)
+  output, err := cmd.CombinedOutput()
+  printError(err)
+  printOutput(output)
+  io.WriteString(w, string(output))
+}
+
+func getTestPage(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  thing := 1
+  tpl.ExecuteTemplate(w, "test.gohtml", thing)
 }
 
 func loginFunc(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

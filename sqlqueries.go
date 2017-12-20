@@ -1,14 +1,11 @@
 package main
 
 import (
-  _ "io"
   "fmt"
   "net/http"
-  _ "html/template"
   "database/sql"
   "github.com/lib/pq"
   "github.com/julienschmidt/httprouter"
-  _ "strconv"
   "strings"
 )
 
@@ -473,7 +470,7 @@ func ReturnOneAccount(params httprouter.Params) accountwithtxs {
     return returnedData
   case nil:
     sqlStatement = `SELECT hash, amount, fee, txcount, sender, recipient FROM fundstx WHERE sender = $1 OR recipient = $1`
-    rows, err := db.Query(sqlStatement, params.ByName("hash"))
+    rows, err := db.Query(sqlStatement, returnedaccount.Hash)
     if err != nil {
       panic(err)
     }

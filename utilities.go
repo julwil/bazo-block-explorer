@@ -4,7 +4,6 @@ import (
   "fmt"
   "bytes"
   "encoding/binary"
-
   "golang.org/x/crypto/sha3"
   "github.com/mchetelat/bazo_miner/protocol"
 )
@@ -12,6 +11,7 @@ import (
 func ConvertBlock(unconvertedBlock *protocol.Block) block {
   var convertedBlock block
   var convertedTxHash string
+
   //convertedBlock.Header = fmt.Sprintf("%x", unconvertedBlock.Header)
   convertedBlock.Hash = fmt.Sprintf("%x", unconvertedBlock.Hash)
   convertedBlock.PrevHash = fmt.Sprintf("%x", unconvertedBlock.PrevHash)
@@ -37,11 +37,13 @@ func ConvertBlock(unconvertedBlock *protocol.Block) block {
     convertedBlock.ConfigTxData = append(convertedBlock.ConfigTxData, convertedTxHash)
   }
   fmt.Printf("%s\n", convertedBlock.ConfigTxData)
+
   return convertedBlock
 }
 
 func ConvertFundsTransaction(unconvertedTx *protocol.FundsTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte) fundstx {
   var convertedTx fundstx
+
   //convertedTx.Header = fmt.Sprintf("%x", unconvertedTx.Header)
   convertedTx.Hash = fmt.Sprintf("%x", unconvertedTxHash)
   convertedTx.BlockHash = fmt.Sprintf("%x", unconvertedBlockHash)
@@ -57,6 +59,7 @@ func ConvertFundsTransaction(unconvertedTx *protocol.FundsTx, unconvertedBlockHa
 
 func ConvertAccTransaction(unconvertedTx *protocol.AccTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte) acctx {
   var convertedTx acctx
+
   //convertedTx.Header = fmt.Sprintf("%x", unconvertedTx.Header)
   convertedTx.Hash = fmt.Sprintf("%x", unconvertedTxHash)
   convertedTx.BlockHash = fmt.Sprintf("%x", unconvertedBlockHash)
@@ -70,6 +73,7 @@ func ConvertAccTransaction(unconvertedTx *protocol.AccTx, unconvertedBlockHash [
 
 func ConvertConfigTransaction(unconvertedTx *protocol.ConfigTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte) configtx {
   var convertedTx configtx
+
   //convertedTx.Header = fmt.Sprintf("%x", unconvertedTx.Header)
   convertedTx.Hash = fmt.Sprintf("%x", unconvertedTxHash)
   convertedTx.BlockHash = fmt.Sprintf("%x", unconvertedBlockHash)
@@ -84,6 +88,7 @@ func ConvertConfigTransaction(unconvertedTx *protocol.ConfigTx, unconvertedBlock
 
 func ConvertOpenFundsTransaction(unconvertedTx *protocol.FundsTx, unconvertedTxHash [32]byte) fundstx {
   var convertedTx fundstx
+
   //convertedTx.Header = fmt.Sprintf("%x", unconvertedTx.Header)
   convertedTx.Hash = fmt.Sprintf("%x", unconvertedTxHash)
   convertedTx.Amount = unconvertedTx.Amount
@@ -106,7 +111,8 @@ func invertBlockArray(array []*protocol.Block) []*protocol.Block {
 
 func SerializeHashContent(data interface{}) (hash [32]byte) {
 	var buf bytes.Buffer
+
 	binary.Write(&buf, binary.BigEndian, data)
-  
+
 	return sha3.Sum256(buf.Bytes())
 }

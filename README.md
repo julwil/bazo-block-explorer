@@ -2,8 +2,6 @@
 * Backend
   * update search
   * refactor adminfunc
-  * protect configTx POST methods
-  * add IDs for configTx POST methods (constants)
   * better error handling (not panic)
 * JS login (client side)
   * User enters private key

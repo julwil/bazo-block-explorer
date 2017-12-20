@@ -49,13 +49,13 @@ func ReturnOneBlock(params httprouter.Params) block {
     fmt.Printf("No rows returned!")
   case nil:
     if len(returnedblock.FundsTxDataString.String) > 0 {
-      returnedblock.FundsTxData = strings.Split(returnedblock.FundsTxDataString.String[:len(returnedblock.FundsTxDataString.String)], ",")
+      returnedblock.FundsTxData = strings.Split(returnedblock.FundsTxDataString.String[1:len(returnedblock.FundsTxDataString.String)-1], ",")
     }
     if len(returnedblock.AccTxDataString.String) > 0 {
-      returnedblock.AccTxData = strings.Split(returnedblock.AccTxDataString.String[:len(returnedblock.AccTxDataString.String)], ",")
+      returnedblock.AccTxData = strings.Split(returnedblock.AccTxDataString.String[1:len(returnedblock.AccTxDataString.String)-1], ",")
     }
     if len(returnedblock.ConfigTxDataString.String) > 0 {
-      returnedblock.ConfigTxData = strings.Split(returnedblock.ConfigTxDataString.String[:len(returnedblock.ConfigTxDataString.String)], ",")
+      returnedblock.ConfigTxData = strings.Split(returnedblock.ConfigTxDataString.String[1:len(returnedblock.ConfigTxDataString.String)-1], ",")
     }
     return returnedblock
   default:

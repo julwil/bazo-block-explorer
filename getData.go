@@ -12,59 +12,52 @@ import (
 	"github.com/mchetelat/bazo_miner/protocol"
 )
 
-var allBlockHeaders []*protocol.SPVHeader
-var allBlocks []*protocol.Block
+var newestBlock *protocol.Block
+
 var logger *log.Logger
 
 var block1 *protocol.Block
 
 func runDB() {
-  if !checkEmptyDB() {
-    fmt.Println("The database is empty!")
-    fmt.Println("Loading all blocks and saving them to the database...")
-    loadAllBlocks()
-    fmt.Println("All blocks loaded and saved to the database!")
-  } else {
-    fmt.Println("The database is not empty!")
-    fmt.Println("BORK")
 
-  }
+  loadAllBlocks()
+
   for 0 < 1 {
     time.Sleep(time.Second * 10)
     fmt.Println("Refreshing State...")
-    refreshState()
+    newRefreshState()
     fmt.Println("State refreshed!")
   }
 }
 
 func loadAllBlocks() {
-  //genesishash := [32]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
   block := reqBlock(nil)
-  allBlocks = append(allBlocks, block)
+  newestBlock = block
+  SaveBlockAndTransactions(block)
   prevHash := block.PrevHash
 
   for block.Hash != [32]byte{} {
     block = reqBlock(prevHash[:])
-    allBlocks = append(allBlocks, block)
+    SaveBlockAndTransactions(block)
     prevHash = block.PrevHash
   }
-
-  allBlocks = invertBlockArray(allBlocks)
-
-  for _, oneBlock := range allBlocks{
-    SaveBlocksAndTransactions(oneBlock)
-  }
 }
 
-func refreshState() {
-	var newBlocks []*protocol.Block
-
-	newBlocks = getNewBlocks(reqBlock(nil), allBlocks[len(allBlocks)-1], newBlocks)
-  for _, oneBlock := range newBlocks{
-    SaveBlocksAndTransactions(oneBlock)
+func newRefreshState() {
+  block := reqBlock(nil)
+  if block.Hash == newestBlock.Hash {
+    SaveBlockAndTransactions(block)
   }
-	allBlocks = append(allBlocks, newBlocks...)
+  prevHash := block.PrevHash
+
+  for block.Hash != newestBlock.Hash {
+    block = reqBlock(prevHash[:])
+    SaveBlockAndTransactions(block)
+    prevHash = block.PrevHash
+  }
+  newestBlock = block
 }
+
 
 func getNewBlocks(latest *protocol.Block, eldest *protocol.Block, list []*protocol.Block) []*protocol.Block {
 	if latest.Hash != eldest.Hash {
@@ -167,7 +160,7 @@ func FetchOpenTx(txHash string){
   WriteOpenFundsTx(convertedTx)
 }
 
-func SaveBlocksAndTransactions(oneBlock *protocol.Block)  {
+func SaveBlockAndTransactions(oneBlock *protocol.Block)  {
   for _, accTxHash := range oneBlock.AccTxData{
     accTx := reqTx(p2p.ACCTX_REQ, accTxHash)
     convertedTx := ConvertAccTransaction(accTx.(*protocol.AccTx), oneBlock.Hash, accTxHash)

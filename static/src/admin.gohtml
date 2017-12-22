@@ -5,6 +5,7 @@
 
     {{template "head"}}
 
+
   </head>
 
   <body>
@@ -13,18 +14,19 @@
 
     <div class="clr"></div>
     <section id="parameter-list">
+      {{template "transactionModal"}}
       <div class="container">
-        <h3>Change System Parameters</h3>
+        <h3><%title%></h3>
             <h5>Current {{.BSName}}: {{.BlockSize}} Bytes</h5>
-            <form class="form-group form-horizontal" action="/admin/blocksize" method="post">
+            <form class="form-group form-horizontal">
               <div class="row">
                 <div class="col-sm-3">
                   <label>Change Block Size</label>
-                  <input type="number" name="new-blocksize" class="form-control" placeholder="Bytes">
+                  <input type="number" name="new-blocksize" v-model="blocksize.blocksize" class="form-control" placeholder="Bytes">
                 </div>
                 <div class="col-sm-3">
                   <label>Fee</label>
-                  <input type="number" name="fee" class="form-control" placeholder="Bazo Coins">
+                  <input type="number" name="fee" v-model="blocksize.fee" class="form-control" placeholder="Bazo Coins">
                 </div>
                 <div class="col-sm-3">
                   <label>TxCount</label>
@@ -32,21 +34,21 @@
                 </div>
                 <div class="col-sm-2">
                   <label class="text-white">.....</label>
-                  <button type="submit" class="btn btn-primary btn-block">Send</button>
+                  <button v-on:click="changeBlockSize(blocksize.blocksize, blocksize.fee)" type="button" class="btn btn-primary btn-block" href="#">Send</button>
                 </div>
               </div>
             </form>
           <div class="clr"></div>
             <h5>Current {{.DIName}}: {{.DiffInterval}} Blocks</h5>
-            <form class="form-group form-horizontal" action="/admin/diffinterval" method="post">
+            <form class="form-group form-horizontal">
               <div class="row">
                 <div class="col-sm-3">
                   <label>Change Difficulty Interval</label>
-                  <input type="number" name="new-diffinterval" class="form-control" placeholder="Nr. of Blocks">
+                  <input type="number" name="new-diffinterval" v-model="diffinterval.diffinterval" class="form-control" placeholder="Nr. of Blocks">
                 </div>
                 <div class="col-sm-3">
                   <label>Fee</label>
-                  <input type="number" name="fee" class="form-control" placeholder="Bazo Coins">
+                  <input type="number" name="fee" v-model="diffinterval.fee" class="form-control" placeholder="Bazo Coins">
                 </div>
                 <div class="col-sm-3">
                   <label>TxCount</label>
@@ -54,21 +56,21 @@
                 </div>
                 <div class="col-sm-2">
                   <label class="text-white">.....</label>
-                  <button type="submit" class="btn btn-primary btn-block">Send</button>
+                  <button type="button" class="btn btn-primary btn-block" href="#">Send</button>
                 </div>
               </div>
             </form>
           <div class="clr"></div>
             <h5>Current {{.MFName}}: {{.MinFee}} Bazo Coins</h5>
-            <form class="config-form" action="/admin/minfee" method="post">
+            <form class="config-form">
               <div class="row">
                 <div class="col-sm-3">
                   <label>Change Minimum Fee</label>
-                  <input type="number" name="new-minfee" class="form-control" placeholder="Bazo Coins">
+                  <input type="number" name="new-minfee" v-model="minfee.minfee" class="form-control" placeholder="Bazo Coins">
                 </div>
                 <div class="col-sm-3">
                   <label>Fee</label>
-                  <input type="number" name="fee" class="form-control" placeholder="Bazo Coins">
+                  <input type="number" name="fee" v-model="minfee.fee" class="form-control" placeholder="Bazo Coins">
                 </div>
                 <div class="col-sm-3">
                   <label>TxCount</label>
@@ -76,21 +78,21 @@
                 </div>
                 <div class="col-sm-2">
                   <label class="text-white">.....</label>
-                  <button type="submit" class="btn btn-primary btn-block">Send</button>
+                  <button type="button" class="btn btn-primary btn-block" href="#">Send</button>
                 </div>
               </div>
             </form>
           <div class="clr"></div>
             <h5>Current {{.BIName}}: {{.BlockInterval}} Seconds</h5>
-            <form class="congif-form" action="/admin/blockinterval" method="post">
+            <form class="congif-form">
               <div class="row">
                 <div class="col-sm-3">
                   <label>Change Block Interval</label>
-                  <input type="number" name="new-blockinterval" class="form-control" placeholder="Seconds">
+                  <input type="number" name="new-blockinterval" v-model="blockinterval.blockinterval" class="form-control" placeholder="Seconds">
                 </div>
                 <div class="col-sm-3">
                   <label>Fee</label>
-                  <input type="number" name="fee" class="form-control" placeholder="Bazo Coins">
+                  <input type="number" name="fee" v-model="blockinterval.fee" class="form-control" placeholder="Bazo Coins">
                 </div>
                 <div class="col-sm-3">
                   <label>TxCount</label>
@@ -98,21 +100,21 @@
                 </div>
                 <div class="col-sm-2">
                   <label class="text-white">.....</label>
-                  <button type="submit" class="btn btn-primary btn-block">Send</button>
+                  <button type="button" class="btn btn-primary btn-block" href="#">Send</button>
                 </div>
               </div>
             </form>
           <div class="clr"></div>
             <h5>Current {{.BRName}}: {{.BlockReward}} Bazo Coins</h5>
-            <form class="config-form" action="/admin/blockreward" method="post">
+            <form class="config-form">
               <div class="row">
                 <div class="col-sm-3">
                   <label>Change Block Reward</label>
-                  <input type="number" name="new-blockreward" class="form-control" placeholder="Bazo Coins">
+                  <input type="number" name="new-blockreward" v-model="blockreward.blockreward" class="form-control" placeholder="Bazo Coins">
                 </div>
                 <div class="col-sm-3">
                   <label>Fee</label>
-                  <input type="number" name="fee" class="form-control" placeholder="Bazo Coins">
+                  <input type="number" name="fee" v-model="blockreward.fee"class="form-control" placeholder="Bazo Coins">
                 </div>
                 <div class="col-sm-3">
                   <label>TxCount</label>
@@ -120,13 +122,18 @@
                 </div>
                 <div class="col-sm-2">
                   <label class="text-white">.....</label>
-                  <button type="submit" class="btn btn-primary btn-block">Send</button>
+                  <button type="button" class="btn btn-primary btn-block" href="#">Send</button>
                 </div>
               </div>
             </form>
       </div>
     </section>
     <br>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="/static/src/adminjs.js"></script>
+    <script src="/static/src/elliptic.min.js"></script>
 
     {{template "scriptImports"}}
 

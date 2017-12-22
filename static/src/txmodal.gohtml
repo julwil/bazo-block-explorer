@@ -1,6 +1,6 @@
-{{define "loginModal"}}
+{{define "transactionModal"}}
 
-<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -11,15 +11,12 @@
       </div>
       <div class="modal-body">
         Enter Private Key
-        <%accountinfo.txhash%>
-        <form class="config-form" action="/login" method="post">
           <div class="input-group">
-            <input class="form-control" type="text" name="root-key-field" placeholder="Root Key">
+            <input v-model="accountinfo.privatekey" class="form-control" type="text" name="root-key-field" placeholder="Root Key">
             <span class="input-group-btn">
-              <button class="btn btn-primary" type="submit">Sign</button>
+              <button class="btn btn-primary" type="button" v-on:click="signTransaction(accountinfo.privatekey, accountinfo.txhash)">Sign</button>
             </span>
           </div>
-        </form>
       </div>
       <div class="modal-footer">
       </div>

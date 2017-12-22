@@ -25,10 +25,14 @@ func initializeRouter() *httprouter.Router {
   router.POST("/search/", searchForHash)
   router.POST("/login", loginFunc)
   router.GET("/login-failed", loginFail)
-  router.GET("/adminpanel", adminfunc)
+  router.GET("/adminpanel", adminNoVerif)
   router.ServeFiles("/static/*filepath", http.Dir("static"))
 
   return router
+}
+
+func adminNoVerif(w http.ResponseWriter, r *http.Request, params httprouter.Params)  {
+  tpl.ExecuteTemplate(w, "admin.gohtml", values)
 }
 
 func getToken(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -139,7 +143,6 @@ func adminfunc(w http.ResponseWriter, r *http.Request, params httprouter.Params)
 			fmt.Fprintln(w, "Invalid Token")
 			return
 		}
-    values := 1
 		w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(http.StatusOK)
     tpl.ExecuteTemplate(w, "admin.gohtml", values)

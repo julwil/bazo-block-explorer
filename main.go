@@ -8,9 +8,21 @@ import (
 )
 
 var tpl *template.Template
+var values systemparams
+
 
 func init() {
-  tpl = template.Must(template.ParseGlob("static/src/*.gohtml"))
+  tpl = template.Must(template.ParseGlob("static/src/*"))
+  values.BlockSize = 0
+  values.BSName = "Block Size"
+  values.DiffInterval = 0
+  values.DIName = "Difficulty Interval"
+  values.MinFee = 0
+  values.MFName = "Minimum Fee"
+  values.BlockInterval = 0
+  values.BIName = "Block Interval"
+  values.BlockReward = 0
+  values.BRName = "Block Reward"
 }
 
 func main() {

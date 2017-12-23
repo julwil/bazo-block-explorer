@@ -37,7 +37,87 @@ var app = new Vue({
         }
       )
 
-    }
+    },
+    changeDiffInterval: function(diffinterval, fee) {
+      console.log("Changing difficulty interval: ", diffinterval, fee)
+
+      axios.get('http://192.41.136.199:8001/account/' + app.accountinfo.rootpublickey).then(
+        function(response) {
+          console.log(response.data)
+          app.accountinfo.txcount = response.data.txCnt
+          if (response.data.isRoot) {
+            axios.post(`http://192.41.136.199:8001/createConfigTx/${0}/${2}/${diffinterval.diffinterval}/${app.diffinterval.fee}/${app.accountinfo.txcount}`).then(
+              function(response) {
+                $("#myModal").modal()
+                console.log(response.data);
+                app.accountinfo.txhash = response.data.content[0].detail
+              }
+            )
+          }
+        }
+      )
+
+    },
+    changeMinFee: function(minfee, fee) {
+      console.log("Changing minimum fee: ", minfee, fee)
+
+      axios.get('http://192.41.136.199:8001/account/' + app.accountinfo.rootpublickey).then(
+        function(response) {
+          console.log(response.data)
+          app.accountinfo.txcount = response.data.txCnt
+          if (response.data.isRoot) {
+            axios.post(`http://192.41.136.199:8001/createConfigTx/${0}/${3}/${minfee.minfee}/${app.minfee.fee}/${app.accountinfo.txcount}`).then(
+              function(response) {
+                $("#myModal").modal()
+                console.log(response.data);
+                app.accountinfo.txhash = response.data.content[0].detail
+              }
+            )
+          }
+        }
+      )
+
+    },
+    changeBlockInterval: function(blockinterval, fee) {
+      console.log("Changing block interval: ", blockinterval, fee)
+
+      axios.get('http://192.41.136.199:8001/account/' + app.accountinfo.rootpublickey).then(
+        function(response) {
+          console.log(response.data)
+          app.accountinfo.txcount = response.data.txCnt
+          if (response.data.isRoot) {
+            axios.post(`http://192.41.136.199:8001/createConfigTx/${0}/${4}/${blockinterval.blockinterval}/${app.blockinterval.fee}/${app.accountinfo.txcount}`).then(
+              function(response) {
+                $("#myModal").modal()
+                console.log(response.data);
+                app.accountinfo.txhash = response.data.content[0].detail
+              }
+            )
+          }
+        }
+      )
+
+    },
+    changeBlockReward: function(blockreward, fee) {
+      console.log("Changing blockreward: ", blockreward, fee)
+
+      axios.get('http://192.41.136.199:8001/account/' + app.accountinfo.rootpublickey).then(
+        function(response) {
+          console.log(response.data)
+          app.accountinfo.txcount = response.data.txCnt
+          if (response.data.isRoot) {
+            axios.post(`http://192.41.136.199:8001/createConfigTx/${0}/${5}/${blockreward.blockreward}/${app.blockreward.fee}/${app.accountinfo.txcount}`).then(
+              function(response) {
+                $("#myModal").modal()
+                console.log(response.data);
+                app.accountinfo.txhash = response.data.content[0].detail
+              }
+            )
+          }
+        }
+      )
+
+    },
   },
   data: {
     blocksize: {

@@ -28,10 +28,6 @@
                   <label>Fee</label>
                   <input type="number" name="fee" v-model="blocksize.fee" class="form-control" placeholder="Bazo Coins">
                 </div>
-                <div class="col-sm-3">
-                  <label>TxCount</label>
-                  <input type="number" name="txCount" class="form-control">
-                </div>
                 <div class="col-sm-2">
                   <label class="text-white">.....</label>
                   <button v-on:click="changeBlockSize(blocksize.blocksize, blocksize.fee)" type="button" class="btn btn-primary btn-block" href="#">Send</button>
@@ -50,13 +46,9 @@
                   <label>Fee</label>
                   <input type="number" name="fee" v-model="diffinterval.fee" class="form-control" placeholder="Bazo Coins">
                 </div>
-                <div class="col-sm-3">
-                  <label>TxCount</label>
-                  <input type="number" name="txCount" class="form-control">
-                </div>
                 <div class="col-sm-2">
                   <label class="text-white">.....</label>
-                  <button type="button" class="btn btn-primary btn-block" href="#">Send</button>
+                  <button v-on:click="changeDiffInterval(diffinterval.diffinterval, diffinterval.fee)" type="button" class="btn btn-primary btn-block" href="#">Send</button>
                 </div>
               </div>
             </form>
@@ -72,13 +64,9 @@
                   <label>Fee</label>
                   <input type="number" name="fee" v-model="minfee.fee" class="form-control" placeholder="Bazo Coins">
                 </div>
-                <div class="col-sm-3">
-                  <label>TxCount</label>
-                  <input type="number" name="txCount" class="form-control">
-                </div>
                 <div class="col-sm-2">
                   <label class="text-white">.....</label>
-                  <button type="button" class="btn btn-primary btn-block" href="#">Send</button>
+                  <button v-on:click="changeMinFee(minfee.minfee, minfee.fee)" type="button" class="btn btn-primary btn-block" href="#">Send</button>
                 </div>
               </div>
             </form>
@@ -94,13 +82,9 @@
                   <label>Fee</label>
                   <input type="number" name="fee" v-model="blockinterval.fee" class="form-control" placeholder="Bazo Coins">
                 </div>
-                <div class="col-sm-3">
-                  <label>TxCount</label>
-                  <input type="number" name="txCount" class="form-control">
-                </div>
                 <div class="col-sm-2">
                   <label class="text-white">.....</label>
-                  <button type="button" class="btn btn-primary btn-block" href="#">Send</button>
+                  <button v-on:click="changeBlockInterval(blockinterval.blockinterval, blockinterval.fee)" type="button" class="btn btn-primary btn-block" href="#">Send</button>
                 </div>
               </div>
             </form>
@@ -116,13 +100,9 @@
                   <label>Fee</label>
                   <input type="number" name="fee" v-model="blockreward.fee"class="form-control" placeholder="Bazo Coins">
                 </div>
-                <div class="col-sm-3">
-                  <label>TxCount</label>
-                  <input type="number" name="txCount" class="form-control">
-                </div>
                 <div class="col-sm-2">
                   <label class="text-white">.....</label>
-                  <button type="button" class="btn btn-primary btn-block" href="#">Send</button>
+                  <button v-on:click="changeBlockReward(blockreward.blockreward, blockreward.fee)" type="button" class="btn btn-primary btn-block" href="#">Send</button>
                 </div>
               </div>
             </form>

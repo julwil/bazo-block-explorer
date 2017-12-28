@@ -25,7 +25,7 @@ func runDB() {
   for 0 < 1 {
     time.Sleep(time.Second * 10)
     fmt.Println("Refreshing State...")
-    newRefreshState()
+    RefreshState()
     fmt.Println("State refreshed!")
   }
 }
@@ -43,7 +43,7 @@ func loadAllBlocks() {
   }
 }
 
-func newRefreshState() {
+func RefreshState() {
   block := reqBlock(nil)
   if block.Hash == newestBlock.Hash {
     SaveBlockAndTransactions(block)
@@ -56,16 +56,6 @@ func newRefreshState() {
     prevHash = block.PrevHash
   }
   newestBlock = block
-}
-
-
-func getNewBlocks(latest *protocol.Block, eldest *protocol.Block, list []*protocol.Block) []*protocol.Block {
-	if latest.Hash != eldest.Hash {
-		ancestor := reqBlock(latest.PrevHash[:])
-		list = getNewBlocks(ancestor, eldest, list)
-		list = append(list, latest)
-	}
-  return list
 }
 
 func Connect(connectionString string) (conn net.Conn) {

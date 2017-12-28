@@ -1,6 +1,7 @@
 package main
 
 import (
+  _"os"
   "fmt"
   "net/http"
   "html/template"
@@ -28,8 +29,8 @@ func init() {
 func main() {
   router := initializeRouter()
 
-  //go runDB()
-  //loadAllBlocks()
+  setupDB()
+  go runDB()
   fmt.Println("Listening...")
   http.ListenAndServe(":8080", router)
 }

@@ -26,17 +26,14 @@ func ConvertBlock(unconvertedBlock *protocol.Block) block {
     convertedTxHash = fmt.Sprintf("%x", hash)
     convertedBlock.FundsTxData = append(convertedBlock.FundsTxData, convertedTxHash)
   }
-  fmt.Printf("%s\n", convertedBlock.FundsTxData)
   for _, hash := range unconvertedBlock.AccTxData {
     convertedTxHash = fmt.Sprintf("%x", hash)
     convertedBlock.AccTxData = append(convertedBlock.AccTxData, convertedTxHash)
   }
-  fmt.Printf("%s\n", convertedBlock.AccTxData)
   for _, hash := range unconvertedBlock.ConfigTxData {
     convertedTxHash = fmt.Sprintf("%x", hash)
     convertedBlock.ConfigTxData = append(convertedBlock.ConfigTxData, convertedTxHash)
   }
-  fmt.Printf("%s\n", convertedBlock.ConfigTxData)
 
   return convertedBlock
 }

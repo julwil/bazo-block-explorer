@@ -33,6 +33,28 @@ func connectToDB() {
   }
 }
 
+func setupDB()  {
+  fmt.Println("Setting up Database...")
+  dropTables()
+  createTables()
+  fmt.Println("Setup Complete")
+}
+
+func dropTables() {
+  connectToDB()
+  defer db.Close()
+  fmt.Println("Dropping Tables...")
+  sqlStatement := `drop table blocks;
+                   drop table fundstx;
+                   drop table acctx;
+                   drop table configtx;
+                   drop table accounts;
+                   drop table openfundstx;`
+  db.Exec(sqlStatement)
+  fmt.Println("Dropped Tables")
+
+}
+
 func ReturnOneBlock(UrlHash string) block {
   connectToDB()
   defer db.Close()
@@ -491,4 +513,79 @@ func ReturnTopAccounts(UrlHash string) []account {
     panic(err)
   }
   return returnedrows
+}
+
+func createTables() {
+  connectToDB()
+  defer db.Close()
+  fmt.Println("Creating Tables...")
+
+  sqlStatement :=   `create table blocks (
+                    header bit(8),
+                    hash char(64) primary key,
+                    prevHash char(64) not null,
+                    nonce char(16),
+                    timestamp bigint not null,
+                    merkleRoot char(64) not null,
+                    beneficiary char(64) not null,
+                    nrFundsTx smallint not null,
+                    nrAccTx smallint not null,
+                    nrConfigTx smallint not null,
+                    fundsTxData varchar(100)[],
+                    accTxData varchar(100)[],
+                    configTxData varchar(100)[]
+                    );
+
+                    create table fundstx (
+                    header bit(8),
+                    hash char(64) primary key,
+                    blockhash char(64) not null,
+                    amount bigint not null,
+                    fee bigint not null,
+                    txcount int not null,
+                    sender char(64) not null,
+                    recipient char(64) not null,
+                    signature char(128) not null
+                    );
+
+                    create table openfundstx (
+                    header bit(8),
+                    hash char(64) primary key,
+                    amount bigint not null,
+                    fee bigint not null,
+                    txcount int not null,
+                    sender char(64) not null,
+                    recipient char(64) not null,
+                    signature char(128) not null
+                    );
+
+                    create table acctx(
+                    header bit(8),
+                    hash char(64) primary key,
+                    blockhash char(64),
+                    issuer char(64) not null,
+                    fee bigint not null,
+                    pubkey char(128) not null,
+                    signature char(128) not null
+                    );
+
+                    create table configtx(
+                    header bit(8),
+                    hash char(64) primary key,
+                    blockhash char(64),
+                    id int not null,
+                    payload bigint not null,
+                    fee bigint not null,
+                    txcount int not null,
+                    signature char(128) not null
+                    );
+
+                    create table accounts(
+                    hash char(64) primary key,
+                    address char(128),
+                    balance bigint not null,
+                    txcount int not null
+                    );`
+                    db.Exec(sqlStatement)
+  fmt.Println("Created Tables Successfully")
 }

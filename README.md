@@ -3,7 +3,8 @@
   * refactor adminfunc
   * better error handling (not panic)
   * open transactions
-* Database Component
+* Login
+  * save public key to vue thing
 
 
 TODAY

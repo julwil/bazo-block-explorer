@@ -2,6 +2,14 @@
 
     <nav class="navbar navbar-dark bg-dark justify-content-between">
       <a class="navbar-brand text-white" href="/">Bazo Blockchain Explorer</a>
+      <form class="col-sm-12" id="navSearch" action="/search/" method="post">
+          <div class="input-group" id="navSearchInput">
+            <input class="form-control" name="search-value" type="text" placeholder="Search through blocks, transactions and accounts..." aria-label="Search">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit">Search</button>
+            </span>
+          </div>
+      </form>
       <ul class="nav">
         <li class="nav-item">
           <a class="nav-link active text-white" href="/blocks">Blocks</a>

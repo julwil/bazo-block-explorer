@@ -10,11 +10,13 @@
 
   <body>
 
-    {{template "navBar"}}
+    {{template "navBarLoggedIn"}}
 
     <div class="clr"></div>
     <section id="parameter-list">
+
       {{template "transactionModal"}}
+
       <div class="container">
         <h3>Change System Parameters</h3>
             <h5>Current {{.BSName}}: {{.BlockSize}} Bytes</h5>
@@ -110,10 +112,9 @@
     </section>
     <br>
 
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    {{template "vueImports"}}
+    
     <script src="/static/src/adminjs.js"></script>
-    <script src="/static/src/elliptic.min.js"></script>
 
     {{template "scriptImports"}}
 

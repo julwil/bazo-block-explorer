@@ -22,7 +22,6 @@ type block struct {
   ConfigTxData []string
 }
 
-//Include bock hash maybe?
 type fundstx struct {
   Hash string
   BlockHash string
@@ -52,7 +51,7 @@ type configtx struct {
 	TxCount uint8
 	Signature string
 }
-//Include tx hashes mybe?
+
 type account struct {
   Hash string
   Address string
@@ -60,7 +59,16 @@ type account struct {
   TxCount int32
   FundsTxData []string
 }
-//change to map
+
+type JSONAccount struct {
+	Address       [64]byte `json:"-"`
+	AddressString string   `json:"address"`
+	Balance       uint64   `json:"balance"`
+	TxCnt         uint32   `json:"txCnt"`
+	IsCreated     bool     `json:"isCreated"`
+	IsRoot        bool     `json:"isRoot"`
+}
+
 type systemparams struct {
   BSName string
   BlockSize int

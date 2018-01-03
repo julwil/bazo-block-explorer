@@ -11,19 +11,21 @@
       </div>
       <div class="modal-body">
         Enter Root Public Key
-        <form class="config-form" action="/login" method="post">
           <div class="input-group">
-            <input class="form-control" type="text" name="root-key-field" placeholder="Root Key">
+            <input v-model="accountinfo.publickey" class="form-control" type="text" name="public-key-field" placeholder="Public Key">
             <span class="input-group-btn">
-              <button class="btn btn-primary" type="submit">Sign</button>
+              <button class="btn btn-primary" type="button" v-on:click="checkPublicKey(accountinfo.publickey)">Check</button>
             </span>
           </div>
-        </form>
       </div>
       <div class="modal-footer">
       </div>
     </div>
   </div>
 </div>
+
+{{template "vueImports"}}
+
+<script src="/static/src/loginjs.js"></script>
 
 {{end}}

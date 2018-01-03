@@ -3,6 +3,8 @@ package main
 import (
     "fmt"
     "net/http"
+    _ "io/ioutil"
+    _ "encoding/json"
     "github.com/julienschmidt/httprouter"
     "github.com/dgrijalva/jwt-go"
 )
@@ -172,6 +174,7 @@ func adminfunc(w http.ResponseWriter, r *http.Request, params httprouter.Params)
 }
 
 func loginFunc(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  /*
   if r.PostFormValue("root-key-field") == "123456" {
     cookie := CreateToken()
     http.SetCookie(w, &cookie)
@@ -180,6 +183,24 @@ func loginFunc(w http.ResponseWriter, r *http.Request, params httprouter.Params)
   } else {
     http.Redirect(w, r, "/login-failed", 302)
   }
+  */
+  /*
+  RESTresponse, err := http.Get("http://192.41.136.199:8001/account/" + r.PostFormValue("public-key-field"))
+  if err != nil {
+    fmt.Fprintln(w, "Error while checking key!")
+    fmt.Print(err.Error())
+  }
+
+  var accountInformation JSONAccount
+  RESTresponseData, err := ioutil.ReadAll(RESTresponse.Body)
+	json.Unmarshal(RESTresponseData, &accountInformation)
+
+  fmt.Println(accountInformation.IsRoot)
+
+  if accountInformation.IsRoot {
+    cookie := CreateToken(r.PostFormValue("public-key-field"))
+  }
+  */
 }
 
 func loginFail(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

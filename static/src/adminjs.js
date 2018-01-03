@@ -8,6 +8,9 @@ var app = new Vue({
     closeModal: function () {
       $('#myModal').modal('hide');
     },
+    setPublicKeyFromCookie: function () {
+      app.accountinfo.rootpublickey = this.$cookies.get("publicKey")
+    },
     signTransaction: function (txhash, privatekey) {
       console.log(txhash, privatekey);
       var curve = new elliptic.ec('p256')
@@ -23,6 +26,7 @@ var app = new Vue({
     },
     changeBlockSize: function(blocksize, fee) {
       console.log("Changing blocksize: ", blocksize, fee)
+      app.setPublicKeyFromCookie()
       if (app.isPositiveInt(blocksize) && app.isPositiveInt(fee)) {
         axios.get('http://192.41.136.199:8001/account/' + app.accountinfo.rootpublickey).then(
           function(response) {
@@ -45,6 +49,7 @@ var app = new Vue({
     },
     changeDiffInterval: function(diffinterval, fee) {
       console.log("Changing difficulty interval: ", diffinterval, fee)
+      app.setPublicKeyFromCookie()
       if (app.isPositiveInt(diffinterval) && app.isPositiveInt(fee)) {
         axios.get('http://192.41.136.199:8001/account/' + app.accountinfo.rootpublickey).then(
           function(response) {
@@ -67,6 +72,7 @@ var app = new Vue({
     },
     changeMinFee: function(minfee, fee) {
       console.log("Changing minimum fee: ", minfee, fee)
+      app.setPublicKeyFromCookie()
       if (app.isPositiveInt(minfee) && app.isPositiveInt(fee)) {
         axios.get('http://192.41.136.199:8001/account/' + app.accountinfo.rootpublickey).then(
           function(response) {
@@ -89,6 +95,7 @@ var app = new Vue({
     },
     changeBlockInterval: function(blockinterval, fee) {
       console.log("Changing block interval: ", blockinterval, fee)
+      app.setPublicKeyFromCookie()
       if (app.isPositiveInt(blockinterval) && app.isPositiveInt(fee)) {
         axios.get('http://192.41.136.199:8001/account/' + app.accountinfo.rootpublickey).then(
           function(response) {
@@ -111,6 +118,7 @@ var app = new Vue({
     },
     changeBlockReward: function(blockreward, fee) {
       console.log("Changing block reward: ", blockreward, fee)
+      app.setPublicKeyFromCookie()
       if (app.isPositiveInt(blockreward) && app.isPositiveInt(fee)) {
         axios.get('http://192.41.136.199:8001/account/' + app.accountinfo.rootpublickey).then(
           function(response) {
@@ -155,7 +163,7 @@ var app = new Vue({
     },
     accountinfo: {
       privatekey: '',
-      rootpublickey: 'f894ba7a24c1c324bc4b0a833d4b076a0e0f675a380fb7e782672c6568aaab0669ddbc62f79cb521411840d83ff0abf941a8e717d81af3dfc2973f1bac30308a',
+      rootpublickey: '',
       txhash: '',
       txcount: ''
     },

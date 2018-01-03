@@ -5,6 +5,7 @@
   * open transactions
 * Login
   * save public key to vue thing
+* Pageination
 
 
 TODAY

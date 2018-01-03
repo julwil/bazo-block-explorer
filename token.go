@@ -26,7 +26,7 @@ func CreateToken() http.Cookie {
 }
 
 func ExtractCookie(r *http.Request) (*http.Cookie, error) {
-  tokenCookie, err := r.Cookie(tokenName)
+  tokenCookie, err := r.Cookie("publicKey")
   return tokenCookie, err
 }
 

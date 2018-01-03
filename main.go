@@ -30,7 +30,7 @@ func main() {
   router := initializeRouter()
 
   setupDB()
-  go runDB()
+  //go runDB()
   fmt.Println("Listening...")
   http.ListenAndServe(":8080", router)
 }

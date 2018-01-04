@@ -1,14 +1,9 @@
 # Things to fix/add
-* Backend
-  * refactor adminfunc
-  * better error handling (not panic)
-  * open transactions
-* Login
-  * save public key to vue thing
-* Pageination
-
-
-TODAY
-* login
-* system parameters
-* statistical information begin
+* Finish Login
+  * Cookie Setter (front/backend)
+* Error Handling
+  * Get rid of panic(err)
+  * Exceptions
+* Include POS Transactions
+* Stats
+* Request System Parameters

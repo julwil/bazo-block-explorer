@@ -3,17 +3,13 @@ package main
 import (
     "fmt"
     "net/http"
-    _ "io/ioutil"
-    _ "encoding/json"
     "github.com/julienschmidt/httprouter"
-    "github.com/dgrijalva/jwt-go"
 )
 
 func initializeRouter() *httprouter.Router {
   router := httprouter.New()
 
   router.GET("/", getIndex)
-  //router.GET("/get-token", getToken
   router.GET("/blocks", getAllBlocks)
   router.GET("/block/:hash", getOneBlock)
   router.GET("/transactions/funds", getAllFundsTx)
@@ -26,21 +22,16 @@ func initializeRouter() *httprouter.Router {
   router.GET("/accounts", getTopAccounts)
   router.POST("/search/", searchForHash)
   router.POST("/login", loginFunc)
-  router.GET("/login-failed", loginFail)
-  router.GET("/adminpanel", adminNoVerif)
+  router.GET("/adminpanel", adminfunc)
+
   router.ServeFiles("/static/*filepath", http.Dir("static"))
 
   return router
 }
 
+//used for testing
 func adminNoVerif(w http.ResponseWriter, r *http.Request, params httprouter.Params)  {
   tpl.ExecuteTemplate(w, "admin.gohtml", values)
-}
-
-func getToken(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  cookie := CreateToken()
-  http.SetCookie(w, &cookie)
-  http.Redirect(w, r, "/", 307)
 }
 
 func getIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -125,7 +116,7 @@ func searchForHash(w http.ResponseWriter, r *http.Request, params httprouter.Par
 }
 
 func adminfunc(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  tokenCookie, err := ExtractCookie(r)
+  publicKeyCookie, err := GetPublicKeyCookie(r)
 	switch {
 	case err == http.ErrNoCookie:
 		w.WriteHeader(http.StatusUnauthorized)
@@ -137,75 +128,26 @@ func adminfunc(w http.ResponseWriter, r *http.Request, params httprouter.Params)
 		fmt.Fprintln(w, "Cookie parse error: %v\n")
 		return
 	}
-  token, err := ParseToken(tokenCookie)
-  switch err.(type) {
-	case nil: // no error
-		if !token.Valid { // but may still be invalid
-			w.WriteHeader(http.StatusUnauthorized)
-			fmt.Fprintln(w, "Invalid Token")
-			return
-		}
-		w.Header().Set("Content-Type", "text/html")
-		w.WriteHeader(http.StatusOK)
+
+  accountInformation := RequestAccountInformation(publicKeyCookie.Value)
+  if accountInformation.IsRoot {
     tpl.ExecuteTemplate(w, "admin.gohtml", values)
+  } else {
+    tpl.ExecuteTemplate(w, "loginfail.gohtml", 1)
+  }
 
-	case *jwt.ValidationError: // something was wrong during the validation
-		vErr := err.(*jwt.ValidationError)
-
-		switch vErr.Errors {
-		case jwt.ValidationErrorExpired:
-			w.WriteHeader(http.StatusUnauthorized)
-			fmt.Fprintln(w, "Token Expired, get a new one.")
-			return
-
-		default:
-			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintln(w, "Error while Parsing Token!")
-			fmt.Printf("ValidationError error: %+v\n", vErr.Errors)
-			return
-		}
-
-	default: // something else went wrong
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintln(w, "Error while Parsing Token!")
-		fmt.Printf("Token parse error: %v\n", err)
-		return
-	}
 }
 
 func loginFunc(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  /*
-  if r.PostFormValue("root-key-field") == "123456" {
-    cookie := CreateToken()
-    http.SetCookie(w, &cookie)
-    http.Redirect(w, r, "/", 302)
-    //http.Redirect(w, r, "/get-token", 302)
-  } else {
-    http.Redirect(w, r, "/login-failed", 302)
-  }
-  */
-  /*
-  RESTresponse, err := http.Get("http://192.41.136.199:8001/account/" + r.PostFormValue("public-key-field"))
-  if err != nil {
-    fmt.Fprintln(w, "Error while checking key!")
-    fmt.Print(err.Error())
-  }
-
-  var accountInformation JSONAccount
-  RESTresponseData, err := ioutil.ReadAll(RESTresponse.Body)
-	json.Unmarshal(RESTresponseData, &accountInformation)
-
-  fmt.Println(accountInformation.IsRoot)
+  accountInformation := RequestAccountInformation(r.PostFormValue("public-key-field"))
 
   if accountInformation.IsRoot {
-    cookie := CreateToken(r.PostFormValue("public-key-field"))
+    cookie := CreateCookie(r.PostFormValue("public-key-field"))
+    http.SetCookie(w, &cookie)
+    http.Redirect(w, r, "/adminpanel", 302)
+  } else {
+    tpl.ExecuteTemplate(w, "loginfail.gohtml", 1)
   }
-  */
-}
-
-func loginFail(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  thing := 1
-  tpl.ExecuteTemplate(w, "loginfail.gohtml", thing)
 }
 
 func getAccount(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

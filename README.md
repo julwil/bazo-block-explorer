@@ -1,9 +1,13 @@
 # Things to fix/add
-* Finish Login
-  * Cookie Setter (front/backend)
-* Error Handling
-  * Get rid of panic(err)
-  * Exceptions
-* Include POS Transactions
+## Urgent
 * Stats
 * Request System Parameters
+  * Marc
+## Not Urgent
+* Refactoring
+* Error Handling
+  * Get rid of panic(err)
+  * Exceptions and Validation
+* Include POS
+  * Struct Attributes
+  * POS Transactions

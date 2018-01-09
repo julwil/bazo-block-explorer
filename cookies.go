@@ -14,7 +14,7 @@ func CreateCookie(publicKey string) http.Cookie {
   tokenName = "publicKey"
   expireCookie := time.Now().Add(time.Minute * 10)
 
-  cookie := http.Cookie{Name: tokenName, Value: publicKey, Expires: expireCookie, HttpOnly: true}
+  cookie := http.Cookie{Name: tokenName, Value: publicKey, Expires: expireCookie}
   return cookie
 }
 

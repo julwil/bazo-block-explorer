@@ -19,7 +19,7 @@
 
       <div class="container">
         <h3>Change System Parameters</h3>
-            <h5>Current {{.BSName}}: {{.BlockSize}} Bytes</h5>
+            <h5>Current Blocksize: {{.BlockSize}} Bytes</h5>
             <form class="form-group form-horizontal">
               <div class="row">
                 <div class="col-sm-3">
@@ -37,7 +37,7 @@
               </div>
             </form>
           <div class="clr"></div>
-            <h5>Current {{.DIName}}: {{.DiffInterval}} Blocks</h5>
+            <h5>Current Difficulty Interval: {{.DiffInterval}} Blocks</h5>
             <form class="form-group form-horizontal">
               <div class="row">
                 <div class="col-sm-3">
@@ -55,7 +55,7 @@
               </div>
             </form>
           <div class="clr"></div>
-            <h5>Current {{.MFName}}: {{.MinFee}} Bazo Coins</h5>
+            <h5>Current Minimum Fee: {{.MinFee}} Bazo Coins</h5>
             <form class="config-form">
               <div class="row">
                 <div class="col-sm-3">
@@ -73,7 +73,7 @@
               </div>
             </form>
           <div class="clr"></div>
-            <h5>Current {{.BIName}}: {{.BlockInterval}} Seconds</h5>
+            <h5>Current Block Interval: {{.BlockInterval}} Seconds</h5>
             <form class="congif-form">
               <div class="row">
                 <div class="col-sm-3">
@@ -91,7 +91,7 @@
               </div>
             </form>
           <div class="clr"></div>
-            <h5>Current {{.BRName}}: {{.BlockReward}} Bazo Coins</h5>
+            <h5>Current Block Reward: {{.BlockReward}} Bazo Coins</h5>
             <form class="config-form">
               <div class="row">
                 <div class="col-sm-3">
@@ -113,7 +113,7 @@
     <br>
 
     {{template "vueImports"}}
-    
+
     <script src="/static/src/adminjs.js"></script>
 
     {{template "scriptImports"}}

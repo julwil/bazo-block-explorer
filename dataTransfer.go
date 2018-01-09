@@ -9,6 +9,7 @@ import (
   "bufio"
   "math/big"
 	"github.com/mchetelat/bazo_miner/p2p"
+  "github.com/mchetelat/bazo_miner/miner"
 	"github.com/mchetelat/bazo_miner/protocol"
 )
 
@@ -20,12 +21,27 @@ var block1 *protocol.Block
 
 func runDB() {
 
+  saveInitialParameters()
   loadAllBlocks()
 
   for 0 < 1 {
     time.Sleep(time.Second * 60)
     RefreshState()
   }
+}
+
+func saveInitialParameters()  {
+  var convertedParameters systemparams
+  parameters := miner.NewDefaultParameters()
+
+  convertedParameters.Timestamp = time.Now().Unix()
+  convertedParameters.BlockSize = parameters.Block_size
+  convertedParameters.DiffInterval = parameters.Diff_interval
+  convertedParameters.MinFee = parameters.Fee_minimum
+  convertedParameters.BlockInterval = parameters.Block_interval
+  convertedParameters.BlockReward = parameters.Diff_interval
+
+  WriteParameters(convertedParameters)
 }
 
 func loadAllBlocks() {
@@ -39,6 +55,7 @@ func loadAllBlocks() {
     SaveBlockAndTransactions(block)
     prevHash = block.PrevHash
   }
+  fmt.Println("All Blocks Loaded!")
 }
 
 func RefreshState() {
@@ -186,7 +203,9 @@ func SaveBlockAndTransactions(oneBlock *protocol.Block)  {
   for _, configTxHash := range oneBlock.ConfigTxData{
     configTx := reqTx(p2p.CONFIGTX_REQ, configTxHash)
     convertedTx := ConvertConfigTransaction(configTx.(*protocol.ConfigTx), oneBlock.Hash, configTxHash)
+    newParams := ExtractParameters(convertedTx)
 
+    WriteParameters(newParams)
     WriteConfigTx(convertedTx)
   }
 

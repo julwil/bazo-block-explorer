@@ -51,6 +51,7 @@ func ConvertFundsTransaction(unconvertedTx *protocol.FundsTx, unconvertedBlockHa
   convertedTx.TxCount = unconvertedTx.TxCnt
   convertedTx.From = fmt.Sprintf("%x", unconvertedTx.From)
   convertedTx.To = fmt.Sprintf("%x", unconvertedTx.To)
+  convertedTx.Timestamp = time.Now().Unix()
   convertedTx.Signature = fmt.Sprintf("%x", unconvertedTx.Sig)
 
   return convertedTx
@@ -65,6 +66,7 @@ func ConvertAccTransaction(unconvertedTx *protocol.AccTx, unconvertedBlockHash [
   convertedTx.Fee = unconvertedTx.Fee
   convertedTx.Issuer = fmt.Sprintf("%x", unconvertedTx.Issuer)
   convertedTx.PubKey = fmt.Sprintf("%x", unconvertedTx.PubKey)
+  convertedTx.Timestamp = time.Now().Unix()
   convertedTx.Signature = fmt.Sprintf("%x", unconvertedTx.Sig)
 
   return convertedTx
@@ -80,6 +82,7 @@ func ConvertConfigTransaction(unconvertedTx *protocol.ConfigTx, unconvertedBlock
   convertedTx.Fee = unconvertedTx.Fee
   convertedTx.Payload = unconvertedTx.Payload
   convertedTx.TxCount = unconvertedTx.TxCnt
+  convertedTx.Timestamp = time.Now().Unix()
   convertedTx.Signature = fmt.Sprintf("%x", unconvertedTx.Sig)
 
   return convertedTx
@@ -98,6 +101,27 @@ func ConvertOpenFundsTransaction(unconvertedTx *protocol.FundsTx, unconvertedTxH
   convertedTx.Signature = fmt.Sprintf("%x", unconvertedTx.Sig)
 
   return convertedTx
+}
+
+func ExtractParameters(tx configtx) systemparams {
+  currentParams := ReturnNewestParameters()
+  currentParams.Timestamp = time.Now().Unix()
+
+  switch tx.Id {
+  case 1:
+    currentParams.BlockSize = tx.Payload
+  case 2:
+    currentParams.DiffInterval = tx.Payload
+  case 3:
+    currentParams.MinFee = tx.Payload
+  case 4:
+    currentParams.BlockInterval = tx.Payload
+  case 5:
+    currentParams.BlockReward = tx.Payload
+  default:
+    return currentParams
+  }
+  return currentParams
 }
 
 func invertBlockArray(array []*protocol.Block) []*protocol.Block {

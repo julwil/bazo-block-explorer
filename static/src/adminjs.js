@@ -10,6 +10,8 @@ var app = new Vue({
     },
     setPublicKeyFromCookie: function () {
       app.accountinfo.rootpublickey = this.$cookies.get("publicKey")
+      console.log(app.accountinfo.rootpublickey)
+      console.log(this.$cookies.get("publicKey"))
     },
     signTransaction: function (txhash, privatekey) {
       console.log(txhash, privatekey);

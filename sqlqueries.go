@@ -4,6 +4,7 @@ import (
   "fmt"
   "database/sql"
   "github.com/lib/pq"
+  _ "github.com/brentp/go-chartjs"
   "strings"
 )
 
@@ -49,6 +50,7 @@ func dropTables() {
                    drop table acctx;
                    drop table configtx;
                    drop table accounts;
+                   drop table parameters;
                    drop table openfundstx;`
   db.Exec(sqlStatement)
   fmt.Println("Dropped Tables")
@@ -322,9 +324,9 @@ func WriteFundsTx(tx fundstx) {
   defer db.Close()
 
   sqlStatement = `
-    INSERT INTO fundstx (hash, blockhash, amount, fee, txcount, sender, recipient, signature)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
-  _, err = db.Exec(sqlStatement, tx.Hash, tx.BlockHash, tx.Amount, tx.Fee, tx.TxCount, tx.From, tx.To, tx.Signature)
+    INSERT INTO fundstx (hash, blockhash, amount, fee, txcount, sender, recipient, timestamp, signature)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
+  _, err = db.Exec(sqlStatement, tx.Hash, tx.BlockHash, tx.Amount, tx.Fee, tx.TxCount, tx.From, tx.To, tx.Timestamp, tx.Signature)
   if err != nil {
     panic(err)
   }
@@ -335,9 +337,9 @@ func WriteAccTx(tx acctx) {
   defer db.Close()
 
   sqlStatement = `
-    INSERT INTO acctx (hash, blockhash, fee, issuer, pubkey, signature)
-    VALUES ($1, $2, $3, $4, $5, $6)`
-  _, err = db.Exec(sqlStatement, tx.Hash, tx.BlockHash, tx.Fee, tx.Issuer, tx.PubKey, tx.Signature)
+    INSERT INTO acctx (hash, blockhash, fee, issuer, pubkey, timestamp, signature)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)`
+  _, err = db.Exec(sqlStatement, tx.Hash, tx.BlockHash, tx.Fee, tx.Issuer, tx.PubKey, tx.Timestamp, tx.Signature)
   if err != nil {
     panic(err)
   }
@@ -348,9 +350,9 @@ func WriteConfigTx(tx configtx) {
   defer db.Close()
 
   sqlStatement = `
-    INSERT INTO configtx (hash, blockhash, id, payload, fee, txcount, signature)
-    VALUES ($1, $2, $3, $4, $5, $6, $7)`
-  _, err = db.Exec(sqlStatement, tx.Hash, tx.BlockHash, tx.Id, tx.Payload, tx.Fee, tx.TxCount, tx.Signature)
+    INSERT INTO configtx (hash, blockhash, id, payload, fee, txcount, timestamp, signature)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
+  _, err = db.Exec(sqlStatement, tx.Hash, tx.BlockHash, tx.Id, tx.Payload, tx.Fee, tx.TxCount, tx.Timestamp, tx.Signature)
   if err != nil {
     panic(err)
   }
@@ -515,6 +517,40 @@ func ReturnTopAccounts(UrlHash string) []account {
   return returnedrows
 }
 
+func WriteParameters(parameters systemparams)  {
+  connectToDB()
+  defer db.Close()
+
+  sqlStatement := `INSERT INTO parameters (blocksize, diffinterval, minfee, blockinterval, blockreward, timestamp)
+                    VALUES ($1, $2, $3, $4, $5, $6)`
+
+  _, err = db.Exec(sqlStatement, parameters.BlockSize, parameters.DiffInterval, parameters.MinFee, parameters.BlockInterval, parameters.BlockReward, parameters.Timestamp)
+  if err != nil {
+    panic(err)
+  }
+}
+
+func ReturnNewestParameters() systemparams {
+  connectToDB()
+  defer db.Close()
+
+  sqlStatement := `SELECT blocksize, diffinterval, minfee, blockinterval, blockreward, timestamp FROM parameters ORDER BY timestamp DESC LIMIT 1`
+  var returnedrow systemparams
+  row := db.QueryRow(sqlStatement)
+  switch err = row.Scan(&returnedrow.BlockSize, &returnedrow.DiffInterval, &returnedrow.MinFee, &returnedrow.BlockInterval, &returnedrow.BlockReward, &returnedrow.Timestamp)
+  err {
+  case sql.ErrNoRows:
+    //on website 404 would be more suitable maybe
+  case nil:
+    return returnedrow
+  default:
+    //on website 500 error maybe.
+    panic(err)
+  }
+  var params1 systemparams
+  return params1
+}
+
 func createTables() {
   connectToDB()
   defer db.Close()
@@ -546,6 +582,7 @@ func createTables() {
                     txcount int not null,
                     sender char(64) not null,
                     recipient char(64) not null,
+                    timestamp bigint not null,
                     signature char(128) not null
                     );
 
@@ -557,6 +594,7 @@ func createTables() {
                     txcount int not null,
                     sender char(64) not null,
                     recipient char(64) not null,
+                    timestamp bigint not null,
                     signature char(128) not null
                     );
 
@@ -567,6 +605,7 @@ func createTables() {
                     issuer char(64) not null,
                     fee bigint not null,
                     pubkey char(128) not null,
+                    timestamp bigint not null,
                     signature char(128) not null
                     );
 
@@ -578,6 +617,7 @@ func createTables() {
                     payload bigint not null,
                     fee bigint not null,
                     txcount int not null,
+                    timestamp bigint not null,
                     signature char(128) not null
                     );
 
@@ -586,6 +626,15 @@ func createTables() {
                     address char(128),
                     balance bigint not null,
                     txcount int not null
+                    );
+
+                    create table parameters(
+                    timestamp bigint not null,
+                    blocksize int not null,
+                    diffinterval int not null,
+                    minfee int not null,
+                    blockinterval int not null,
+                    blockreward int not null
                     );`
                     db.Exec(sqlStatement)
   fmt.Println("Created Tables Successfully")

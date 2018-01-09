@@ -32,6 +32,7 @@ type fundstx struct {
   TxCount uint32
   From string
   To string
+  Timestamp int64
   Signature string
 }
 
@@ -41,6 +42,7 @@ type acctx struct {
   Issuer string
   Fee uint64
   PubKey string
+  Timestamp int64
   Signature string
 }
 
@@ -51,6 +53,7 @@ type configtx struct {
 	Payload uint64
 	Fee uint64
 	TxCount uint8
+  Timestamp int64
 	Signature string
 }
 
@@ -72,16 +75,13 @@ type JSONAccount struct {
 }
 
 type systemparams struct {
-  BSName string
-  BlockSize int
-  DIName string
-  DiffInterval int
-  MFName string
-  MinFee int
-  BIName string
-  BlockInterval int
-  BRName string
-  BlockReward int
+  Timestamp int64
+  BlockHash string
+  BlockSize uint64
+  DiffInterval uint64
+  MinFee uint64
+  BlockInterval uint64
+  BlockReward uint64
 }
 
 type blocksandtx struct {

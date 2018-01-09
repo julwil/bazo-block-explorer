@@ -126,7 +126,8 @@ func adminfunc(w http.ResponseWriter, r *http.Request, params httprouter.Params)
 
   accountInformation := RequestAccountInformation(publicKeyCookie.Value)
   if accountInformation.IsRoot {
-    tpl.ExecuteTemplate(w, "admin.gohtml", values)
+    parameters := ReturnNewestParameters()
+    tpl.ExecuteTemplate(w, "admin.gohtml", parameters)
   } else {
     tpl.ExecuteTemplate(w, "loginfail.gohtml", 1)
   }

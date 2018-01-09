@@ -50,8 +50,7 @@ func dropTables() {
                    drop table acctx;
                    drop table configtx;
                    drop table accounts;
-                   drop table parameters;
-                   drop table openfundstx;`
+                   drop table parameters;`
   db.Exec(sqlStatement)
   fmt.Println("Dropped Tables")
 
@@ -101,7 +100,6 @@ func ReturnAllBlocks(UrlHash string) []block {
   for rows.Next() {
     var returnedrow block
     err = rows.Scan(&returnedrow.Hash, &returnedrow.Timestamp, &returnedrow.TimeString, &returnedrow.Beneficiary, &returnedrow.NrFundsTx, &returnedrow.NrAccTx, &returnedrow.NrConfigTx)
-    //returnedrow.Timestamp = returnedrow.Timestamp[:19]
     if err != nil {
       panic(err)
     }
@@ -379,41 +377,6 @@ func checkEmptyDB() bool {
   return true
 }
 
-func WriteOpenFundsTx(tx fundstx) {
-  connectToDB()
-  defer db.Close()
-
-  sqlStatement = `
-    INSERT INTO openfundstx (hash, amount, fee, txcount, sender, recipient, signature)
-    VALUES ($1, $2, $3, $4, $5, $6, $7)`
-  _, err = db.Exec(sqlStatement, tx.Hash, tx.Amount, tx.Fee, tx.TxCount, tx.From, tx.To, tx.Signature)
-  if err != nil {
-    panic(err)
-  }
-}
-
-func ReturnOpenFundsTx(UrlHash string) fundstx {
-  connectToDB()
-  defer db.Close()
-
-  sqlStatement := `SELECT hash, amount, fee, txcount, sender, recipient, signature FROM openfundstx WHERE hash = $1;`
-  var returnedrow fundstx
-  row := db.QueryRow(sqlStatement, UrlHash)
-  switch err = row.Scan(&returnedrow.Hash, &returnedrow.Amount, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.From, &returnedrow.To, &returnedrow.Signature)
-  err {
-  case sql.ErrNoRows:
-    //on website 404 would be more suitable maybe
-    fmt.Printf("Transaction could not be found!")
-  case nil:
-    return returnedrow
-  default:
-    //on website 500 error maybe.
-    panic(err)
-  }
-  var tx1 fundstx
-  return tx1
-}
-
 func UpdateAccountData(tx fundstx) {
   connectToDB()
   defer db.Close()
@@ -495,7 +458,7 @@ func ReturnTopAccounts(UrlHash string) []account {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, address, balance, txcount FROM accounts ORDER BY balance DESC LIMIT 10`
+  sqlStatement := `SELECT hash, address, balance, txcount FROM accounts ORDER BY balance DESC LIMIT 20`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -586,18 +549,6 @@ func createTables() {
                     signature char(128) not null
                     );
 
-                    create table openfundstx (
-                    header bit(8),
-                    hash char(64) primary key,
-                    amount bigint not null,
-                    fee bigint not null,
-                    txcount int not null,
-                    sender char(64) not null,
-                    recipient char(64) not null,
-                    timestamp bigint not null,
-                    signature char(128) not null
-                    );
-
                     create table acctx(
                     header bit(8),
                     hash char(64) primary key,
@@ -636,6 +587,7 @@ func createTables() {
                     blockinterval int not null,
                     blockreward int not null
                     );`
-                    db.Exec(sqlStatement)
+                    
+  db.Exec(sqlStatement)
   fmt.Println("Created Tables Successfully")
 }

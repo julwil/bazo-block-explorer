@@ -46,15 +46,6 @@ func getAllBlocks(w http.ResponseWriter, r *http.Request, params httprouter.Para
 
 func getOneFundsTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   returnedtx := ReturnOneFundsTx(params.ByName("hash"))
-  /*
-  fmt.Println(returnedtx.Hash)
-  if returnedtx.Hash == "" {
-    fmt.Println("trying to copy opentx from network")
-    txHash := params.ByName("hash")
-    FetchOpenTx(txHash)
-    returnedtx = ReturnOpenFundsTx(params.ByName("hash"))
-  }
-  */
   tpl.ExecuteTemplate(w, "fundstx.gohtml", returnedtx)
 }
 

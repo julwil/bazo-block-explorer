@@ -1,7 +1,6 @@
 # Things to fix/add
 ## Urgent
 * Stats
-* Request System Parameters
 ## Not Urgent
 * Refactoring
 * Error Handling

@@ -66,7 +66,6 @@ func RefreshState() {
 
   if block.Hash == newestBlock.Hash {
     //No new Blocks
-
     return
 
   } else if prevHash == newestBlock.Hash {
@@ -165,20 +164,7 @@ func rcvData(c net.Conn) (header *p2p.Header, payload []byte, err error) {
 		}
 	}
 
-	//logger.Printf("Receive message:\nSender: %v\nType: %v\nPayload length: %v\n", p.getIPPort(), logMapping[header.TypeID], len(payload))
 	return header, payload, nil
-}
-
-func FetchOpenTx(txHash string){
-  //sampleHash := [32]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-  var txByteHash [32]byte
-
-  txHashInt, _ := new(big.Int).SetString(txHash, 16)
-  copy(txByteHash[:], txHashInt.Bytes())
-
-  openTx := reqTx(p2p.FUNDSTX_REQ, txByteHash)
-  convertedTx := ConvertOpenFundsTransaction(openTx.(*protocol.FundsTx), txByteHash)
-  WriteOpenFundsTx(convertedTx)
 }
 
 func SaveBlockAndTransactions(oneBlock *protocol.Block)  {

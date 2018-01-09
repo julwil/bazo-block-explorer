@@ -21,7 +21,7 @@
             <thead>
               <tr id="header-row">
                 <th>Hash</th>
-                <th style="width: 15%;">Timestamp</th>
+                <th style="width: 20%;">Timestamp</th>
                 <th style="width: 10%;">NrFundsTX</th>
                 <th style="width: 10%;">NrAccTX</th>
                 <th style="width: 10%;">NrConfigTX</th>
@@ -31,7 +31,7 @@
               {{range .Blocks}}
               <tr>
                 <td> <a href="/block/{{.Hash}}">{{.Hash}}</a></td>
-                <td>{{.Timestamp}}</td>
+                <td>{{.TimeString}}</td>
                 <td>{{.NrFundsTx}}</td>
                 <td>{{.NrAccTx}}</td>
                 <td>{{.NrConfigTx}}</td>

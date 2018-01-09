@@ -23,10 +23,8 @@ func runDB() {
   loadAllBlocks()
 
   for 0 < 1 {
-    time.Sleep(time.Second * 120)
-    fmt.Println("Refreshing State...")
+    time.Sleep(time.Second * 60)
     RefreshState()
-    fmt.Println("State refreshed!")
   }
 }
 
@@ -44,25 +42,25 @@ func loadAllBlocks() {
 }
 
 func RefreshState() {
+  fmt.Println("Refreshing State...")
   block := reqBlock(nil)
   prevHash := block.PrevHash
   tempBlock := block
 
   if block.Hash == newestBlock.Hash {
-    fmt.Println("No new blocks")
+    //No new Blocks
 
     return
 
   } else if prevHash == newestBlock.Hash {
-    fmt.Println("1 new block")
+    //One new Block
     SaveBlockAndTransactions(block)
     newestBlock = block
 
     return
 
   } else if block.Hash != newestBlock.Hash {
-    fmt.Println("Multiple new blocks")
-
+    //Multiple new Blocks
     SaveBlockAndTransactions(block)
   }
 

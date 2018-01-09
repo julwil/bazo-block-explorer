@@ -2,6 +2,7 @@ package main
 
 import (
   "database/sql"
+  _ "time"
 )
 
 type block struct {
@@ -9,6 +10,7 @@ type block struct {
   Hash string
   PrevHash string
   Timestamp int64
+  TimeString string
   MerkleRoot string
   Beneficiary string
   NrFundsTx uint16

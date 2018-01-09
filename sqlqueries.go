@@ -59,10 +59,10 @@ func ReturnOneBlock(UrlHash string) block {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, prevhash, timestamp, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata FROM blocks WHERE hash = $1;`
+  sqlStatement := `SELECT hash, prevhash, timestamp, timestring, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata FROM blocks WHERE hash = $1;`
   var returnedblock block
   row := db.QueryRow(sqlStatement, UrlHash)
-  switch err := row.Scan(&returnedblock.Hash, &returnedblock.PrevHash, &returnedblock.Timestamp, &returnedblock.MerkleRoot, &returnedblock.Beneficiary, &returnedblock.NrFundsTx, &returnedblock.NrAccTx, &returnedblock.NrConfigTx, &returnedblock.FundsTxDataString, &returnedblock.AccTxDataString, &returnedblock.ConfigTxDataString)
+  switch err := row.Scan(&returnedblock.Hash, &returnedblock.PrevHash, &returnedblock.Timestamp, &returnedblock.TimeString, &returnedblock.MerkleRoot, &returnedblock.Beneficiary, &returnedblock.NrFundsTx, &returnedblock.NrAccTx, &returnedblock.NrConfigTx, &returnedblock.FundsTxDataString, &returnedblock.AccTxDataString, &returnedblock.ConfigTxDataString)
   err {
   case sql.ErrNoRows:
     //on website 404 would be more suitable maybe
@@ -89,7 +89,7 @@ func ReturnAllBlocks(UrlHash string) []block {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, timestamp, beneficiary, nrFundsTx, nrAccTx, nrConfigTx FROM blocks ORDER BY timestamp DESC LIMIT 100`
+  sqlStatement := `SELECT hash, timestamp, timestring, beneficiary, nrFundsTx, nrAccTx, nrConfigTx FROM blocks ORDER BY timestamp DESC LIMIT 100`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -98,7 +98,7 @@ func ReturnAllBlocks(UrlHash string) []block {
   returnedrows := make([]block, 0)
   for rows.Next() {
     var returnedrow block
-    err = rows.Scan(&returnedrow.Hash, &returnedrow.Timestamp, &returnedrow.Beneficiary, &returnedrow.NrFundsTx, &returnedrow.NrAccTx, &returnedrow.NrConfigTx)
+    err = rows.Scan(&returnedrow.Hash, &returnedrow.Timestamp, &returnedrow.TimeString, &returnedrow.Beneficiary, &returnedrow.NrFundsTx, &returnedrow.NrAccTx, &returnedrow.NrConfigTx)
     //returnedrow.Timestamp = returnedrow.Timestamp[:19]
     if err != nil {
       panic(err)
@@ -258,7 +258,7 @@ func ReturnBlocksAndTransactions(UrlHash string) blocksandtx {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, timestamp, beneficiary, nrFundsTx, nrAccTx, nrConfigTx FROM blocks ORDER BY timestamp DESC LIMIT 6`
+  sqlStatement := `SELECT hash, timestamp, timestring, beneficiary, nrFundsTx, nrAccTx, nrConfigTx FROM blocks ORDER BY timestamp DESC LIMIT 6`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -267,7 +267,7 @@ func ReturnBlocksAndTransactions(UrlHash string) blocksandtx {
   returnedblocks := make([]block, 0)
   for rows.Next() {
     var returnedrow block
-    err = rows.Scan(&returnedrow.Hash, &returnedrow.Timestamp, &returnedrow.Beneficiary, &returnedrow.NrFundsTx, &returnedrow.NrAccTx, &returnedrow.NrConfigTx)
+    err = rows.Scan(&returnedrow.Hash, &returnedrow.Timestamp, &returnedrow.TimeString, &returnedrow.Beneficiary, &returnedrow.NrFundsTx, &returnedrow.NrAccTx, &returnedrow.NrConfigTx)
     //returnedrow.Timestamp = returnedrow.Timestamp[:19]
     if err != nil {
       panic(err)
@@ -309,9 +309,9 @@ func WriteBlock(block block)  {
   defer db.Close()
 
   sqlStatement = `
-    INSERT INTO blocks (hash, prevhash, timestamp, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
-  _, err = db.Exec(sqlStatement, block.Hash, block.PrevHash, block.Timestamp, block.MerkleRoot, block.Beneficiary, block.NrFundsTx, block.NrAccTx, block.NrConfigTx, pq.Array(block.FundsTxData), pq.Array(block.AccTxData), pq.Array(block.ConfigTxData))
+    INSERT INTO blocks (hash, prevhash, timestamp, timestring, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`
+  _, err = db.Exec(sqlStatement, block.Hash, block.PrevHash, block.Timestamp, block.TimeString, block.MerkleRoot, block.Beneficiary, block.NrFundsTx, block.NrAccTx, block.NrConfigTx, pq.Array(block.FundsTxData), pq.Array(block.AccTxData), pq.Array(block.ConfigTxData))
   if err != nil {
     panic(err)
   }
@@ -526,6 +526,7 @@ func createTables() {
                     prevHash char(64) not null,
                     nonce char(16),
                     timestamp bigint not null,
+                    timestring varchar(100) not null,
                     merkleRoot char(64) not null,
                     beneficiary char(64) not null,
                     nrFundsTx smallint not null,

@@ -29,11 +29,6 @@ func initializeRouter() *httprouter.Router {
   return router
 }
 
-//used for testing
-func adminNoVerif(w http.ResponseWriter, r *http.Request, params httprouter.Params)  {
-  tpl.ExecuteTemplate(w, "admin.gohtml", values)
-}
-
 func getIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   returnedrows := ReturnBlocksAndTransactions(params.ByName("hash"))
   tpl.ExecuteTemplate(w, "index.gohtml", returnedrows)

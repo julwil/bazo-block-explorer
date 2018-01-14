@@ -2,6 +2,9 @@
 ## Urgent
 * Stats
 ## Not Urgent
+* Packages
+* Installation
+* folders for src
 * Refactoring
 * Error Handling
   * Get rid of panic(err)

@@ -3,6 +3,7 @@ package main
 import (
   "fmt"
   "database/sql"
+  "time"
   "github.com/lib/pq"
   _ "github.com/brentp/go-chartjs"
   "strings"
@@ -50,7 +51,9 @@ func dropTables() {
                    drop table acctx;
                    drop table configtx;
                    drop table accounts;
-                   drop table parameters;`
+                   drop table parameters;
+                   drop table stats;
+                   drop table txhistory;`
   db.Exec(sqlStatement)
   fmt.Println("Dropped Tables")
 
@@ -381,15 +384,21 @@ func UpdateAccountData(tx fundstx) {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `UPDATE accounts SET balance = accounts.balance - $2, txcount = accounts.txcount + 1 WHERE hash = $1`
+  sqlStatement := `INSERT INTO accounts (hash, balance, txcount)
+                    VALUES ($1, $2 * -1, $3)
+                    ON CONFLICT (hash) DO UPDATE SET balance = accounts.balance - $2, txcount = accounts.txcount + 1 WHERE accounts.hash = $1`
+
   totalAmount := tx.Amount + tx.Fee
-  //totalCount := tx.TxCount + 1
-  _, err = db.Exec(sqlStatement, tx.From, totalAmount)
+  _, err = db.Exec(sqlStatement, tx.From, totalAmount, 1)
   if err != nil {
     panic(err)
   }
-  sqlStatement = `UPDATE accounts SET balance = accounts.balance + $2 WHERE hash = $1`
-  _, err = db.Exec(sqlStatement, tx.To, tx.Amount)
+
+  sqlStatement = `INSERT INTO accounts (hash, balance, txcount)
+                    VALUES ($1, $2, $3)
+                    ON CONFLICT (hash) DO UPDATE SET balance = accounts.balance + $2 WHERE accounts.hash = $1`
+
+  _, err = db.Exec(sqlStatement, tx.To, tx.Amount, 0)
   if err != nil {
     panic(err)
   }
@@ -400,7 +409,8 @@ func WriteAccountWithAddress(tx acctx, accountHash string) {
   defer db.Close()
 
   sqlStatement := `INSERT INTO accounts (hash, address, balance, txcount)
-                    VALUES ($1, $2, $3, $4)`
+                    VALUES ($1, $2, $3, $4)
+                    ON CONFLICT (hash) DO UPDATE SET address = $2`
 
   _, err = db.Exec(sqlStatement, accountHash, tx.PubKey, 0, 0)
   if err != nil {
@@ -514,12 +524,135 @@ func ReturnNewestParameters() systemparams {
   return params1
 }
 
+func RemoveRootFromDB()  {
+  connectToDB()
+  defer db.Close()
+
+  sqlStatement := `DELETE FROM accounts WHERE address IS NULL;`
+
+  _, err = db.Exec(sqlStatement)
+  if err != nil {
+    panic(err)
+  }
+}
+
+func UpdateTotals() {
+  connectToDB()
+  defer db.Close()
+  sqlStatement = `SELECT SUM(balance) FROM accounts`
+
+  var totalsupply int64
+  row := db.QueryRow(sqlStatement)
+  switch err = row.Scan(&totalsupply)
+  err {
+  case sql.ErrNoRows:
+    //on website 404 would be more suitable maybe
+  case nil:
+  default:
+    //on website 500 error maybe.
+    panic(err)
+  }
+
+  sqlStatement = `SELECT COUNT(hash) FROM accounts`
+
+  var totalaccounts int64
+  row = db.QueryRow(sqlStatement)
+  switch err = row.Scan(&totalaccounts)
+  err {
+  case sql.ErrNoRows:
+    //on website 404 would be more suitable maybe
+  case nil:
+  default:
+    //on website 500 error maybe.
+    panic(err)
+  }
+
+
+  sqlStatement = `INSERT INTO stats (totalsupply, nraccounts, timestamp) VALUES ($1, $2, $3)`
+  _, err = db.Exec(sqlStatement, totalsupply, totalaccounts, time.Now().Unix())
+  if err != nil {
+    panic(err)
+  }
+}
+
+func ReturnTotals() stats {
+  connectToDB()
+  defer db.Close()
+
+  sqlStatement := `SELECT totalsupply, nraccounts FROM stats ORDER BY timestamp DESC LIMIT 1`
+
+  var stats stats
+  row := db.QueryRow(sqlStatement)
+  switch err := row.Scan(&stats.TotalSupply, &stats.TotalNrAccounts)
+  err {
+  case sql.ErrNoRows:
+    //on website 404 would be more suitable maybe
+  case nil:
+    return stats
+  default:
+    //on website 500 error maybe.
+    panic(err)
+  }
+  return stats
+}
+
+func Return14Hours() []Serie  {
+  connectToDB()
+  defer db.Close()
+
+  sqlStatement := `SELECT hash, timestamp, nrfundstx, nracctx, nrconfigtx FROM blocks WHERE timestamp > $1;`
+  twelveHoursAgo := time.Now().Unix() - 46800
+
+  rows, err := db.Query(sqlStatement, twelveHoursAgo)
+  if err != nil {
+    panic(err)
+  }
+  defer rows.Close()
+  returnedrows := make([]block, 0)
+  for rows.Next() {
+    var returnedrow block
+    err = rows.Scan(&returnedrow.Hash, &returnedrow.Timestamp, &returnedrow.NrFundsTx, &returnedrow.NrAccTx, &returnedrow.NrConfigTx)
+    if err != nil {
+      panic(err)
+    }
+    returnedrows = append(returnedrows, returnedrow)
+  }
+  err = rows.Err()
+  if err != nil {
+    panic(err)
+  }
+
+  var series []Serie
+  currentHourTxs := 0
+  timeThreshold := time.Unix(returnedrows[0].Timestamp, 0).Add(time.Duration(-1)*time.Hour)
+  fmt.Println(timeThreshold.Format("15:04"))
+
+  for _, block := range returnedrows {
+    if block.Timestamp > timeThreshold.Unix() {
+      currentHourTxs = currentHourTxs + int(block.NrFundsTx) + int(block.NrAccTx) + int(block.NrConfigTx)
+    } else {
+      series = append(series, Serie{timeThreshold.Format("15:04"), currentHourTxs})
+      fmt.Println(currentHourTxs)
+
+      timeThreshold = timeThreshold.Add(time.Duration(-3600)*time.Second)
+      fmt.Println(timeThreshold.Format("15:04"))
+      currentHourTxs = int(block.NrFundsTx) + int(block.NrAccTx) + int(block.NrConfigTx)
+    }
+  }
+  series = append(series, Serie{timeThreshold.Format("15:04"), currentHourTxs})
+
+
+  return series
+
+
+}
+
 func createTables() {
   connectToDB()
   defer db.Close()
   fmt.Println("Creating Tables...")
 
-  sqlStatement :=   `create table blocks (
+  sqlStatement1 :=  `create table blocks (
                     header bit(8),
                     hash char(64) primary key,
                     prevHash char(64) not null,
@@ -547,9 +680,9 @@ func createTables() {
                     recipient char(64) not null,
                     timestamp bigint not null,
                     signature char(128) not null
-                    );
+                    );`
 
-                    create table acctx(
+  sqlStatement2 :=  `create table acctx(
                     header bit(8),
                     hash char(64) primary key,
                     blockhash char(64),
@@ -570,9 +703,9 @@ func createTables() {
                     txcount int not null,
                     timestamp bigint not null,
                     signature char(128) not null
-                    );
+                    );`
 
-                    create table accounts(
+  sqlStatement3 :=  `create table accounts(
                     hash char(64) primary key,
                     address char(128),
                     balance bigint not null,
@@ -586,8 +719,23 @@ func createTables() {
                     minfee int not null,
                     blockinterval int not null,
                     blockreward int not null
+                    );
+
+                    create table stats(
+                    totalsupply bigint,
+                    nraccounts bigint,
+                    timestamp bigint
+                    );
+
+                    create table txhistory(
+                    timestring varchar(100) not null,
+                    timestamp bigint not null,
+                    txnumber bigint DEFAULT 0
                     );`
-                    
-  db.Exec(sqlStatement)
+
+  db.Exec(sqlStatement1)
+  db.Exec(sqlStatement2)
+  db.Exec(sqlStatement3)
+
   fmt.Println("Created Tables Successfully")
 }

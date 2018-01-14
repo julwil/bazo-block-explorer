@@ -7,7 +7,7 @@ import (
   "time"
   "errors"
   "bufio"
-  "math/big"
+  _"math/big"
 	"github.com/mchetelat/bazo_miner/p2p"
   "github.com/mchetelat/bazo_miner/miner"
 	"github.com/mchetelat/bazo_miner/protocol"
@@ -55,6 +55,8 @@ func loadAllBlocks() {
     SaveBlockAndTransactions(block)
     prevHash = block.PrevHash
   }
+  RemoveRootFromDB()
+  UpdateTotals()
   fmt.Println("All Blocks Loaded!")
 }
 
@@ -66,6 +68,8 @@ func RefreshState() {
 
   if block.Hash == newestBlock.Hash {
     //No new Blocks
+    RemoveRootFromDB()
+    UpdateTotals()
     return
 
   } else if prevHash == newestBlock.Hash {
@@ -73,6 +77,8 @@ func RefreshState() {
     SaveBlockAndTransactions(block)
     newestBlock = block
 
+    RemoveRootFromDB()
+    UpdateTotals()
     return
 
   } else if block.Hash != newestBlock.Hash {
@@ -86,6 +92,9 @@ func RefreshState() {
     SaveBlockAndTransactions(block)
   }
   newestBlock = tempBlock
+
+  RemoveRootFromDB()
+  UpdateTotals()
 }
 
 func Connect(connectionString string) (conn net.Conn) {

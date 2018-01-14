@@ -3,6 +3,7 @@ package main
 import (
     "fmt"
     "net/http"
+    "encoding/json"
     "github.com/julienschmidt/httprouter"
 )
 
@@ -20,6 +21,7 @@ func initializeRouter() *httprouter.Router {
   router.GET("/transactions/config/:hash", getOneConfigTx)
   router.GET("/account/:hash", getAccount)
   router.GET("/accounts", getTopAccounts)
+  router.GET("/stats", getStats)
   router.POST("/search/", searchForHash)
   router.POST("/login", loginFunc)
   router.GET("/adminpanel", adminfunc)
@@ -145,4 +147,14 @@ func getAccount(w http.ResponseWriter, r *http.Request, params httprouter.Params
 func getTopAccounts(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   returnedaccounts := ReturnTopAccounts(params.ByName("hash"))
   tpl.ExecuteTemplate(w, "accounts.gohtml", returnedaccounts)
+}
+
+func getStats(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  stats := ReturnTotals()
+  stats.Parameters = ReturnNewestParameters()
+  chartData := Return14Hours()
+  b, _ := json.Marshal(chartData)
+  stats.ChartData = string(b)
+
+  tpl.ExecuteTemplate(w, "stats.gohtml", stats)
 }

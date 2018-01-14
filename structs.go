@@ -93,3 +93,15 @@ type accountwithtxs struct {
   Account account
   Txs []fundstx
 }
+
+type stats struct {
+  ChartData string
+  TotalSupply int
+  TotalNrAccounts int
+  Parameters systemparams
+}
+
+type Serie struct {
+  Name  string `json:"x"`
+	Value int    `json:"value"`
+}

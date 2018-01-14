@@ -18,7 +18,7 @@ func ConvertBlock(unconvertedBlock *protocol.Block) block {
   convertedBlock.PrevHash = fmt.Sprintf("%x", unconvertedBlock.PrevHash)
   //convertedBlock.Nonce = fmt.Sprintf("%x", unconvertedBlock.Nonce)
   convertedBlock.Timestamp = unconvertedBlock.Timestamp
-  convertedBlock.TimeString = time.Unix(unconvertedBlock.Timestamp, 0).Format("02 Jan 2006 15:04:12")
+  convertedBlock.TimeString = time.Unix(unconvertedBlock.Timestamp, 0).Format("02 Jan 2006 15:04")
   convertedBlock.MerkleRoot = fmt.Sprintf("%x", unconvertedBlock.MerkleRoot)
   convertedBlock.Beneficiary = fmt.Sprintf("%x", unconvertedBlock.Beneficiary)
   convertedBlock.NrFundsTx = unconvertedBlock.NrFundsTx

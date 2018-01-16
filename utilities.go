@@ -80,7 +80,11 @@ func ConvertConfigTransaction(unconvertedTx *protocol.ConfigTx, unconvertedBlock
   convertedTx.BlockHash = fmt.Sprintf("%x", unconvertedBlockHash)
   convertedTx.Id = unconvertedTx.Id
   convertedTx.Fee = unconvertedTx.Fee
-  convertedTx.Payload = unconvertedTx.Payload
+  if unconvertedTx.Payload > 10000000 {
+    convertedTx.Payload = 10000000
+  } else {
+    convertedTx.Payload = unconvertedTx.Payload
+  }
   convertedTx.TxCount = unconvertedTx.TxCnt
   convertedTx.Timestamp = time.Now().Unix()
   convertedTx.Signature = fmt.Sprintf("%x", unconvertedTx.Sig)

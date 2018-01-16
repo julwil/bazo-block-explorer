@@ -621,30 +621,28 @@ func Return14Hours() []Serie  {
   if err != nil {
     panic(err)
   }
+  if len(returnedrows) == 0 {
+    var emptySeries []Serie
+    return emptySeries
+  }
 
   var series []Serie
   currentHourTxs := 0
   timeThreshold := time.Unix(returnedrows[0].Timestamp, 0).Add(time.Duration(-1)*time.Hour)
-  fmt.Println(timeThreshold.Format("15:04"))
 
   for _, block := range returnedrows {
     if block.Timestamp > timeThreshold.Unix() {
       currentHourTxs = currentHourTxs + int(block.NrFundsTx) + int(block.NrAccTx) + int(block.NrConfigTx)
     } else {
       series = append(series, Serie{timeThreshold.Format("15:04"), currentHourTxs})
-      fmt.Println(currentHourTxs)
 
       timeThreshold = timeThreshold.Add(time.Duration(-3600)*time.Second)
-      fmt.Println(timeThreshold.Format("15:04"))
       currentHourTxs = int(block.NrFundsTx) + int(block.NrAccTx) + int(block.NrConfigTx)
     }
   }
   series = append(series, Serie{timeThreshold.Format("15:04"), currentHourTxs})
 
-
   return series
-
-
 }
 
 func createTables() {
@@ -733,9 +731,18 @@ func createTables() {
                     txnumber bigint DEFAULT 0
                     );`
 
-  db.Exec(sqlStatement1)
-  db.Exec(sqlStatement2)
-  db.Exec(sqlStatement3)
+  _, err := db.Exec(sqlStatement1)
+  if err != nil {
+    panic(err)
+  }
+  _, err = db.Exec(sqlStatement2)
+  if err != nil {
+    panic(err)
+  }
+  _, err = db.Exec(sqlStatement3)
+  if err != nil {
+    panic(err)
+  }
 
   fmt.Println("Created Tables Successfully")
 }

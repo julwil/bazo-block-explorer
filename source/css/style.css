@@ -1,189 +1,29 @@
-/* CURRENTLY NOT IN USE */
-*{
-  margin: 0;
-  padding: 0;
+#navSearchInput input[type=text] {
+  width: 600px !important;
 }
 
-body{
-  /*font-family: Arial, Helvetica, sans-serif;*/
-  font-family: 'Open Sans', sans-serif;
-  font-size: 16px;
-  line-height: 1.6;
-  padding: 0;
-  margin: 0;
-  background-color: #white;
+#configInput input[type=number] {
+  width: 10px !important;
 }
 
-/* Global */
-
-.container{
-  width: 80%;
-  margin-left:10%;
-  display: block;
+.table {
+  table-layout: fixed !important;
 }
 
-.clr{
-  clear: both;
+.table td {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
-a {
-  color: #040301;
+/*
+.data-table#transactions-table {
+  font-size: 12px; !important;
 }
-
-/* Header */
-
-header{
-  background-color: white;
-  padding: 30px 0px;
-  min-height: 30px;
-  width: 100%;
-  display: block;
+*/
+/*
+.container {
+  margin-right: 5%;
+  margin-left: 5%;
 }
-
-header #page-title a{
-  float: left;
-  line-height: 1;
-  font-size: inherit;
-  font-weight: bolder;
-  text-decoration: underline;
-}
-
-header ul{
-  float: right;
-}
-
-header a{
-  text-decoration: none;
-  font-size: 20px;
-}
-
-header li{
-  float: left;
-  display: inline;
-  margin-left: 40px;
-}
-
-.current a{
-  color: #999999;
-}
-
-/* Search Bar */
-
-#search-bar{
-min-height: 30px;
-padding: 30px 0;
-background-color: #77A0C3;
-}
-
-#search-bar input[type="text"]{
-  float: left;
-  height: 30px;
-  width: 80%;
-  border: none;
-  text-indent: 9px;
-  font-size: 15px;
-}
-
-#search-bar #search-button{
-float: right;
-height: 30px;
-width: 20%;
-border: none;
-background-color: #4E7077;
-color: white;
-font-size: 15px;
-}
-
-/* Data Tables */
-.table-title{
-  margin-top: 15px;
-}
-
-.data-table {
-  display: table;
-  margin: 20px 0;
-  width: 100%;
-  background-color: white;
-}
-
-.data-table table{
-  width: 100%;
-  border-collapse: collapse;
-
-}
-.data-table tr{
-  height: 40px;
-  border-bottom: 1px solid #efefef;
-}
-
-#header-row{
-  border-bottom: 2px solid #efefef;
-}
-
-.data-table th{
-  text-align: left;
-  padding-left: 3px;
-}
-
-.data-table td{
-  text-align: left;
-  padding-left: 3px;
-  font-family: monospace;
-
-}
-
-/* About */
-
-#about{
-  background-color: white;
-  padding: 3px;
-}
-
-#about h1{
-  background-color: white;
-  padding: 6px;
-}
-
-/* Admin Panel*/
-#parameter-list ul{
-  list-style-type: none;
-}
-
-#parameter-list li{
-  margin-top: 20px;
-}
-
-#parameter-list input[type="number"]{
-  float: left;
-  height: 26px;
-  width: 30%;
-  border: none;
-  text-indent: 9px;
-  font-size: 15px;
-  border: 2px solid #4E7077;
-}
-
-#parameter-list input[type="submit"]{
-  float: left;
-  height: 30px;
-  width: 10%;
-  border: none;
-  background-color: #4E7077;
-  color: white;
-  font-size: 15px;
-}
-
-/* Footer */
-
-footer{
-  background-color: #77A0C3;
-  font-size: 16px;
-  text-align: center;
-  margin-top: 20px;
-  padding-top: 20px;
-  padding-bottom: 20px;
-}
-
-footer p{
-  color:white;
-}
+*/

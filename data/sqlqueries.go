@@ -1,11 +1,11 @@
-package main
+package data
 
 import (
+  "BazoBlockExplorer/utilities"
   "fmt"
   "database/sql"
   "time"
   "github.com/lib/pq"
-  _ "github.com/brentp/go-chartjs"
   "strings"
 )
 
@@ -59,12 +59,12 @@ func dropTables() {
 
 }
 
-func ReturnOneBlock(UrlHash string) block {
+func ReturnOneBlock(UrlHash string) utilities.Block {
   connectToDB()
   defer db.Close()
 
   sqlStatement := `SELECT hash, prevhash, timestamp, timestring, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata FROM blocks WHERE hash = $1;`
-  var returnedblock block
+  var returnedblock utilities.Block
   row := db.QueryRow(sqlStatement, UrlHash)
   switch err := row.Scan(&returnedblock.Hash, &returnedblock.PrevHash, &returnedblock.Timestamp, &returnedblock.TimeString, &returnedblock.MerkleRoot, &returnedblock.Beneficiary, &returnedblock.NrFundsTx, &returnedblock.NrAccTx, &returnedblock.NrConfigTx, &returnedblock.FundsTxDataString, &returnedblock.AccTxDataString, &returnedblock.ConfigTxDataString)
   err {
@@ -85,11 +85,11 @@ func ReturnOneBlock(UrlHash string) block {
     //on website 500 error maybe.
     panic(err)
   }
-  var block1 block
-  return block1
+
+  return returnedblock
 }
 
-func ReturnAllBlocks(UrlHash string) []block {
+func ReturnAllBlocks(UrlHash string) []utilities.Block {
   connectToDB()
   defer db.Close()
 
@@ -99,9 +99,9 @@ func ReturnAllBlocks(UrlHash string) []block {
     panic(err)
   }
   defer rows.Close()
-  returnedrows := make([]block, 0)
+  returnedrows := make([]utilities.Block, 0)
   for rows.Next() {
-    var returnedrow block
+    var returnedrow utilities.Block
     err = rows.Scan(&returnedrow.Hash, &returnedrow.Timestamp, &returnedrow.TimeString, &returnedrow.Beneficiary, &returnedrow.NrFundsTx, &returnedrow.NrAccTx, &returnedrow.NrConfigTx)
     if err != nil {
       panic(err)
@@ -115,12 +115,12 @@ func ReturnAllBlocks(UrlHash string) []block {
   return returnedrows
 }
 
-func ReturnOneFundsTx(UrlHash string) fundstx {
+func ReturnOneFundsTx(UrlHash string) utilities.Fundstx {
   connectToDB()
   defer db.Close()
 
   sqlStatement := `SELECT hash, blockhash, amount, fee, txcount, sender, recipient, signature FROM fundstx WHERE hash = $1;`
-  var returnedrow fundstx
+  var returnedrow utilities.Fundstx
   row := db.QueryRow(sqlStatement, UrlHash)
   switch err = row.Scan(&returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Amount, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.From, &returnedrow.To, &returnedrow.Signature)
   err {
@@ -132,11 +132,10 @@ func ReturnOneFundsTx(UrlHash string) fundstx {
     //on website 500 error maybe.
     panic(err)
   }
-  var tx1 fundstx
-  return tx1
+  return returnedrow
 }
 
-func ReturnAllFundsTx(UrlHash string) []fundstx {
+func ReturnAllFundsTx(UrlHash string) []utilities.Fundstx {
   connectToDB()
   defer db.Close()
 
@@ -146,9 +145,9 @@ func ReturnAllFundsTx(UrlHash string) []fundstx {
     panic(err)
   }
   defer rows.Close()
-  returnedrows := make([]fundstx, 0)
+  returnedrows := make([]utilities.Fundstx, 0)
   for rows.Next() {
-    var returnedrow fundstx
+    var returnedrow utilities.Fundstx
     err = rows.Scan(&returnedrow.Hash, &returnedrow.Amount, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.From, &returnedrow.To, &returnedrow.Signature)
     if err != nil {
       panic(err)
@@ -162,12 +161,12 @@ func ReturnAllFundsTx(UrlHash string) []fundstx {
   return returnedrows
 }
 
-func ReturnOneAccTx(UrlHash string) acctx {
+func ReturnOneAccTx(UrlHash string) utilities.Acctx {
   connectToDB()
   defer db.Close()
 
   sqlStatement := `SELECT hash, blockhash, issuer, fee, pubkey, signature FROM acctx WHERE hash = $1;`
-  var returnedrow acctx
+  var returnedrow utilities.Acctx
   row := db.QueryRow(sqlStatement, UrlHash)
   switch err = row.Scan(&returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Issuer, &returnedrow.Fee, &returnedrow.PubKey, &returnedrow.Signature)
   err {
@@ -179,11 +178,11 @@ func ReturnOneAccTx(UrlHash string) acctx {
     //on website 500 error maybe.
     panic(err)
   }
-  var tx1 acctx
-  return tx1
+
+  return returnedrow
 }
 
-func ReturnAllAccTx(UrlHash string) []acctx {
+func ReturnAllAccTx(UrlHash string) []utilities.Acctx {
   connectToDB()
   defer db.Close()
 
@@ -193,9 +192,9 @@ func ReturnAllAccTx(UrlHash string) []acctx {
     panic(err)
   }
   defer rows.Close()
-  returnedrows := make([]acctx, 0)
+  returnedrows := make([]utilities.Acctx, 0)
   for rows.Next() {
-    var returnedrow acctx
+    var returnedrow utilities.Acctx
     err = rows.Scan(&returnedrow.Hash, &returnedrow.Issuer, &returnedrow.Fee, &returnedrow.PubKey)
     if err != nil {
       panic(err)
@@ -209,12 +208,12 @@ func ReturnAllAccTx(UrlHash string) []acctx {
   return returnedrows
 }
 
-func ReturnOneConfigTx(UrlHash string) configtx {
+func ReturnOneConfigTx(UrlHash string) utilities.Configtx {
   connectToDB()
   defer db.Close()
 
   sqlStatement := `SELECT hash, blockhash, id, payload, fee, txcount, signature FROM configtx WHERE hash = $1;`
-  var returnedrow configtx
+  var returnedrow utilities.Configtx
   row := db.QueryRow(sqlStatement, UrlHash)
   switch err = row.Scan(&returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Id, &returnedrow.Payload, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.Signature)
   err {
@@ -226,11 +225,11 @@ func ReturnOneConfigTx(UrlHash string) configtx {
     //on website 500 error maybe.
     panic(err)
   }
-  var tx1 configtx
-  return tx1
+
+  return returnedrow
 }
 
-func ReturnAllConfigTx(UrlHash string) []configtx {
+func ReturnAllConfigTx(UrlHash string) []utilities.Configtx {
   connectToDB()
   defer db.Close()
 
@@ -240,9 +239,9 @@ func ReturnAllConfigTx(UrlHash string) []configtx {
     panic(err)
   }
   defer rows.Close()
-  returnedrows := make([]configtx, 0)
+  returnedrows := make([]utilities.Configtx, 0)
   for rows.Next() {
-    var returnedrow configtx
+    var returnedrow utilities.Configtx
     err = rows.Scan(&returnedrow.Hash, &returnedrow.Id, &returnedrow.Payload, &returnedrow.Fee, &returnedrow.TxCount)
     if err != nil {
       panic(err)
@@ -256,8 +255,8 @@ func ReturnAllConfigTx(UrlHash string) []configtx {
   return returnedrows
 }
 
-func ReturnBlocksAndTransactions(UrlHash string) blocksandtx {
-  var returnedBlocksAndTxs blocksandtx
+func ReturnBlocksAndTransactions(UrlHash string) utilities.Blocksandtx {
+  var returnedBlocksAndTxs utilities.Blocksandtx
   connectToDB()
   defer db.Close()
 
@@ -267,9 +266,9 @@ func ReturnBlocksAndTransactions(UrlHash string) blocksandtx {
     panic(err)
   }
   defer rows.Close()
-  returnedblocks := make([]block, 0)
+  returnedblocks := make([]utilities.Block, 0)
   for rows.Next() {
-    var returnedrow block
+    var returnedrow utilities.Block
     err = rows.Scan(&returnedrow.Hash, &returnedrow.Timestamp, &returnedrow.TimeString, &returnedrow.Beneficiary, &returnedrow.NrFundsTx, &returnedrow.NrAccTx, &returnedrow.NrConfigTx)
     //returnedrow.Timestamp = returnedrow.Timestamp[:19]
     if err != nil {
@@ -288,9 +287,9 @@ func ReturnBlocksAndTransactions(UrlHash string) blocksandtx {
     panic(err)
   }
   defer rows.Close()
-  returnedtxs := make([]fundstx, 0)
+  returnedtxs := make([]utilities.Fundstx, 0)
   for rows.Next() {
-    var returnedrow fundstx
+    var returnedrow utilities.Fundstx
     err = rows.Scan(&returnedrow.Hash, &returnedrow.Amount, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.From, &returnedrow.To, &returnedrow.Signature)
     if err != nil {
       panic(err)
@@ -307,7 +306,7 @@ func ReturnBlocksAndTransactions(UrlHash string) blocksandtx {
   return returnedBlocksAndTxs
 }
 
-func WriteBlock(block block)  {
+func WriteBlock(block utilities.Block)  {
   connectToDB()
   defer db.Close()
 
@@ -320,7 +319,7 @@ func WriteBlock(block block)  {
   }
 }
 
-func WriteFundsTx(tx fundstx) {
+func WriteFundsTx(tx utilities.Fundstx) {
   connectToDB()
   defer db.Close()
 
@@ -333,7 +332,7 @@ func WriteFundsTx(tx fundstx) {
   }
 }
 
-func WriteAccTx(tx acctx) {
+func WriteAccTx(tx utilities.Acctx) {
   connectToDB()
   defer db.Close()
 
@@ -346,7 +345,7 @@ func WriteAccTx(tx acctx) {
   }
 }
 
-func WriteConfigTx(tx configtx) {
+func WriteConfigTx(tx utilities.Configtx) {
   connectToDB()
   defer db.Close()
 
@@ -380,7 +379,7 @@ func checkEmptyDB() bool {
   return true
 }
 
-func UpdateAccountData(tx fundstx) {
+func UpdateAccountData(tx utilities.Fundstx) {
   connectToDB()
   defer db.Close()
 
@@ -404,7 +403,7 @@ func UpdateAccountData(tx fundstx) {
   }
 }
 
-func WriteAccountWithAddress(tx acctx, accountHash string) {
+func WriteAccountWithAddress(tx utilities.Acctx, accountHash string) {
   connectToDB()
   defer db.Close()
 
@@ -418,14 +417,14 @@ func WriteAccountWithAddress(tx acctx, accountHash string) {
   }
 }
 
-func ReturnOneAccount(UrlHash string) accountwithtxs {
-  var returnedData accountwithtxs
+func ReturnOneAccount(UrlHash string) utilities.Accountwithtxs {
+  var returnedData utilities.Accountwithtxs
 
   connectToDB()
   defer db.Close()
 
   sqlStatement := `SELECT hash, address, balance, txcount FROM accounts WHERE hash = $1 OR address = $1`
-  var returnedaccount account
+  var returnedaccount utilities.Account
   row := db.QueryRow(sqlStatement, UrlHash)
   switch err = row.Scan(&returnedaccount.Hash, &returnedaccount.Address, &returnedaccount.Balance, &returnedaccount.TxCount)
   err {
@@ -441,9 +440,9 @@ func ReturnOneAccount(UrlHash string) accountwithtxs {
       panic(err)
     }
     defer rows.Close()
-    returnedrows := make([]fundstx, 0)
+    returnedrows := make([]utilities.Fundstx, 0)
     for rows.Next() {
-      var returnedrow fundstx
+      var returnedrow utilities.Fundstx
       err = rows.Scan(&returnedrow.Hash, &returnedrow.Amount, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.From, &returnedrow.To)
       if err != nil {
         panic(err)
@@ -464,7 +463,7 @@ func ReturnOneAccount(UrlHash string) accountwithtxs {
   return returnedData
 }
 
-func ReturnTopAccounts(UrlHash string) []account {
+func ReturnTopAccounts(UrlHash string) []utilities.Account {
   connectToDB()
   defer db.Close()
 
@@ -474,9 +473,9 @@ func ReturnTopAccounts(UrlHash string) []account {
     panic(err)
   }
   defer rows.Close()
-  returnedrows := make([]account, 0)
+  returnedrows := make([]utilities.Account, 0)
   for rows.Next() {
-    var returnedrow account
+    var returnedrow utilities.Account
     err = rows.Scan(&returnedrow.Hash, &returnedrow.Address, &returnedrow.Balance, &returnedrow.TxCount)
     if err != nil {
       panic(err)
@@ -490,7 +489,7 @@ func ReturnTopAccounts(UrlHash string) []account {
   return returnedrows
 }
 
-func WriteParameters(parameters systemparams)  {
+func WriteParameters(parameters utilities.Systemparams)  {
   connectToDB()
   defer db.Close()
 
@@ -503,12 +502,12 @@ func WriteParameters(parameters systemparams)  {
   }
 }
 
-func ReturnNewestParameters() systemparams {
+func ReturnNewestParameters() utilities.Systemparams {
   connectToDB()
   defer db.Close()
 
   sqlStatement := `SELECT blocksize, diffinterval, minfee, blockinterval, blockreward, timestamp FROM parameters ORDER BY timestamp DESC LIMIT 1`
-  var returnedrow systemparams
+  var returnedrow utilities.Systemparams
   row := db.QueryRow(sqlStatement)
   switch err = row.Scan(&returnedrow.BlockSize, &returnedrow.DiffInterval, &returnedrow.MinFee, &returnedrow.BlockInterval, &returnedrow.BlockReward, &returnedrow.Timestamp)
   err {
@@ -520,8 +519,8 @@ func ReturnNewestParameters() systemparams {
     //on website 500 error maybe.
     panic(err)
   }
-  var params1 systemparams
-  return params1
+
+  return returnedrow
 }
 
 func RemoveRootFromDB()  {
@@ -575,13 +574,13 @@ func UpdateTotals() {
   }
 }
 
-func ReturnTotals() stats {
+func ReturnTotals() utilities.Stats {
   connectToDB()
   defer db.Close()
 
   sqlStatement := `SELECT totalsupply, nraccounts FROM stats ORDER BY timestamp DESC LIMIT 1`
 
-  var stats stats
+  var stats utilities.Stats
   row := db.QueryRow(sqlStatement)
   switch err := row.Scan(&stats.TotalSupply, &stats.TotalNrAccounts)
   err {
@@ -596,7 +595,7 @@ func ReturnTotals() stats {
   return stats
 }
 
-func Return14Hours() []Serie  {
+func Return14Hours() []utilities.Serie  {
   connectToDB()
   defer db.Close()
 
@@ -608,9 +607,9 @@ func Return14Hours() []Serie  {
     panic(err)
   }
   defer rows.Close()
-  returnedrows := make([]block, 0)
+  returnedrows := make([]utilities.Block, 0)
   for rows.Next() {
-    var returnedrow block
+    var returnedrow utilities.Block
     err = rows.Scan(&returnedrow.Hash, &returnedrow.Timestamp, &returnedrow.NrFundsTx, &returnedrow.NrAccTx, &returnedrow.NrConfigTx)
     if err != nil {
       panic(err)
@@ -622,11 +621,11 @@ func Return14Hours() []Serie  {
     panic(err)
   }
   if len(returnedrows) == 0 {
-    var emptySeries []Serie
+    var emptySeries []utilities.Serie
     return emptySeries
   }
 
-  var series []Serie
+  var series []utilities.Serie
   currentHourTxs := 0
   timeThreshold := time.Unix(returnedrows[0].Timestamp, 0).Add(time.Duration(-1)*time.Hour)
 
@@ -634,13 +633,13 @@ func Return14Hours() []Serie  {
     if block.Timestamp > timeThreshold.Unix() {
       currentHourTxs = currentHourTxs + int(block.NrFundsTx) + int(block.NrAccTx) + int(block.NrConfigTx)
     } else {
-      series = append(series, Serie{timeThreshold.Format("15:04"), currentHourTxs})
+      series = append(series, utilities.Serie{timeThreshold.Format("15:04"), currentHourTxs})
 
       timeThreshold = timeThreshold.Add(time.Duration(-3600)*time.Second)
       currentHourTxs = int(block.NrFundsTx) + int(block.NrAccTx) + int(block.NrConfigTx)
     }
   }
-  series = append(series, Serie{timeThreshold.Format("15:04"), currentHourTxs})
+  series = append(series, utilities.Serie{timeThreshold.Format("15:04"), currentHourTxs})
 
   return series
 }

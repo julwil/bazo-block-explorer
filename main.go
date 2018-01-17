@@ -2,22 +2,16 @@ package main
 
 import (
   _"os"
+  "BazoBlockExplorer/router"
   "fmt"
   "net/http"
-  "html/template"
 )
 
-var tpl *template.Template
-
-func init() {
-  tpl = template.Must(template.ParseGlob("source/html/*"))
-}
-
 func main() {
-  router := initializeRouter()
+  requestRouter := router.InitializeRouter()
 
   //setupDB()
   //go runDB()
   fmt.Println("Listening...")
-  http.ListenAndServe(":8080", router)
+  http.ListenAndServe(":8080", requestRouter)
 }

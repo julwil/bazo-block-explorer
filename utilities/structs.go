@@ -1,11 +1,10 @@
-package main
+package utilities
 
 import (
   "database/sql"
-  _ "time"
 )
 
-type block struct {
+type Block struct {
   Header string
   Hash string
   PrevHash string
@@ -24,7 +23,7 @@ type block struct {
   ConfigTxData []string
 }
 
-type fundstx struct {
+type Fundstx struct {
   Hash string
   BlockHash string
   Amount uint64
@@ -36,7 +35,7 @@ type fundstx struct {
   Signature string
 }
 
-type acctx struct {
+type Acctx struct {
   Hash string
   BlockHash string
   Issuer string
@@ -46,7 +45,7 @@ type acctx struct {
   Signature string
 }
 
-type configtx struct {
+type Configtx struct {
   Hash string
   BlockHash string
 	Id uint8
@@ -57,7 +56,7 @@ type configtx struct {
 	Signature string
 }
 
-type account struct {
+type Account struct {
   Hash string
   Address string
   Balance int64
@@ -74,7 +73,7 @@ type JSONAccount struct {
 	IsRoot        bool     `json:"isRoot"`
 }
 
-type systemparams struct {
+type Systemparams struct {
   Timestamp int64
   BlockHash string
   BlockSize uint64
@@ -84,21 +83,21 @@ type systemparams struct {
   BlockReward uint64
 }
 
-type blocksandtx struct {
-  Blocks []block
-  Txs []fundstx
+type Blocksandtx struct {
+  Blocks []Block
+  Txs []Fundstx
 }
 
-type accountwithtxs struct {
-  Account account
-  Txs []fundstx
+type Accountwithtxs struct {
+  Account Account
+  Txs []Fundstx
 }
 
-type stats struct {
+type Stats struct {
   ChartData string
   TotalSupply int
   TotalNrAccounts int
-  Parameters systemparams
+  Parameters Systemparams
 }
 
 type Serie struct {

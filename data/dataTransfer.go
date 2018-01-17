@@ -1,22 +1,20 @@
-package main
+package data
 
 import (
+  "BazoBlockExplorer/utilities"
   "net"
   "fmt"
   "log"
   "time"
   "errors"
   "bufio"
-  _"math/big"
 	"github.com/mchetelat/bazo_miner/p2p"
   "github.com/mchetelat/bazo_miner/miner"
 	"github.com/mchetelat/bazo_miner/protocol"
 )
 
 var newestBlock *protocol.Block
-
 var logger *log.Logger
-
 var block1 *protocol.Block
 
 func runDB() {
@@ -31,7 +29,7 @@ func runDB() {
 }
 
 func saveInitialParameters()  {
-  var convertedParameters systemparams
+  var convertedParameters utilities.Systemparams
   parameters := miner.NewDefaultParameters()
 
   convertedParameters.Timestamp = time.Now().Unix()
@@ -179,8 +177,8 @@ func rcvData(c net.Conn) (header *p2p.Header, payload []byte, err error) {
 func SaveBlockAndTransactions(oneBlock *protocol.Block)  {
   for _, accTxHash := range oneBlock.AccTxData{
     accTx := reqTx(p2p.ACCTX_REQ, accTxHash)
-    convertedTx := ConvertAccTransaction(accTx.(*protocol.AccTx), oneBlock.Hash, accTxHash)
-    accountHashBytes := SerializeHashContent(accTx.(*protocol.AccTx).PubKey)
+    convertedTx := utilities.ConvertAccTransaction(accTx.(*protocol.AccTx), oneBlock.Hash, accTxHash)
+    accountHashBytes := utilities.SerializeHashContent(accTx.(*protocol.AccTx).PubKey)
     accountHash := fmt.Sprintf("%x", accountHashBytes)
 
     WriteAccountWithAddress(convertedTx, accountHash)
@@ -189,7 +187,7 @@ func SaveBlockAndTransactions(oneBlock *protocol.Block)  {
 
   for _, fundsTxHash := range oneBlock.FundsTxData{
     fundsTx := reqTx(p2p.FUNDSTX_REQ, fundsTxHash)
-    convertedTx := ConvertFundsTransaction(fundsTx.(*protocol.FundsTx), oneBlock.Hash, fundsTxHash)
+    convertedTx := utilities.ConvertFundsTransaction(fundsTx.(*protocol.FundsTx), oneBlock.Hash, fundsTxHash)
 
     UpdateAccountData(convertedTx)
     WriteFundsTx(convertedTx)
@@ -197,13 +195,14 @@ func SaveBlockAndTransactions(oneBlock *protocol.Block)  {
 
   for _, configTxHash := range oneBlock.ConfigTxData{
     configTx := reqTx(p2p.CONFIGTX_REQ, configTxHash)
-    convertedTx := ConvertConfigTransaction(configTx.(*protocol.ConfigTx), oneBlock.Hash, configTxHash)
-    newParams := ExtractParameters(convertedTx)
+    convertedTx := utilities.ConvertConfigTransaction(configTx.(*protocol.ConfigTx), oneBlock.Hash, configTxHash)
+    currentParams := ReturnNewestParameters()
+    newParams := utilities.ExtractParameters(convertedTx, currentParams)
 
     WriteParameters(newParams)
     WriteConfigTx(convertedTx)
   }
 
-  convertedBlock := ConvertBlock(oneBlock)
+  convertedBlock := utilities.ConvertBlock(oneBlock)
   WriteBlock(convertedBlock)
 }

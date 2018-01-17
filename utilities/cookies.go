@@ -1,11 +1,11 @@
-package main
+package utilities
 
 import (
-    "net/http"
-    "time"
-    "fmt"
-    "io/ioutil"
-    "encoding/json"
+  "net/http"
+  "time"
+  "fmt"
+  "io/ioutil"
+  "encoding/json"
 )
 
 var tokenName string

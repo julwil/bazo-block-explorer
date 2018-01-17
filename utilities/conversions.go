@@ -1,16 +1,13 @@
-package main
+package utilities
 
 import (
   "fmt"
-  "bytes"
   "time"
-  "encoding/binary"
-  "golang.org/x/crypto/sha3"
   "github.com/mchetelat/bazo_miner/protocol"
 )
 
-func ConvertBlock(unconvertedBlock *protocol.Block) block {
-  var convertedBlock block
+func ConvertBlock(unconvertedBlock *protocol.Block) Block {
+  var convertedBlock Block
   var convertedTxHash string
 
   //convertedBlock.Header = fmt.Sprintf("%x", unconvertedBlock.Header)
@@ -40,8 +37,8 @@ func ConvertBlock(unconvertedBlock *protocol.Block) block {
   return convertedBlock
 }
 
-func ConvertFundsTransaction(unconvertedTx *protocol.FundsTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte) fundstx {
-  var convertedTx fundstx
+func ConvertFundsTransaction(unconvertedTx *protocol.FundsTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte) Fundstx {
+  var convertedTx Fundstx
 
   //convertedTx.Header = fmt.Sprintf("%x", unconvertedTx.Header)
   convertedTx.Hash = fmt.Sprintf("%x", unconvertedTxHash)
@@ -57,8 +54,8 @@ func ConvertFundsTransaction(unconvertedTx *protocol.FundsTx, unconvertedBlockHa
   return convertedTx
 }
 
-func ConvertAccTransaction(unconvertedTx *protocol.AccTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte) acctx {
-  var convertedTx acctx
+func ConvertAccTransaction(unconvertedTx *protocol.AccTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte) Acctx {
+  var convertedTx Acctx
 
   //convertedTx.Header = fmt.Sprintf("%x", unconvertedTx.Header)
   convertedTx.Hash = fmt.Sprintf("%x", unconvertedTxHash)
@@ -72,8 +69,8 @@ func ConvertAccTransaction(unconvertedTx *protocol.AccTx, unconvertedBlockHash [
   return convertedTx
 }
 
-func ConvertConfigTransaction(unconvertedTx *protocol.ConfigTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte) configtx {
-  var convertedTx configtx
+func ConvertConfigTransaction(unconvertedTx *protocol.ConfigTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte) Configtx {
+  var convertedTx Configtx
 
   //convertedTx.Header = fmt.Sprintf("%x", unconvertedTx.Header)
   convertedTx.Hash = fmt.Sprintf("%x", unconvertedTxHash)
@@ -90,56 +87,4 @@ func ConvertConfigTransaction(unconvertedTx *protocol.ConfigTx, unconvertedBlock
   convertedTx.Signature = fmt.Sprintf("%x", unconvertedTx.Sig)
 
   return convertedTx
-}
-
-func ConvertOpenFundsTransaction(unconvertedTx *protocol.FundsTx, unconvertedTxHash [32]byte) fundstx {
-  var convertedTx fundstx
-
-  //convertedTx.Header = fmt.Sprintf("%x", unconvertedTx.Header)
-  convertedTx.Hash = fmt.Sprintf("%x", unconvertedTxHash)
-  convertedTx.Amount = unconvertedTx.Amount
-  convertedTx.Fee = unconvertedTx.Fee
-  convertedTx.TxCount = unconvertedTx.TxCnt
-  convertedTx.From = fmt.Sprintf("%x", unconvertedTx.From)
-  convertedTx.To = fmt.Sprintf("%x", unconvertedTx.To)
-  convertedTx.Signature = fmt.Sprintf("%x", unconvertedTx.Sig)
-
-  return convertedTx
-}
-
-func ExtractParameters(tx configtx) systemparams {
-  currentParams := ReturnNewestParameters()
-  currentParams.Timestamp = time.Now().Unix()
-
-  switch tx.Id {
-  case 1:
-    currentParams.BlockSize = tx.Payload
-  case 2:
-    currentParams.DiffInterval = tx.Payload
-  case 3:
-    currentParams.MinFee = tx.Payload
-  case 4:
-    currentParams.BlockInterval = tx.Payload
-  case 5:
-    currentParams.BlockReward = tx.Payload
-  default:
-    return currentParams
-  }
-  return currentParams
-}
-
-func invertBlockArray(array []*protocol.Block) []*protocol.Block {
-	for i, j := 0, len(array)-1; i < j; i, j = i+1, j-1 {
-		array[i], array[j] = array[j], array[i]
-	}
-
-	return array
-}
-
-func SerializeHashContent(data interface{}) (hash [32]byte) {
-	var buf bytes.Buffer
-
-	binary.Write(&buf, binary.BigEndian, data)
-
-	return sha3.Sum256(buf.Bytes())
 }

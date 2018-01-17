@@ -10,7 +10,7 @@ import (
 var tpl *template.Template
 
 func init() {
-  tpl = template.Must(template.ParseGlob("static/src/*"))
+  tpl = template.Must(template.ParseGlob("source/html/*"))
 }
 
 func main() {

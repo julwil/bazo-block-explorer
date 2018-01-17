@@ -26,7 +26,7 @@ func initializeRouter() *httprouter.Router {
   router.POST("/login", loginFunc)
   router.GET("/adminpanel", adminfunc)
 
-  router.ServeFiles("/static/*filepath", http.Dir("static"))
+  router.ServeFiles("/source/*filepath", http.Dir("source"))
 
   return router
 }

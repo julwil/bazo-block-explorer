@@ -1,17 +1,13 @@
 # Things to fix/add
 ## Urgent
-* Packages
-  * Split up Go files
-  * Folders for src
 * Include PoS
   * Struct Attributes
   * POS Transactions
-## Not Urgent
-* Installation
-* Refactoring
 * Error Handling
   * Get rid of panic(err)
   * Exceptions and Validation
+## Not Urgent
+* Installation
 # ToDo in Paper
 * Design
   * Why DB needed

@@ -12,7 +12,7 @@ import (
 const (
   host = "localhost"
   port = 5432
-  user = "postgres"
+  //user = "postgres"
   //password = ""
   //use blockexplorertest1 for dummy db
   dbname = "blockexplorerdb"
@@ -22,9 +22,12 @@ var sqlStatement string
 var db *sql.DB
 var err error
 
+var name string
+var password string
+
 func connectToDB() {
-  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-    host, port, user, dbname)
+  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+    host, port, name, password, dbname)
   db, err = sql.Open("postgres", psqlInfo)
   if err != nil {
     panic(err)
@@ -35,7 +38,22 @@ func connectToDB() {
   }
 }
 
-func SetupDB()  {
+func SetupDB(username string, userpassword string)  {
+
+  name = username
+  password = userpassword
+
+  psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+    host, port, name, password, dbname)
+  db, err = sql.Open("postgres", psqlInfo)
+  if err != nil {
+    panic(err)
+  }
+  err = db.Ping()
+  if err != nil {
+    panic(err)
+  }
+
   fmt.Println("Setting up Database...")
   dropTables()
   createTables()

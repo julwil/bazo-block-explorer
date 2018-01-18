@@ -17,7 +17,7 @@ var newestBlock *protocol.Block
 var logger *log.Logger
 var block1 *protocol.Block
 
-func runDB() {
+func RunDB() {
 
   saveInitialParameters()
   loadAllBlocks()

@@ -1,14 +1,15 @@
 # Things to fix/add
 ## Urgent
-* Include PoS
-  * Struct Attributes
-  * POS Transactions
+* Installation
 * Error Handling
   * Get rid of panic(err)
   * Exceptions and Validation
 ## Not Urgent
-* Installation
+* Include PoS
+  * Struct Attributes
+  * POS Transactions
 # ToDo in Paper
+* PoS
 * Design
   * Why DB needed
 * Implementation

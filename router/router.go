@@ -108,13 +108,18 @@ func searchForHash(w http.ResponseWriter, r *http.Request, params httprouter.Par
   returnedaccountwithtxs := data.ReturnOneAccount(r.PostFormValue("search-value"))
   if returnedaccountwithtxs.Account.Hash != "" {
     tpl.ExecuteTemplate(w, "account.gohtml", returnedaccountwithtxs)
+  } else {
+    //tpl.ExecuteTemplate(w, "noresult.gohtml", 1)
   }
-  tpl.ExecuteTemplate(w, "noresult.gohtml", 1)
 }
 
 func adminfunc(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   publicKeyCookie, err := utilities.GetPublicKeyCookie(r)
 	switch {
+  case publicKeyCookie.Value == " ":
+    w.WriteHeader(http.StatusUnauthorized)
+    fmt.Fprintln(w, "Not verified!")
+    return
 	case err == http.ErrNoCookie:
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintln(w, "No cookie in request!")
@@ -137,6 +142,7 @@ func adminfunc(w http.ResponseWriter, r *http.Request, params httprouter.Params)
 }
 
 func loginFunc(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+
   accountInformation := utilities.RequestAccountInformation(r.PostFormValue("public-key-field"))
 
   if accountInformation.IsRoot {

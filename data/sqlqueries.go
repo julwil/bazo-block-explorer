@@ -35,7 +35,7 @@ func connectToDB() {
   }
 }
 
-func setupDB()  {
+func SetupDB()  {
   fmt.Println("Setting up Database...")
   dropTables()
   createTables()

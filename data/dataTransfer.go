@@ -1,7 +1,7 @@
 package data
 
 import (
-  "BazoBlockExplorer/utilities"
+  "github.com/lucBoillat/BazoBlockExplorer/utilities"
   "net"
   "fmt"
   "log"

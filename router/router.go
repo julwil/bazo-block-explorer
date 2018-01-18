@@ -1,8 +1,8 @@
 package router
 
 import (
-  "BazoBlockExplorer/data"
-  "BazoBlockExplorer/utilities"
+  "github.com/lucBoillat/BazoBlockExplorer/data"
+  "github.com/lucBoillat/BazoBlockExplorer/utilities"
   "fmt"
   "net/http"
   "encoding/json"

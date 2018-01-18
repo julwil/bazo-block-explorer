@@ -1,6 +1,6 @@
 # Things to fix/add
 ## Urgent
-* Installation
+* Installation on Node
 * Error Handling
   * Get rid of panic(err)
   * Exceptions and Validation

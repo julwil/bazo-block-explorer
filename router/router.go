@@ -92,32 +92,36 @@ func getAllConfigTx(w http.ResponseWriter, r *http.Request, params httprouter.Pa
 }
 
 func searchForHash(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedblock := data.ReturnOneBlock(r.PostFormValue("search-value"))
-  if returnedblock.Hash != "" {
-    tpl.ExecuteTemplate(w, "block.gohtml", returnedblock)
-  }
-
-  returnedfundstx := data.ReturnOneFundsTx(r.PostFormValue("search-value"))
-  if returnedfundstx.Hash != "" {
-    tpl.ExecuteTemplate(w, "fundstx.gohtml", returnedfundstx)
-  }
-
-  returnedacctx := data.ReturnOneAccTx(r.PostFormValue("search-value"))
-  if returnedacctx.Hash != "" {
-    tpl.ExecuteTemplate(w, "acctx.gohtml", returnedacctx)
+  returnedaccountwithtxs := data.ReturnOneAccount(r.PostFormValue("search-value"))
+  if returnedaccountwithtxs.Account.Hash != "" {
+    tpl.ExecuteTemplate(w, "account.gohtml", returnedaccountwithtxs)
+    return
   }
 
   returnedconfigtx := data.ReturnOneConfigTx(r.PostFormValue("search-value"))
   if returnedconfigtx.Hash != "" {
     tpl.ExecuteTemplate(w, "configtx.gohtml", returnedconfigtx)
+    return
   }
 
-  returnedaccountwithtxs := data.ReturnOneAccount(r.PostFormValue("search-value"))
-  if returnedaccountwithtxs.Account.Hash != "" {
-    tpl.ExecuteTemplate(w, "account.gohtml", returnedaccountwithtxs)
-  } else {
-    //tpl.ExecuteTemplate(w, "noresult.gohtml", 1)
+  returnedblock := data.ReturnOneBlock(r.PostFormValue("search-value"))
+  if returnedblock.Hash != "" {
+    tpl.ExecuteTemplate(w, "block.gohtml", returnedblock)
+    return
   }
+
+  returnedfundstx := data.ReturnOneFundsTx(r.PostFormValue("search-value"))
+  if returnedfundstx.Hash != "" {
+    tpl.ExecuteTemplate(w, "fundstx.gohtml", returnedfundstx)
+    return
+  }
+
+  returnedacctx := data.ReturnOneAccTx(r.PostFormValue("search-value"))
+  if returnedacctx.Hash != "" {
+    tpl.ExecuteTemplate(w, "acctx.gohtml", returnedacctx)
+    return
+  }
+  tpl.ExecuteTemplate(w, "noresult.gohtml", returnedacctx)
 }
 
 func adminfunc(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

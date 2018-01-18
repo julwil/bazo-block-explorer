@@ -12,8 +12,8 @@
 
 .table td {
   white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
+  overflow: scroll !important;
+  /*text-overflow: scroll !important;*/
 }
 
 /*

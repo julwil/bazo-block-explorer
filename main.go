@@ -11,7 +11,7 @@ import (
 func main() {
   requestRouter := router.InitializeRouter()
 
-  data.SetupDB()
+  //data.SetupDB()
   //go data.RunDB()
   fmt.Println("Listening...")
   http.ListenAndServe(":8080", requestRouter)

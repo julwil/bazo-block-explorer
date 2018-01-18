@@ -3,7 +3,7 @@ package main
 import (
   _"os"
   "github.com/lucBoillat/BazoBlockExplorer/router"
-  _ "github.com/lucBoillat/BazoBlockExplorer/data"
+  "github.com/lucBoillat/BazoBlockExplorer/data"
   "fmt"
   "net/http"
 )
@@ -11,7 +11,7 @@ import (
 func main() {
   requestRouter := router.InitializeRouter()
 
-  //data.SetupDB()
+  data.SetupDB()
   //go data.RunDB()
   fmt.Println("Listening...")
   http.ListenAndServe(":8080", requestRouter)

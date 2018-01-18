@@ -18,6 +18,7 @@ func InitializeRouter() *httprouter.Router {
   router := httprouter.New()
 
   router.GET("/", getIndex)
+  router.GET("/test", getTest)
   router.GET("/blocks", getAllBlocks)
   router.GET("/block/:hash", getOneBlock)
   router.GET("/transactions/funds", getAllFundsTx)
@@ -37,6 +38,12 @@ func InitializeRouter() *httprouter.Router {
   router.ServeFiles("/source/*filepath", http.Dir("source"))
 
   return router
+}
+
+func getTest(w http.ResponseWriter, r *http.Request, params httprouter.Params)  {
+  fmt.Println("testconsole")
+  fmt.Fprintln(w, "testpage")
+  return
 }
 
 func getIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

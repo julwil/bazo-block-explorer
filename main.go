@@ -3,7 +3,7 @@ package main
 import (
   _"os"
   "github.com/lucBoillat/BazoBlockExplorer/router"
-  "github.com/lucBoillat/BazoBlockExplorer/data"
+  _ "github.com/lucBoillat/BazoBlockExplorer/data"
   "fmt"
   "net/http"
 )

@@ -53,7 +53,7 @@ func SetupDB(username string, userpassword string)  {
   if err != nil {
     panic(err)
   }
-
+  defer db.Close()
   fmt.Println("Setting up Database...")
   dropTables()
   createTables()
@@ -157,7 +157,7 @@ func ReturnAllFundsTx(UrlHash string) []utilities.Fundstx {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, amount, fee, txcount, sender, recipient, signature FROM fundstx`
+  sqlStatement := `SELECT hash, amount, fee, txcount, sender, recipient, signature FROM fundstx ORDER BY timestamp DESC LIMIT 100`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -204,7 +204,7 @@ func ReturnAllAccTx(UrlHash string) []utilities.Acctx {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, issuer, fee, pubkey FROM acctx`
+  sqlStatement := `SELECT hash, issuer, fee, pubkey FROM acctx ORDER BY timestamp DESC LIMIT 100`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -251,7 +251,7 @@ func ReturnAllConfigTx(UrlHash string) []utilities.Configtx {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, id, payload, fee, txcount FROM configtx`
+  sqlStatement := `SELECT hash, id, payload, fee, txcount FROM configtx ORDER BY timestamp DESC LIMIT 100`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -278,7 +278,7 @@ func ReturnBlocksAndTransactions(UrlHash string) utilities.Blocksandtx {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, timestamp, timestring, beneficiary, nrFundsTx, nrAccTx, nrConfigTx FROM blocks ORDER BY timestamp DESC LIMIT 6`
+  sqlStatement := `SELECT hash, timestamp, timestring, beneficiary, nrFundsTx, nrAccTx, nrConfigTx FROM blocks ORDER BY timestamp DESC LIMIT 10`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -299,7 +299,7 @@ func ReturnBlocksAndTransactions(UrlHash string) utilities.Blocksandtx {
     panic(err)
   }
 
-  sqlStatement = `SELECT hash, amount, fee, txcount, sender, recipient, signature FROM fundstx`
+  sqlStatement = `SELECT hash, amount, fee, txcount, sender, recipient, signature FROM fundstx ORDER BY timestamp DESC LIMIT 10`
   rows, err = db.Query(sqlStatement)
   if err != nil {
     panic(err)

@@ -17,4 +17,3 @@
 * Evaluation
   * Stress Test
 * Summary and Future Work
-* Installation guide

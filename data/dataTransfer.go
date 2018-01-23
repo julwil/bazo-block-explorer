@@ -17,6 +17,11 @@ var newestBlock *protocol.Block
 var logger *log.Logger
 var block1 *protocol.Block
 
+func timeTrack(start time.Time, name string) {
+    elapsed := time.Since(start)
+    fmt.Printf("%s took %s\n", name, elapsed)
+}
+
 func RunDB() {
 
   saveInitialParameters()
@@ -43,6 +48,7 @@ func saveInitialParameters()  {
 }
 
 func loadAllBlocks() {
+  defer timeTrack(time.Now(), "Copying Database")
   block := reqBlock(nil)
   newestBlock = block
   SaveBlockAndTransactions(block)

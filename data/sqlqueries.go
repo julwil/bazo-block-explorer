@@ -54,6 +54,7 @@ func SetupDB(username string, userpassword string)  {
     panic(err)
   }
   defer db.Close()
+
   fmt.Println("Setting up Database...")
   dropTables()
   createTables()

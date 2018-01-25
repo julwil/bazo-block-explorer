@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+
+    {{template "head"}}
+
+  </head>
+
+  <body>
+
+    {{template "navBar"}}
+
+    <div class="clr"></div>
+
+    <section>
+      <div class="container">
+        <div class="table-title">
+          <h3>Account {{.Account.Hash}}</h3>
+        </div>
+        <div class="data-table">
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="width: 20%;">Hash</th>
+                <td>{{.Account.Hash}}</td>
+              </tr>
+              <tr>
+                <th>Address</th>
+                <td>{{.Account.Address}}</td>
+              </tr>
+              </tr>
+                <th>Balance</th>
+                <td>{{.Account.Balance}}</td>
+              </tr>
+              </tr>
+                <th>Transaction Count</th>
+                <td>{{.Account.TxCount}}</td>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="table-title">
+          <h3>Transactions for this Account</h3>
+        </div>
+        <div class="data-table">
+          <table class="table">
+            <thead>
+              <tr id="header-row">
+                <th>Hash</th>
+                <th>From</th>
+                <th>To</th>
+                <th style="width: 10%;">Amount</th>
+                <th style="width: 10%;">Fee</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{range .Txs}}
+              <tr>
+                <td> <a href="/bazo/transactions/funds/{{.Hash}}">{{.Hash}}</a></td>
+                <td> <a href="/bazo/account/{{.From}}">{{.From}}</a></td>
+                <td> <a href="/bazo/account/{{.To}}">{{.To}}</a></td>
+                <td>{{.Amount}}</td>
+                <td>{{.Fee}}</td>
+              </tr>
+              {{end}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <div class="clr"></div>
+
+    {{template "scriptImports"}}
+
+  </body>
+</html>

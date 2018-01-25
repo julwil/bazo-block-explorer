@@ -1,0 +1,29 @@
+{{define "loginModal"}}
+
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Enter Root Public Key
+        <form class="config-form" action="/bazo/login" method="post">
+           <div class="input-group">
+             <input class="form-control" type="text" name="public-key-field" placeholder="Public Key">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit">Verify</button>
+            </span>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>
+
+{{end}}

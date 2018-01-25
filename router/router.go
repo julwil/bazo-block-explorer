@@ -127,14 +127,14 @@ func searchForHash(w http.ResponseWriter, r *http.Request, params httprouter.Par
 func adminfunc(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   publicKeyCookie, err := utilities.GetPublicKeyCookie(r)
 	switch {
+  case err == http.ErrNoCookie:
+    w.WriteHeader(http.StatusUnauthorized)
+    fmt.Fprintln(w, "No cookie in request!")
+    return
   case publicKeyCookie.Value == " ":
     w.WriteHeader(http.StatusUnauthorized)
     fmt.Fprintln(w, "Not verified!")
     return
-	case err == http.ErrNoCookie:
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprintln(w, "No cookie in request!")
-		return
 	case err != nil:
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintln(w, "Error while Parsing cookie!")

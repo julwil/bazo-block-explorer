@@ -20,12 +20,12 @@ func InitializeRouter() *httprouter.Router {
   router.GET("/", getIndex)
   router.GET("/blocks", getAllBlocks)
   router.GET("/block/:hash", getOneBlock)
-  router.GET("/transactions/funds", getAllFundsTx)
-  router.GET("/transactions/funds/:hash", getOneFundsTx)
-  router.GET("/transactions/acc", getAllAccTx)
-  router.GET("/transactions/acc/:hash", getOneAccTx)
-  router.GET("/transactions/config", getAllConfigTx)
-  router.GET("/transactions/config/:hash", getOneConfigTx)
+  router.GET("/tx/funds", getAllFundsTx)
+  router.GET("/tx/funds/:hash", getOneFundsTx)
+  router.GET("/tx/acc", getAllAccTx)
+  router.GET("/tx/acc/:hash", getOneAccTx)
+  router.GET("/tx/config", getAllConfigTx)
+  router.GET("/tx/config/:hash", getOneConfigTx)
   router.GET("/account/:hash", getAccount)
   router.GET("/accounts", getTopAccounts)
   router.GET("/stats", getStats)
@@ -93,31 +93,31 @@ func getAllConfigTx(w http.ResponseWriter, r *http.Request, params httprouter.Pa
 func searchForHash(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   returnedaccountwithtxs := data.ReturnOneAccount(r.PostFormValue("search-value"))
   if returnedaccountwithtxs.Account.Hash != "" {
-    tpl.ExecuteTemplate(w, "account.gohtml", returnedaccountwithtxs)
+    tpl.ExecuteTemplate(w, "accountSearch.gohtml", returnedaccountwithtxs)
     return
   }
 
   returnedconfigtx := data.ReturnOneConfigTx(r.PostFormValue("search-value"))
   if returnedconfigtx.Hash != "" {
-    tpl.ExecuteTemplate(w, "configtx.gohtml", returnedconfigtx)
+    tpl.ExecuteTemplate(w, "configtxSearch.gohtml", returnedconfigtx)
     return
   }
 
   returnedblock := data.ReturnOneBlock(r.PostFormValue("search-value"))
   if returnedblock.Hash != "" {
-    tpl.ExecuteTemplate(w, "block.gohtml", returnedblock)
+    tpl.ExecuteTemplate(w, "blockSearch.gohtml", returnedblock)
     return
   }
 
   returnedfundstx := data.ReturnOneFundsTx(r.PostFormValue("search-value"))
   if returnedfundstx.Hash != "" {
-    tpl.ExecuteTemplate(w, "fundstx.gohtml", returnedfundstx)
+    tpl.ExecuteTemplate(w, "fundstxSearch.gohtml", returnedfundstx)
     return
   }
 
   returnedacctx := data.ReturnOneAccTx(r.PostFormValue("search-value"))
   if returnedacctx.Hash != "" {
-    tpl.ExecuteTemplate(w, "acctx.gohtml", returnedacctx)
+    tpl.ExecuteTemplate(w, "acctxSearch.gohtml", returnedacctx)
     return
   }
   tpl.ExecuteTemplate(w, "noresult.gohtml", returnedacctx)
@@ -158,7 +158,7 @@ func loginFunc(w http.ResponseWriter, r *http.Request, params httprouter.Params)
   if accountInformation.IsRoot {
     cookie := utilities.CreateCookie(r.PostFormValue("public-key-field"))
     http.SetCookie(w, &cookie)
-    http.Redirect(w, r, "/adminpanel", 302)
+    tpl.ExecuteTemplate(w, "loginsuccess.gohtml", 1)
   } else {
     tpl.ExecuteTemplate(w, "loginfail.gohtml", 1)
   }
@@ -167,7 +167,7 @@ func loginFunc(w http.ResponseWriter, r *http.Request, params httprouter.Params)
 func logoutFunc(w http.ResponseWriter, r *http.Request, params httprouter.Params)  {
   cookie := utilities.CreateCookie(" ")
   http.SetCookie(w, &cookie)
-  http.Redirect(w, r, "/", 302)
+  tpl.ExecuteTemplate(w, "loggedout.gohtml", 1)
 }
 
 func getAccount(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

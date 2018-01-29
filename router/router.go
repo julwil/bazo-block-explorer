@@ -47,88 +47,88 @@ func getIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 
 func getOneBlock(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   returnedblock := data.ReturnOneBlock(params.ByName("hash"))
-  returnedblock.UrlLevel = "../../"
+  returnedblock.UrlLevel = "../.."
   tpl.ExecuteTemplate(w, "block.gohtml", returnedblock)
 
 }
 func getAllBlocks(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   var blocks utilities.Blocksandurl
   blocks.Blocks = data.ReturnAllBlocks(params.ByName("hash"))
-  blocks.UrlLevel = "../"
+  blocks.UrlLevel = ".."
   tpl.ExecuteTemplate(w, "blocks.gohtml", blocks)
 }
 
 func getOneFundsTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   returnedtx := data.ReturnOneFundsTx(params.ByName("hash"))
-  returnedtx.UrlLevel = "../../../"
+  returnedtx.UrlLevel = "../../.."
   tpl.ExecuteTemplate(w, "fundstx.gohtml", returnedtx)
 }
 
 func getAllFundsTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   var txs utilities.Fundsandurl
   txs.Txs = data.ReturnAllFundsTx(params.ByName("hash"))
-  txs.UrlLevel = "../../"
+  txs.UrlLevel = "../.."
   tpl.ExecuteTemplate(w, "fundstxs.gohtml", txs)
 }
 
 func getOneAccTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   returnedtx := data.ReturnOneAccTx(params.ByName("hash"))
-  returnedtx.UrlLevel = "../../../"
+  returnedtx.UrlLevel = "../../.."
   tpl.ExecuteTemplate(w, "acctx.gohtml", returnedtx)
 }
 
 func getAllAccTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   var txs utilities.Accsandurl
   txs.Txs = data.ReturnAllAccTx(params.ByName("hash"))
-  txs.UrlLevel = "../../"
+  txs.UrlLevel = "../.."
   tpl.ExecuteTemplate(w, "acctxs.gohtml", txs)
 }
 
 func getOneConfigTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   returnedtx := data.ReturnOneConfigTx(params.ByName("hash"))
-  returnedtx.UrlLevel = "../../../"
+  returnedtx.UrlLevel = "../../.."
   tpl.ExecuteTemplate(w, "configtx.gohtml", returnedtx)
 }
 
 func getAllConfigTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   var txs utilities.Configssandurl
   txs.Txs = data.ReturnAllConfigTx(params.ByName("hash"))
-  txs.UrlLevel = "../../"
+  txs.UrlLevel = "../.."
   tpl.ExecuteTemplate(w, "configtxs.gohtml", txs)
 }
 
 func searchForHash(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   returnedaccountwithtxs := data.ReturnOneAccount(r.PostFormValue("search-value"))
   if returnedaccountwithtxs.Account.Hash != "" {
-    returnedaccountwithtxs.UrlLevel = "../"
+    returnedaccountwithtxs.UrlLevel = ".."
     tpl.ExecuteTemplate(w, "accountSearch.gohtml", returnedaccountwithtxs)
     return
   }
 
   returnedconfigtx := data.ReturnOneConfigTx(r.PostFormValue("search-value"))
   if returnedconfigtx.Hash != "" {
-    returnedconfigtx.UrlLevel = "../"
+    returnedconfigtx.UrlLevel = ".."
     tpl.ExecuteTemplate(w, "configtx.gohtml", returnedconfigtx)
     return
   }
 
   returnedblock := data.ReturnOneBlock(r.PostFormValue("search-value"))
   if returnedblock.Hash != "" {
-    returnedblock.UrlLevel = "../"
+    returnedblock.UrlLevel = ".."
     tpl.ExecuteTemplate(w, "blockSearch.gohtml", returnedblock)
     return
   }
 
   returnedfundstx := data.ReturnOneFundsTx(r.PostFormValue("search-value"))
   if returnedfundstx.Hash != "" {
-    returnedfundstx.UrlLevel = "../"
+    returnedfundstx.UrlLevel = ".."
     tpl.ExecuteTemplate(w, "fundstx.gohtml", returnedfundstx)
     return
   }
 
   returnedacctx := data.ReturnOneAccTx(r.PostFormValue("search-value"))
   if returnedacctx.Hash != "" {
-    returnedacctx.UrlLevel = "../"
+    returnedacctx.UrlLevel = ".."
     tpl.ExecuteTemplate(w, "acctx.gohtml", returnedacctx)
     return
   }
@@ -156,11 +156,11 @@ func adminfunc(w http.ResponseWriter, r *http.Request, params httprouter.Params)
   accountInformation := utilities.RequestAccountInformation(publicKeyCookie.Value)
   if accountInformation.IsRoot {
     parameters := data.ReturnNewestParameters()
-    parameters.UrlLevel = "../"
+    parameters.UrlLevel = ".."
     tpl.ExecuteTemplate(w, "admin.gohtml", parameters)
   } else {
     var url utilities.Emptyresponse
-    url.UrlLevel = "../"
+    url.UrlLevel = ".."
     tpl.ExecuteTemplate(w, "loginfail.gohtml", url)
   }
 
@@ -169,7 +169,7 @@ func adminfunc(w http.ResponseWriter, r *http.Request, params httprouter.Params)
 func loginFunc(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   accountInformation := utilities.RequestAccountInformation(r.PostFormValue("public-key-field"))
   var url utilities.Emptyresponse
-  url.UrlLevel = "../"
+  url.UrlLevel = ".."
 
   if accountInformation.IsRoot {
     cookie := utilities.CreateCookie(r.PostFormValue("public-key-field"))
@@ -183,7 +183,7 @@ func loginFunc(w http.ResponseWriter, r *http.Request, params httprouter.Params)
 func logoutFunc(w http.ResponseWriter, r *http.Request, params httprouter.Params)  {
   cookie := utilities.CreateCookie(" ")
   var url utilities.Emptyresponse
-  url.UrlLevel = "../"
+  url.UrlLevel = ".."
 
   http.SetCookie(w, &cookie)
   tpl.ExecuteTemplate(w, "loggedout.gohtml", url)
@@ -192,16 +192,16 @@ func logoutFunc(w http.ResponseWriter, r *http.Request, params httprouter.Params
 func getAccount(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   returnedaccountwithtxs := data.ReturnOneAccount(params.ByName("hash"))
   for _, tx := range returnedaccountwithtxs.Txs {
-    tx.UrlLevel = "../../"
+    tx.UrlLevel = "../.."
   }
-  returnedaccountwithtxs.UrlLevel = "../../"
+  returnedaccountwithtxs.UrlLevel = "../.."
   tpl.ExecuteTemplate(w, "account.gohtml", returnedaccountwithtxs)
 }
 
 func getTopAccounts(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   var accounts utilities.Accountsandurl
   accounts.Accounts = data.ReturnTopAccounts(params.ByName("hash"))
-  accounts.UrlLevel = "../"
+  accounts.UrlLevel = ".."
   tpl.ExecuteTemplate(w, "accounts.gohtml", accounts)
 }
 
@@ -211,7 +211,7 @@ func getStats(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
   chartData := data.Return14Hours()
   b, _ := json.Marshal(chartData)
   stats.ChartData = string(b)
-  stats.UrlLevel = "../"
+  stats.UrlLevel = ".."
 
   tpl.ExecuteTemplate(w, "stats.gohtml", stats)
 }

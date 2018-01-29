@@ -13,7 +13,7 @@ func main() {
     requestRouter := router.InitializeRouter()
 
     data.SetupDB(os.Args[2], os.Args[3])
-    //go data.RunDB()
+    go data.RunDB()
     fmt.Println("Listening...")
     http.ListenAndServe(os.Args[1], requestRouter)
 

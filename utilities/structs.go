@@ -21,6 +21,7 @@ type Block struct {
   AccTxData []string
   ConfigTxDataString sql.NullString
   ConfigTxData []string
+  UrlLevel string
 }
 
 type Fundstx struct {
@@ -33,6 +34,7 @@ type Fundstx struct {
   To string
   Timestamp int64
   Signature string
+  UrlLevel string
 }
 
 type Acctx struct {
@@ -43,6 +45,7 @@ type Acctx struct {
   PubKey string
   Timestamp int64
   Signature string
+  UrlLevel string
 }
 
 type Configtx struct {
@@ -54,6 +57,7 @@ type Configtx struct {
 	TxCount uint8
   Timestamp int64
 	Signature string
+  UrlLevel string
 }
 
 type Account struct {
@@ -62,6 +66,7 @@ type Account struct {
   Balance int64
   TxCount int32
   FundsTxData []string
+  UrlLevel string
 }
 
 type JSONAccount struct {
@@ -81,16 +86,19 @@ type Systemparams struct {
   MinFee uint64
   BlockInterval uint64
   BlockReward uint64
+  UrlLevel string
 }
 
 type Blocksandtx struct {
   Blocks []Block
   Txs []Fundstx
+  UrlLevel string
 }
 
 type Accountwithtxs struct {
   Account Account
   Txs []Fundstx
+  UrlLevel string
 }
 
 type Stats struct {
@@ -98,6 +106,7 @@ type Stats struct {
   TotalSupply int
   TotalNrAccounts int
   Parameters Systemparams
+  UrlLevel string
 }
 
 type Serie struct {

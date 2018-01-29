@@ -62,9 +62,9 @@
             <tbody>
               {{range .Txs}}
               <tr>
-                <td> <a href="{{.UrlHash}}/tx/funds/{{.Hash}}">{{.Hash}}</a></td>
-                <td> <a href="{{.UrlHash}}/account/{{.From}}">{{.From}}</a></td>
-                <td> <a href="{{.UrlHash}}/account/{{.To}}">{{.To}}</a></td>
+                <td> <a href="../../tx/funds/{{.Hash}}">{{.Hash}}</a></td>
+                <td> <a href="../../account/{{.From}}">{{.From}}</a></td>
+                <td> <a href="../../account/{{.To}}">{{.To}}</a></td>
                 <td>{{.Amount}}</td>
                 <td>{{.Fee}}</td>
               </tr>

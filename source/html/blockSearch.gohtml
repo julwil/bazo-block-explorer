@@ -23,11 +23,11 @@
             <thead>
               <tr>
                 <th style="width: 30%;">Hash</th>
-                <td> <a href="/bazo/block/{{.Hash}}">{{.Hash}}</a></td>
+                <td> <a href="../block/{{.Hash}}">{{.Hash}}</a></td>
               </tr>
               <tr>
                 <th>Previous Block</th>
-                <td> <a href="/bazo/block/{{.PrevHash}}">{{.PrevHash}}</a></td>
+                <td> <a href="../block/{{.PrevHash}}">{{.PrevHash}}</a></td>
               </tr>
                 <th>Timestamp</th>
                 <td>{{.TimeString}}</td>
@@ -55,19 +55,19 @@
               {{range .FundsTxData}}
               <tr>
                 <th>Funds Transaction Hash</th>
-                <td><a href="/bazo/transactions/funds/{{.}}">{{.}}</a></td>
+                <td><a href="../tx/funds/{{.}}">{{.}}</a></td>
               </tr>
               {{end}}
               {{range .AccTxData}}
               <tr>
                 <th>Account Creation Transaction Hash</th>
-                <td><a href="/bazo/transactions/acc/{{.}}">{{.}}</a></td>
+                <td><a href="../tx/acc/{{.}}">{{.}}</a></td>
               </tr>
               {{end}}
               {{range .ConfigTxData}}
               <tr>
                 <th>System Configuration Transaction Hash</th>
-                <td><a href="/bazo/transactions/config/{{.}}">{{.}}</a></td>
+                <td><a href="../tx/config/{{.}}">{{.}}</a></td>
               </tr>
               {{end}}
             </thead>

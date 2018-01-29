@@ -1,4 +1,8 @@
-#navSearchInput input[type=text] {
+body {
+  overflow-y: scroll !important;
+}
+
+navSearchInput input[type=text] {
   width: 600px !important;
 }
 
@@ -15,6 +19,7 @@
   overflow: hidden !important;
   text-overflow: ellipsis;
 }
+
 
 /*
 .data-table#transactions-table {

@@ -18,7 +18,6 @@ func InitializeRouter() *httprouter.Router {
   router := httprouter.New()
 
   router.GET("/", getIndex)
-  router.GET("/test", getTest)
   router.GET("/blocks", getAllBlocks)
   router.GET("/block/:hash", getOneBlock)
   router.GET("/transactions/funds", getAllFundsTx)

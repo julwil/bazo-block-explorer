@@ -29,7 +29,7 @@ func InitializeRouter() *httprouter.Router {
   router.GET("/account/:hash", getAccount)
   router.GET("/accounts", getTopAccounts)
   router.GET("/stats", getStats)
-  router.POST("/search/", searchForHash)
+  router.POST("/search", searchForHash)
   router.POST("/login", loginFunc)
   router.GET("/logout", logoutFunc)
   router.GET("/adminpanel", adminfunc)

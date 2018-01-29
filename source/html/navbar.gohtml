@@ -1,29 +1,29 @@
 {{define "navBar"}}
 
     <nav class="navbar navbar-dark bg-dark justify-content-between">
-      <a class="navbar-brand text-white" href="/">Bazo Blockchain Explorer</a>
+      <a class="navbar-brand text-white" href="{{.UrlLevel}}/">Bazo Blockchain Explorer</a>
       <ul class="nav">
         <li class="nav-item">
-          <a class="nav-link active text-white" href="/blocks">Blocks</a>
+          <a class="nav-link active text-white" href="{{.UrlLevel}}/blocks">Blocks</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Transactions
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="/transactions/funds">Funds Transactions</a>
-            <a class="dropdown-item" href="/transactions/acc">Account Creation Transactions</a>
-            <a class="dropdown-item" href="/transactions/config">System Configuration Transactions</a>
+            <a class="dropdown-item" href="{{.UrlLevel}}/tx/funds">Funds Transactions</a>
+            <a class="dropdown-item" href="{{.UrlLevel}}/tx/acc">Account Creation Transactions</a>
+            <a class="dropdown-item" href="{{.UrlLevel}}/tx/config">System Configuration Transactions</a>
           </div>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white" href="/accounts">Accounts</a>
+          <a class="nav-link text-white" href="{{.UrlLevel}}/accounts">Accounts</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white" href="/stats">Status</a>
+          <a class="nav-link text-white" href="{{.UrlLevel}}/stats">Status</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white" href="/adminpanel">Admin</a>
+          <a class="nav-link text-white" href="{{.UrlLevel}}/adminpanel">Admin</a>
         </li>
         <li class="nav-item text-white">
           <a class="nav-link text-white" href="#" data-toggle="modal" data-target="#loginModal">Login</a>
@@ -33,7 +33,7 @@
 
     <nav class="navbar navbar-light bg-light">
       <div class="row">
-        <form class="col-sm-12" id="navSearch" action="/search/" method="post">
+        <form class="col-sm-12" id="navSearch" action="{{.UrlLevel}}/search/" method="post">
             <div class="input-group" id="navSearchInput">
               <input class="form-control" name="search-value" type="text" placeholder="Search through blocks, transactions and accounts..." aria-label="Search">
               <span class="input-group-btn">

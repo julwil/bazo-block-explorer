@@ -53,7 +53,9 @@ func getOneBlock(w http.ResponseWriter, r *http.Request, params httprouter.Param
 }
 func getAllBlocks(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   returnedblocks := data.ReturnAllBlocks(params.ByName("hash"))
-  returnedblocks[0].UrlLevel = "../"
+  for _, block := range returnedblocks {
+    block.UrlLevel = "../"
+  }
   tpl.ExecuteTemplate(w, "blocks.gohtml", returnedblocks)
 }
 
@@ -65,7 +67,9 @@ func getOneFundsTx(w http.ResponseWriter, r *http.Request, params httprouter.Par
 
 func getAllFundsTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   returnedtxs := data.ReturnAllFundsTx(params.ByName("hash"))
-  returnedtxs[0].UrlLevel = "../../"
+  for _, tx := range returnedtxs {
+    tx.UrlLevel = "../../"
+  }
   tpl.ExecuteTemplate(w, "fundstxs.gohtml", returnedtxs)
 }
 
@@ -77,7 +81,9 @@ func getOneAccTx(w http.ResponseWriter, r *http.Request, params httprouter.Param
 
 func getAllAccTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   returnedtxs := data.ReturnAllAccTx(params.ByName("hash"))
-  returnedtxs[0].UrlLevel = "../../"
+  for _, tx := range returnedtxs {
+    tx.UrlLevel = "../../"
+  }
   tpl.ExecuteTemplate(w, "acctxs.gohtml", returnedtxs)
 }
 
@@ -89,7 +95,9 @@ func getOneConfigTx(w http.ResponseWriter, r *http.Request, params httprouter.Pa
 
 func getAllConfigTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   returnedtxs := data.ReturnAllConfigTx(params.ByName("hash"))
-  returnedtxs[0].UrlLevel = "../../"
+  for _, tx := range returnedtxs {
+    tx.UrlLevel = "../../"
+  }
   tpl.ExecuteTemplate(w, "configtxs.gohtml", returnedtxs)
 }
 
@@ -183,13 +191,18 @@ func logoutFunc(w http.ResponseWriter, r *http.Request, params httprouter.Params
 
 func getAccount(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   returnedaccountwithtxs := data.ReturnOneAccount(params.ByName("hash"))
+  for _, tx := range returnedaccountwithtxs.Txs {
+    tx.UrlLevel = "../../"
+  }
   returnedaccountwithtxs.UrlLevel = "../../"
   tpl.ExecuteTemplate(w, "account.gohtml", returnedaccountwithtxs)
 }
 
 func getTopAccounts(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   returnedaccounts := data.ReturnTopAccounts(params.ByName("hash"))
-  returnedaccounts[0].UrlLevel = "../"
+  for _, account := range returnedaccounts {
+    account.UrlLevel = "../"
+  }
   tpl.ExecuteTemplate(w, "accounts.gohtml", returnedaccounts)
 }
 

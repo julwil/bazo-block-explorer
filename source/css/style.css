@@ -2,7 +2,7 @@ body {
   overflow-y: scroll !important;
 }
 
-navSearchInput input[type=text] {
+#navSearchInput input[type=text] {
   width: 600px !important;
 }
 

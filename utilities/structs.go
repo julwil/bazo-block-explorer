@@ -95,6 +95,36 @@ type Blocksandtx struct {
   UrlLevel string
 }
 
+type Blocksandurl struct {
+  Blocks []Block
+  UrlLevel string
+}
+
+type Fundsandurl struct {
+  Txs []Fundstx
+  UrlLevel string
+}
+
+type Accsandurl struct {
+  Txs []Acctx
+  UrlLevel string
+}
+
+type Configssandurl struct {
+  Txs []Configtx
+  UrlLevel string
+}
+
+type Accountsandurl struct {
+  Accounts []Account
+  UrlLevel string
+}
+
+type Emptyresponse struct {
+  value int
+  UrlLevel string
+}
+
 type Accountwithtxs struct {
   Account Account
   Txs []Fundstx

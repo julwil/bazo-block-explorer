@@ -23,19 +23,19 @@
             <thead>
               <tr>
                 <th style="width: 30%;">Hash</th>
-                <td> <a href="/transactions/funds/{{.Hash}}">{{.Hash}}</a></td>
+                <td> <a href="{{.UrlLevel}}/tx/funds/{{.Hash}}">{{.Hash}}</a></td>
               </tr>
               <tr>
                 <th>Block</th>
-                <td> <a href="/block/{{.BlockHash}}">{{.BlockHash}}</a></td>
+                <td> <a href="{{.UrlLevel}}/block/{{.BlockHash}}">{{.BlockHash}}</a></td>
               </tr>
               <tr>
                 <th>From</th>
-                <td> <a href="/account/{{.From}}">{{.From}}</a></td>
+                <td> <a href="{{.UrlLevel}}/account/{{.From}}">{{.From}}</a></td>
               </tr>
               <tr>
                 <th>To</th>
-                <td> <a href="/account/{{.To}}">{{.To}}</a></td>
+                <td> <a href="{{.UrlLevel}}/account/{{.To}}">{{.To}}</a></td>
               </tr>
               <tr>
                 <th>Transaction Count</th>

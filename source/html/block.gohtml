@@ -55,19 +55,19 @@
               {{range .FundsTxData}}
               <tr>
                 <th>Funds Transaction Hash</th>
-                <td><a href="/transactions/funds/{{.}}">{{.}}</a></td>
+                <td><a href="/tx/funds/{{.}}">{{.}}</a></td>
               </tr>
               {{end}}
               {{range .AccTxData}}
               <tr>
                 <th>Account Creation Transaction Hash</th>
-                <td><a href="/transactions/acc/{{.}}">{{.}}</a></td>
+                <td><a href="/tx/acc/{{.}}">{{.}}</a></td>
               </tr>
               {{end}}
               {{range .ConfigTxData}}
               <tr>
                 <th>System Configuration Transaction Hash</th>
-                <td><a href="/transactions/config/{{.}}">{{.}}</a></td>
+                <td><a href="/tx/config/{{.}}">{{.}}</a></td>
               </tr>
               {{end}}
             </thead>

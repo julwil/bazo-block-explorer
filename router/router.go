@@ -52,11 +52,10 @@ func getOneBlock(w http.ResponseWriter, r *http.Request, params httprouter.Param
 
 }
 func getAllBlocks(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedblocks := data.ReturnAllBlocks(params.ByName("hash"))
-  for _, block := range returnedblocks {
-    block.UrlLevel = "../"
-  }
-  tpl.ExecuteTemplate(w, "blocks.gohtml", returnedblocks)
+  var blocks utilities.Blocksandurl
+  blocks.Blocks = data.ReturnAllBlocks(params.ByName("hash"))
+  blocks.UrlLevel = "../"
+  tpl.ExecuteTemplate(w, "blocks.gohtml", blocks)
 }
 
 func getOneFundsTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -66,11 +65,10 @@ func getOneFundsTx(w http.ResponseWriter, r *http.Request, params httprouter.Par
 }
 
 func getAllFundsTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedtxs := data.ReturnAllFundsTx(params.ByName("hash"))
-  for _, tx := range returnedtxs {
-    tx.UrlLevel = "../../"
-  }
-  tpl.ExecuteTemplate(w, "fundstxs.gohtml", returnedtxs)
+  var txs utilities.Fundsandurl
+  txs.Txs = data.ReturnAllFundsTx(params.ByName("hash"))
+  txs.UrlLevel = "../../"
+  tpl.ExecuteTemplate(w, "fundstxs.gohtml", txs)
 }
 
 func getOneAccTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -80,11 +78,10 @@ func getOneAccTx(w http.ResponseWriter, r *http.Request, params httprouter.Param
 }
 
 func getAllAccTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedtxs := data.ReturnAllAccTx(params.ByName("hash"))
-  for _, tx := range returnedtxs {
-    tx.UrlLevel = "../../"
-  }
-  tpl.ExecuteTemplate(w, "acctxs.gohtml", returnedtxs)
+  var txs utilities.Accsandurl
+  txs.Txs = data.ReturnAllAccTx(params.ByName("hash"))
+  txs.UrlLevel = "../../"
+  tpl.ExecuteTemplate(w, "acctxs.gohtml", txs)
 }
 
 func getOneConfigTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -94,11 +91,10 @@ func getOneConfigTx(w http.ResponseWriter, r *http.Request, params httprouter.Pa
 }
 
 func getAllConfigTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedtxs := data.ReturnAllConfigTx(params.ByName("hash"))
-  for _, tx := range returnedtxs {
-    tx.UrlLevel = "../../"
-  }
-  tpl.ExecuteTemplate(w, "configtxs.gohtml", returnedtxs)
+  var txs utilities.Configssandurl
+  txs.Txs = data.ReturnAllConfigTx(params.ByName("hash"))
+  txs.UrlLevel = "../../"
+  tpl.ExecuteTemplate(w, "configtxs.gohtml", txs)
 }
 
 func searchForHash(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -112,7 +108,7 @@ func searchForHash(w http.ResponseWriter, r *http.Request, params httprouter.Par
   returnedconfigtx := data.ReturnOneConfigTx(r.PostFormValue("search-value"))
   if returnedconfigtx.Hash != "" {
     returnedconfigtx.UrlLevel = "../"
-    tpl.ExecuteTemplate(w, "configtxSearch.gohtml", returnedconfigtx)
+    tpl.ExecuteTemplate(w, "configtx.gohtml", returnedconfigtx)
     return
   }
 
@@ -126,14 +122,14 @@ func searchForHash(w http.ResponseWriter, r *http.Request, params httprouter.Par
   returnedfundstx := data.ReturnOneFundsTx(r.PostFormValue("search-value"))
   if returnedfundstx.Hash != "" {
     returnedfundstx.UrlLevel = "../"
-    tpl.ExecuteTemplate(w, "fundstxSearch.gohtml", returnedfundstx)
+    tpl.ExecuteTemplate(w, "fundstx.gohtml", returnedfundstx)
     return
   }
 
   returnedacctx := data.ReturnOneAccTx(r.PostFormValue("search-value"))
   if returnedacctx.Hash != "" {
     returnedacctx.UrlLevel = "../"
-    tpl.ExecuteTemplate(w, "acctxSearch.gohtml", returnedacctx)
+    tpl.ExecuteTemplate(w, "acctx.gohtml", returnedacctx)
     return
   }
   tpl.ExecuteTemplate(w, "noresult.gohtml", returnedacctx)
@@ -163,30 +159,34 @@ func adminfunc(w http.ResponseWriter, r *http.Request, params httprouter.Params)
     parameters.UrlLevel = "../"
     tpl.ExecuteTemplate(w, "admin.gohtml", parameters)
   } else {
-    urlLevel := "../"
-    tpl.ExecuteTemplate(w, "loginfail.gohtml", urlLevel)
+    var url utilities.Emptyresponse
+    url.UrlLevel = "../"
+    tpl.ExecuteTemplate(w, "loginfail.gohtml", url)
   }
 
 }
 
 func loginFunc(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
   accountInformation := utilities.RequestAccountInformation(r.PostFormValue("public-key-field"))
-  urlLevel := "../"
+  var url utilities.Emptyresponse
+  url.UrlLevel = "../"
 
   if accountInformation.IsRoot {
     cookie := utilities.CreateCookie(r.PostFormValue("public-key-field"))
     http.SetCookie(w, &cookie)
-    tpl.ExecuteTemplate(w, "loginsuccess.gohtml", urlLevel)
+    tpl.ExecuteTemplate(w, "loginsuccess.gohtml", url)
   } else {
-    tpl.ExecuteTemplate(w, "loginfail.gohtml", urlLevel)
+    tpl.ExecuteTemplate(w, "loginfail.gohtml", url)
   }
 }
 
 func logoutFunc(w http.ResponseWriter, r *http.Request, params httprouter.Params)  {
   cookie := utilities.CreateCookie(" ")
-  urlLevel := "../"
+  var url utilities.Emptyresponse
+  url.UrlLevel = "../"
+
   http.SetCookie(w, &cookie)
-  tpl.ExecuteTemplate(w, "loggedout.gohtml", urlLevel)
+  tpl.ExecuteTemplate(w, "loggedout.gohtml", url)
 }
 
 func getAccount(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -199,11 +199,10 @@ func getAccount(w http.ResponseWriter, r *http.Request, params httprouter.Params
 }
 
 func getTopAccounts(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  returnedaccounts := data.ReturnTopAccounts(params.ByName("hash"))
-  for _, account := range returnedaccounts {
-    account.UrlLevel = "../"
-  }
-  tpl.ExecuteTemplate(w, "accounts.gohtml", returnedaccounts)
+  var accounts utilities.Accountsandurl
+  accounts.Accounts = data.ReturnTopAccounts(params.ByName("hash"))
+  accounts.UrlLevel = "../"
+  tpl.ExecuteTemplate(w, "accounts.gohtml", accounts)
 }
 
 func getStats(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

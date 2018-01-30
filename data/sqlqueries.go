@@ -85,7 +85,6 @@ func ReturnOneBlock(UrlHash string) utilities.Block {
   switch err := row.Scan(&returnedblock.Hash, &returnedblock.PrevHash, &returnedblock.Timestamp, &returnedblock.TimeString, &returnedblock.MerkleRoot, &returnedblock.Beneficiary, &returnedblock.NrFundsTx, &returnedblock.NrAccTx, &returnedblock.NrConfigTx, &returnedblock.FundsTxDataString, &returnedblock.AccTxDataString, &returnedblock.ConfigTxDataString)
   err {
   case sql.ErrNoRows:
-    //on website 404 would be more suitable maybe
   case nil:
     if len(returnedblock.FundsTxDataString.String) > 0 {
       returnedblock.FundsTxData = strings.Split(returnedblock.FundsTxDataString.String[1:len(returnedblock.FundsTxDataString.String)-1], ",")
@@ -98,7 +97,6 @@ func ReturnOneBlock(UrlHash string) utilities.Block {
     }
     return returnedblock
   default:
-    //on website 500 error maybe.
     panic(err)
   }
 
@@ -141,11 +139,9 @@ func ReturnOneFundsTx(UrlHash string) utilities.Fundstx {
   switch err = row.Scan(&returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Amount, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.From, &returnedrow.To, &returnedrow.Signature)
   err {
   case sql.ErrNoRows:
-    //on website 404 would be more suitable maybe
   case nil:
     return returnedrow
   default:
-    //on website 500 error maybe.
     panic(err)
   }
   return returnedrow
@@ -187,11 +183,9 @@ func ReturnOneAccTx(UrlHash string) utilities.Acctx {
   switch err = row.Scan(&returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Issuer, &returnedrow.Fee, &returnedrow.PubKey, &returnedrow.Signature)
   err {
   case sql.ErrNoRows:
-    //on website 404 would be more suitable maybe
   case nil:
     return returnedrow
   default:
-    //on website 500 error maybe.
     panic(err)
   }
 
@@ -234,11 +228,9 @@ func ReturnOneConfigTx(UrlHash string) utilities.Configtx {
   switch err = row.Scan(&returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Id, &returnedrow.Payload, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.Signature)
   err {
   case sql.ErrNoRows:
-    //on website 404 would be more suitable maybe
   case nil:
     return returnedrow
   default:
-    //on website 500 error maybe.
     panic(err)
   }
 
@@ -276,7 +268,7 @@ func ReturnBlocksAndTransactions(UrlHash string) utilities.Blocksandtx {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, timestamp, timestring, beneficiary, nrFundsTx, nrAccTx, nrConfigTx FROM blocks ORDER BY timestamp DESC LIMIT 10`
+  sqlStatement := `SELECT hash, timestamp, timestring, beneficiary, nrFundsTx, nrAccTx, nrConfigTx FROM blocks ORDER BY timestamp DESC LIMIT 6`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -297,7 +289,7 @@ func ReturnBlocksAndTransactions(UrlHash string) utilities.Blocksandtx {
     panic(err)
   }
 
-  sqlStatement = `SELECT hash, amount, fee, txcount, sender, recipient, signature FROM fundstx ORDER BY timestamp ASC LIMIT 10`
+  sqlStatement = `SELECT hash, amount, fee, txcount, sender, recipient, signature FROM fundstx ORDER BY timestamp ASC LIMIT 6`
   rows, err = db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -384,12 +376,10 @@ func checkEmptyDB() bool {
   switch err := row.Scan(&notEmpty)
   err {
   case sql.ErrNoRows:
-    //on website 404 would be more suitable maybe
     fmt.Printf("No rows returned!")
   case nil:
     return notEmpty
   default:
-    //on website 500 error maybe.
     panic(err)
   }
   return true
@@ -445,8 +435,6 @@ func ReturnOneAccount(UrlHash string) utilities.Accountwithtxs {
   switch err = row.Scan(&returnedaccount.Hash, &returnedaccount.Address, &returnedaccount.Balance, &returnedaccount.TxCount)
   err {
   case sql.ErrNoRows:
-    //on website 404 would be more suitable maybe
-    //return fitting type
     returnedData.Account = returnedaccount
     return returnedData
   case nil:
@@ -473,7 +461,6 @@ func ReturnOneAccount(UrlHash string) utilities.Accountwithtxs {
     returnedData.Txs = returnedrows
     return returnedData
   default:
-    //on website 500 error maybe.
     panic(err)
   }
   return returnedData
@@ -528,11 +515,9 @@ func ReturnNewestParameters() utilities.Systemparams {
   switch err = row.Scan(&returnedrow.BlockSize, &returnedrow.DiffInterval, &returnedrow.MinFee, &returnedrow.BlockInterval, &returnedrow.BlockReward, &returnedrow.Timestamp)
   err {
   case sql.ErrNoRows:
-    //on website 404 would be more suitable maybe
   case nil:
     return returnedrow
   default:
-    //on website 500 error maybe.
     panic(err)
   }
 
@@ -561,10 +546,8 @@ func UpdateTotals() {
   switch err = row.Scan(&totalsupply)
   err {
   case sql.ErrNoRows:
-    //on website 404 would be more suitable maybe
   case nil:
   default:
-    //on website 500 error maybe.
     panic(err)
   }
 
@@ -575,10 +558,8 @@ func UpdateTotals() {
   switch err = row.Scan(&totalaccounts)
   err {
   case sql.ErrNoRows:
-    //on website 404 would be more suitable maybe
   case nil:
   default:
-    //on website 500 error maybe.
     panic(err)
   }
 
@@ -601,11 +582,9 @@ func ReturnTotals() utilities.Stats {
   switch err := row.Scan(&stats.TotalSupply, &stats.TotalNrAccounts)
   err {
   case sql.ErrNoRows:
-    //on website 404 would be more suitable maybe
   case nil:
     return stats
   default:
-    //on website 500 error maybe.
     panic(err)
   }
   return stats
@@ -746,6 +725,11 @@ func createTables() {
                     txnumber bigint DEFAULT 0
                     );`
 
+    sqlStatement4 :=`create index timestamp_idx on blocks (timestamp);
+                      create index sender_idx on fundstx (sender);
+                      create index recipient_idx on fundstx (recipient);
+                      create index address_idx on accounts (address);`
+
   _, err := db.Exec(sqlStatement1)
   if err != nil {
     panic(err)
@@ -755,6 +739,10 @@ func createTables() {
     panic(err)
   }
   _, err = db.Exec(sqlStatement3)
+  if err != nil {
+    panic(err)
+  }
+  _, err = db.Exec(sqlStatement4)
   if err != nil {
     panic(err)
   }

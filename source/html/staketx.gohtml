@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+
+    {{template "head"}}
+
+  </head>
+
+  <body>
+
+    {{template "navBar"}}
+
+    <div class="clr"></div>
+
+    <section>
+      <div class="container">
+        <div class="table-title">
+          <h3>Transaction {{.Hash}}</h3>
+        </div>
+        <div class="data-table" id="transactions-table">
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="width: 30%;">Hash</th>
+                <td> <a href="{{.UrlLevel}}/tx/stake/{{.Hash}}">{{.Hash}}</a></td>
+              </tr>
+              <tr>
+                <th>Block</th>
+                <td> <a href="{{.UrlLevel}}/block/{{.BlockHash}}">{{.BlockHash}}</a></td>
+              </tr>
+              <tr>
+                <th>Fee</th>
+                <td>{{.Fee}}</td>
+              </tr>
+              <tr>
+                <th>Account</th>
+                <td> <a href="{{.UrlLevel}}/account/{{.Account}}">{{.Account}}</a></td>
+              </tr>
+              <tr>
+                <td>Is Staking</td>
+                <th>{{.IsStaking}}</th>
+              </tr>
+              <tr>
+                <td>Signature</td>
+                <th>{{.Signature}}</th>
+              </tr>
+            </thead>
+
+          </table>
+        </div>
+      </div>
+    </section>
+
+    {{template "scriptImports"}}
+
+  </body>
+</html>

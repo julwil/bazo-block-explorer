@@ -41,6 +41,14 @@
                 <td>{{.Beneficiary}}</td>
               </tr>
               <tr>
+                <th>Seed</th>
+                <td>{{.Seed}}</td>
+              </tr>
+              <tr>
+                <th>Hashed Seed</th>
+                <td>{{.HashedSeed}}</td>
+              </tr>
+              <tr>
                 <th>NrFundsTX</th>
                 <td>{{.NrFundsTx}}</td>
               </tr>
@@ -51,6 +59,10 @@
               <tr>
                 <th>NrConfigTX</th>
                 <td>{{.NrConfigTx}}</td>
+              </tr>
+              <tr>
+                <th>NrStakeTX</th>
+                <td>{{.NrStakeTx}}</td>
               </tr>
               {{range .FundsTxData}}
               <tr>
@@ -68,6 +80,12 @@
               <tr>
                 <th>System Configuration Transaction Hash</th>
                 <td><a href="../../tx/config/{{.}}">{{.}}</a></td>
+              </tr>
+              {{end}}
+              {{range .StakeTxData}}
+              <tr>
+                <th>Stake Transaction Hash</th>
+                <td><a href="../../tx/stake/{{.}}">{{.}}</a></td>
               </tr>
               {{end}}
             </thead>

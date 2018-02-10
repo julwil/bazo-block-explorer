@@ -12,15 +12,21 @@ type Block struct {
   TimeString string
   MerkleRoot string
   Beneficiary string
+  Seed string
+  HashedSeed string
+  Height uint16
   NrFundsTx uint16
   NrAccTx uint16
   NrConfigTx uint8
+  NrStakeTx uint16
   FundsTxDataString sql.NullString
   FundsTxData []string
   AccTxDataString sql.NullString
   AccTxData []string
   ConfigTxDataString sql.NullString
   ConfigTxData []string
+  StakeTxDataString sql.NullString
+  StakeTxData []string
   UrlLevel string
 }
 
@@ -60,12 +66,22 @@ type Configtx struct {
   UrlLevel string
 }
 
+type Staketx struct {
+  Hash string
+  BlockHash string
+  Fee uint64
+  IsStaking bool
+  Account string
+  Signature string
+}
+
 type Account struct {
   Hash string
   Address string
   Balance int64
   TxCount int32
   FundsTxData []string
+  IsStaking bool
   UrlLevel string
 }
 
@@ -87,6 +103,12 @@ type Systemparams struct {
   BlockInterval uint64
   BlockReward uint64
   UrlLevel string
+  StakingMin uint64
+  WaitingMin uint64
+  AcceptanceTimeDiff uint64
+  SlashingWindiwSize uint64
+  SlashingReward uint64
+
 }
 
 type Blocksandtx struct {

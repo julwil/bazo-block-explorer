@@ -147,7 +147,14 @@ func searchForHash(w http.ResponseWriter, r *http.Request, params httprouter.Par
     tpl.ExecuteTemplate(w, "acctx.gohtml", returnedacctx)
     return
   }
-  tpl.ExecuteTemplate(w, "noresult.gohtml", returnedacctx)
+
+  returnedstaketx := data.ReturnOneStakeTx(r.PostFormValue("search-value"))
+  if returnedstaketx.Hash != "" {
+    returnedstaketx.UrlLevel = ".."
+    tpl.ExecuteTemplate(w, "staketx.gohtml", returnedstaketx)
+    return
+  }
+  tpl.ExecuteTemplate(w, "noresult.gohtml", returnedstaketx)
 }
 
 func adminfunc(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

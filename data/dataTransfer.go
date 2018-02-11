@@ -43,6 +43,11 @@ func saveInitialParameters()  {
   convertedParameters.MinFee = parameters.Fee_minimum
   convertedParameters.BlockInterval = parameters.Block_interval
   convertedParameters.BlockReward = parameters.Diff_interval
+  convertedParameters.StakingMin = parameters.Staking_minimum
+  convertedParameters.WaitingMin = parameters.Waiting_minimum
+  convertedParameters.AcceptanceTimeDiff = parameters.Acceptance_time_diff
+  convertedParameters.SlashingWindowSize = parameters.Slashing_window_size
+  convertedParameters.SlashingReward = parameters.Slash_reward
 
   WriteParameters(convertedParameters)
 }

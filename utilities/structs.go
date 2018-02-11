@@ -104,12 +104,12 @@ type Systemparams struct {
   MinFee uint64
   BlockInterval uint64
   BlockReward uint64
-  UrlLevel string
   StakingMin uint64
   WaitingMin uint64
   AcceptanceTimeDiff uint64
-  SlashingWindiwSize uint64
+  SlashingWindowSize uint64
   SlashingReward uint64
+  UrlLevel string
 
 }
 

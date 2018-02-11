@@ -542,10 +542,10 @@ func WriteParameters(parameters utilities.Systemparams)  {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `INSERT INTO parameters (blocksize, diffinterval, minfee, blockinterval, blockreward, timestamp)
-                    VALUES ($1, $2, $3, $4, $5, $6)`
+  sqlStatement := `INSERT INTO parameters (blocksize, diffinterval, minfee, blockinterval, blockreward, stakingmin, waitingmin, accepancetimediff, slashingwindowsize, slashingreward, timestamp)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
 
-  _, err = db.Exec(sqlStatement, parameters.BlockSize, parameters.DiffInterval, parameters.MinFee, parameters.BlockInterval, parameters.BlockReward, parameters.Timestamp)
+  _, err = db.Exec(sqlStatement, parameters.BlockSize, parameters.DiffInterval, parameters.MinFee, parameters.BlockInterval, parameters.BlockReward, parameters.StakingMin, parameters.WaitingMin, parameters.AcceptanceTimeDiff, parameters.SlashingWindowSize, parameters.SlashingReward, parameters.Timestamp)
   if err != nil {
     panic(err)
   }
@@ -555,10 +555,10 @@ func ReturnNewestParameters() utilities.Systemparams {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT blocksize, diffinterval, minfee, blockinterval, blockreward, timestamp FROM parameters ORDER BY timestamp DESC LIMIT 1`
+  sqlStatement := `SELECT blocksize, diffinterval, minfee, blockinterval, blockreward, stakingmin, waitingmin, accepancetimediff, slashingwindowsize, slashingreward, timestamp FROM parameters ORDER BY timestamp DESC LIMIT 1`
   var returnedrow utilities.Systemparams
   row := db.QueryRow(sqlStatement)
-  switch err = row.Scan(&returnedrow.BlockSize, &returnedrow.DiffInterval, &returnedrow.MinFee, &returnedrow.BlockInterval, &returnedrow.BlockReward, &returnedrow.Timestamp)
+  switch err = row.Scan(&returnedrow.BlockSize, &returnedrow.DiffInterval, &returnedrow.MinFee, &returnedrow.BlockInterval, &returnedrow.BlockReward, &returnedrow.StakingMin, &returnedrow.WaitingMin, &returnedrow.AcceptanceTimeDiff, &returnedrow.SlashingWindowSize, &returnedrow.SlashingReward, &returnedrow.Timestamp)
   err {
   case sql.ErrNoRows:
   case nil:
@@ -771,7 +771,12 @@ func createTables() {
                     diffinterval int not null,
                     minfee int not null,
                     blockinterval int not null,
-                    blockreward int not null
+                    blockreward int not null,
+                    stakingmin int,
+                    waitingmin int,
+                    accepancetimediff int,
+                    slashingwindowsize int,
+                    slashingreward int,
                     );
 
                     create table stats(

@@ -66,6 +66,7 @@ func dropTables() {
                    drop table fundstx;
                    drop table acctx;
                    drop table configtx;
+                   drop table staketx;
                    drop table accounts;
                    drop table parameters;
                    drop table stats;
@@ -251,6 +252,51 @@ func ReturnAllConfigTx(UrlHash string) []utilities.Configtx {
   for rows.Next() {
     var returnedrow utilities.Configtx
     err = rows.Scan(&returnedrow.Hash, &returnedrow.Id, &returnedrow.Payload, &returnedrow.Fee, &returnedrow.TxCount)
+    if err != nil {
+      panic(err)
+    }
+    returnedrows = append(returnedrows, returnedrow)
+  }
+  err = rows.Err()
+  if err != nil {
+    panic(err)
+  }
+  return returnedrows
+}
+
+func ReturnOneStakeTx(UrlHash string) utilities.Staketx {
+  connectToDB()
+  defer db.Close()
+
+  sqlStatement := `SELECT hash, blockhash, fee, account, isstaking, signature FROM staketx WHERE hash = $1;`
+  var returnedrow utilities.Staketx
+  row := db.QueryRow(sqlStatement, UrlHash)
+  switch err = row.Scan(&returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Fee, &returnedrow.Account, &returnedrow.IsStaking, &returnedrow.Signature)
+  err {
+  case sql.ErrNoRows:
+  case nil:
+    return returnedrow
+  default:
+    panic(err)
+  }
+
+  return returnedrow
+}
+
+func ReturnAllStakeTx(UrlHash string) []utilities.Staketx {
+  connectToDB()
+  defer db.Close()
+
+  sqlStatement := `SELECT hash, account, isstaking, fee FROM staketx ORDER BY timestamp ASC LIMIT 100`
+  rows, err := db.Query(sqlStatement)
+  if err != nil {
+    panic(err)
+  }
+  defer rows.Close()
+  returnedrows := make([]utilities.Staketx, 0)
+  for rows.Next() {
+    var returnedrow utilities.Staketx
+    err = rows.Scan(&returnedrow.Hash, &returnedrow.Account, &returnedrow.IsStaking, &returnedrow.Fee)
     if err != nil {
       panic(err)
     }
@@ -653,12 +699,17 @@ func createTables() {
                     timestring varchar(100) not null,
                     merkleRoot char(64) not null,
                     beneficiary char(64) not null,
+                    seed varchar(100),
+                    hashedseed varchar(100),
+                    height smallint,
                     nrFundsTx smallint not null,
                     nrAccTx smallint not null,
                     nrConfigTx smallint not null,
+                    nrStakeTx smallint,
                     fundsTxData varchar(100)[],
                     accTxData varchar(100)[],
-                    configTxData varchar(100)[]
+                    configTxData varchar(100)[],
+                    stakeTxData varchar(100)[]
                     );
 
                     create table fundstx (
@@ -695,13 +746,23 @@ func createTables() {
                     txcount int not null,
                     timestamp bigint not null,
                     signature char(128) not null
+                    );
+
+                    create table staketx(
+                    header bit(8),
+                    hash char(64) primary key,
+                    fee bigint not null,
+                    account char(64) not null,
+                    isstaking boolean,
+                    signature char(128) not null
                     );`
 
   sqlStatement3 :=  `create table accounts(
                     hash char(64) primary key,
                     address char(128),
                     balance bigint not null,
-                    txcount int not null
+                    txcount int not null,
+                    isstaking boolean
                     );
 
                     create table parameters(

@@ -26,6 +26,8 @@ func InitializeRouter() *httprouter.Router {
   router.GET("/tx/acc/:hash", getOneAccTx)
   router.GET("/tx/config", getAllConfigTx)
   router.GET("/tx/config/:hash", getOneConfigTx)
+  router.GET("/tx/stake", getAllStakeTx)
+  router.GET("/tx/stake/:hash", getOneStakeTx)
   router.GET("/account/:hash", getAccount)
   router.GET("/accounts", getTopAccounts)
   router.GET("/stats", getStats)
@@ -91,10 +93,23 @@ func getOneConfigTx(w http.ResponseWriter, r *http.Request, params httprouter.Pa
 }
 
 func getAllConfigTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-  var txs utilities.Configssandurl
+  var txs utilities.Configsandurl
   txs.Txs = data.ReturnAllConfigTx(params.ByName("hash"))
   txs.UrlLevel = "../.."
   tpl.ExecuteTemplate(w, "configtxs.gohtml", txs)
+}
+
+func getOneStakeTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  returnedtx := data.ReturnOneStakeTx(params.ByName("hash"))
+  returnedtx.UrlLevel = "../../.."
+  tpl.ExecuteTemplate(w, "staketx.gohtml", returnedtx)
+}
+
+func getAllStakeTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+  var txs utilities.Stakesandurl
+  txs.Txs = data.ReturnAllStakeTx(params.ByName("hash"))
+  txs.UrlLevel = "../.."
+  tpl.ExecuteTemplate(w, "staketxs.gohtml", txs)
 }
 
 func searchForHash(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

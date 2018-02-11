@@ -69,10 +69,12 @@ type Configtx struct {
 type Staketx struct {
   Hash string
   BlockHash string
+  Timestamp int64
   Fee uint64
   IsStaking bool
   Account string
   Signature string
+  UrlLevel string
 }
 
 type Account struct {
@@ -132,8 +134,13 @@ type Accsandurl struct {
   UrlLevel string
 }
 
-type Configssandurl struct {
+type Configsandurl struct {
   Txs []Configtx
+  UrlLevel string
+}
+
+type Stakesandurl struct {
+  Txs []Staketx
   UrlLevel string
 }
 

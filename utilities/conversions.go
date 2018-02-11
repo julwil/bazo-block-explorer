@@ -88,3 +88,17 @@ func ConvertConfigTransaction(unconvertedTx *protocol.ConfigTx, unconvertedBlock
 
   return convertedTx
 }
+
+func ConvertStakeTransaction(uncvonvertedTx *protocol.StakeTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte) Staketx  {
+  var convertedTx Staketx
+
+  convertedTx.Hash = fmt.Sprintf("%x", unconvertedTxHash)
+  convertedTx.BlockHash = fmt.Sprintf("%x", unconvertedBlockHash)
+  convertedTx.Timestamp = time.Now().Unix()
+  convertedTx.Fee = unconvertedTx.Fee
+  convertedTx.Account = fmt.Sprintf("%x", unconvertedTx.Account)
+  convertedTx.IsStaking = unconvertedTx.IsStaking
+  convertedTx.Signature = fmt.Sprintf("%x", unconvertedTx.Sig)
+
+  return convertedTx
+}

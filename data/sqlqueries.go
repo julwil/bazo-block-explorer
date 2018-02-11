@@ -412,6 +412,19 @@ func WriteConfigTx(tx utilities.Configtx) {
   }
 }
 
+func WriteStakeTx(tx utilities.Staketx) {
+  connectToDB()
+  defer db.Close()
+
+  sqlStatement = `
+    INSERT INTO staketx (hash, blockhash, timestamp, fee, account, isstaking, signature)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)`
+  _, err = db.Exec(sqlStatement, tx.Hash, tx.BlockHash, tx.Timestamp, tx.Fee, tx.Account, tx.IsStaking, tx.Signature)
+  if err != nil {
+    panic(err)
+  }
+}
+
 func checkEmptyDB() bool {
   connectToDB()
   defer db.Close()
@@ -467,6 +480,10 @@ func WriteAccountWithAddress(tx utilities.Acctx, accountHash string) {
   if err != nil {
     panic(err)
   }
+}
+
+func UpdateAccountIsStaking(tx utilities.Staketx)  {
+  return
 }
 
 func ReturnOneAccount(UrlHash string) utilities.Accountwithtxs {

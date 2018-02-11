@@ -159,6 +159,10 @@ func reqTx(txType uint8, txHash [32]byte) interface{} {
 		var fundsTx *protocol.FundsTx
 		fundsTx = fundsTx.Decode(payload)
 		return fundsTx
+  case p2p.STAKETX_RES:
+    var stakeTx *protocol.StakeTx
+    stakeTx = stakeTx.Decode(payload)
+    return stakeTx
   default:
     panic(err)
 	}
@@ -212,6 +216,14 @@ func SaveBlockAndTransactions(oneBlock *protocol.Block)  {
 
     WriteParameters(newParams)
     WriteConfigTx(convertedTx)
+  }
+
+  for _, stakeTxHash := rang oneBlock.StakeTxData{
+    stakeTx := reqTx(p2p.STAKETX_REQ, stakeTxHash)
+    convertedTx := utilities.ConvertStakeTransaction(stakeTx.(*protocol.StakeTx), oneBlock.Hash, stakeTxHash)
+
+    UpdateAccountIsStaking(convertedTx)
+    WriteStakeTx(convertedTx)
   }
 
   convertedBlock := utilities.ConvertBlock(oneBlock)

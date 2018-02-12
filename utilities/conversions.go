@@ -3,7 +3,7 @@ package utilities
 import (
   "fmt"
   "time"
-  "github.com/mchetelat/bazo_miner/protocol"
+  "github.com/bazo-blockchain/bazo-miner/protocol"
 )
 
 func ConvertBlock(unconvertedBlock *protocol.Block) Block {

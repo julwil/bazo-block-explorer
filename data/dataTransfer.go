@@ -8,9 +8,9 @@ import (
   "time"
   "errors"
   "bufio"
-	"github.com/mchetelat/bazo_miner/p2p"
-  "github.com/mchetelat/bazo_miner/miner"
-	"github.com/mchetelat/bazo_miner/protocol"
+	"github.com/bazo-blockchain/bazo-miner/p2p"
+  "github.com/bazo-blockchain/bazo-miner/miner"
+	"github.com/bazo-blockchain/bazo-miner/protocol"
 )
 
 var newestBlock *protocol.Block

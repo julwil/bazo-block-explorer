@@ -5,7 +5,7 @@ import (
   "time"
   "encoding/binary"
   "golang.org/x/crypto/sha3"
-  "github.com/mchetelat/bazo_miner/protocol"
+  "github.com/bazo-blockchain/bazo-miner/protocol"
 )
 
 func ExtractParameters(tx Configtx, currentParams Systemparams) Systemparams {

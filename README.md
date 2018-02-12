@@ -28,7 +28,6 @@ $ go get github.com/bazo-blockchain/bazo-block-explorer
 ```
 Since the static HTML files do not get included in the compiled binary, the source folder has to be copied from Golang’s src directory to the bin directory, where the compiled block explorer binary is located. The following frame’s folder structure assumes a default Golang installation.
 ```sh
-$ go get github.com/bazo-blockchain/bazo-block-explorer
 $ cd GODIRECTORY/src/github.com/bazo-blockchain/bazo-block-explorer
 $ sudo cp -r source/ ../../../../bin
 $ cd GODIRECTORY/bin

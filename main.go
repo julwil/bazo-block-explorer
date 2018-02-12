@@ -2,8 +2,8 @@ package main
 
 import (
   "os"
-  "github.com/lucBoillat/BazoBlockExplorer/router"
-  "github.com/lucBoillat/BazoBlockExplorer/data"
+  "github.com/bazo-blockchain/BazoBlockExplorer/router"
+  "github.com/bazo-blockchain/BazoBlockExplorer/data"
   "fmt"
   "net/http"
 )

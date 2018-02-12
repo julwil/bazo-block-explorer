@@ -1,7 +1,7 @@
 package data
 
 import (
-  "github.com/lucBoillat/BazoBlockExplorer/utilities"
+  "github.com/bazo-blockchain/BazoBlockExplorer/utilities"
   "fmt"
   "database/sql"
   "time"

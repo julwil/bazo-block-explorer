@@ -604,31 +604,38 @@ func UpdateTotals() {
   defer db.Close()
   sqlStatement = `SELECT SUM(balance) FROM accounts`
 
-  var totalsupply int64
+  var totalSupply sql.NullInt64
   row := db.QueryRow(sqlStatement)
-  switch err = row.Scan(&totalsupply)
+  switch err = row.Scan(&totalSupply)
   err {
   case sql.ErrNoRows:
   case nil:
   default:
     panic(err)
+  }
+  if totalSupply.Valid == false {
+    return
   }
 
   sqlStatement = `SELECT COUNT(hash) FROM accounts`
 
-  var totalaccounts int64
+  var totalAccounts sql.NullInt64
+
   row = db.QueryRow(sqlStatement)
-  switch err = row.Scan(&totalaccounts)
+  switch err = row.Scan(&totalAccounts)
   err {
   case sql.ErrNoRows:
   case nil:
   default:
     panic(err)
   }
-
+  if totalAccounts.Valid == false {
+    return
+  }
+  //totalaccounts = accountsTemp
 
   sqlStatement = `INSERT INTO stats (totalsupply, nraccounts, timestamp) VALUES ($1, $2, $3)`
-  _, err = db.Exec(sqlStatement, totalsupply, totalaccounts, time.Now().Unix())
+  _, err = db.Exec(sqlStatement, totalSupply, totalAccounts, time.Now().Unix())
   if err != nil {
     panic(err)
   }

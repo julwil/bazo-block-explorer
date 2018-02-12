@@ -793,7 +793,7 @@ func createTables() {
                     waitingmin int,
                     accepancetimediff int,
                     slashingwindowsize int,
-                    slashingreward int,
+                    slashingreward int
                     );
 
                     create table stats(

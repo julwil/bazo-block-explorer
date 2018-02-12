@@ -89,7 +89,7 @@ func ConvertConfigTransaction(unconvertedTx *protocol.ConfigTx, unconvertedBlock
   return convertedTx
 }
 
-func ConvertStakeTransaction(uncvonvertedTx *protocol.StakeTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte) Staketx  {
+func ConvertStakeTransaction(unconvertedTx *protocol.StakeTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte) Staketx  {
   var convertedTx Staketx
 
   convertedTx.Hash = fmt.Sprintf("%x", unconvertedTxHash)

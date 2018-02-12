@@ -45,7 +45,7 @@ func saveInitialParameters()  {
   convertedParameters.BlockReward = parameters.Diff_interval
   convertedParameters.StakingMin = parameters.Staking_minimum
   convertedParameters.WaitingMin = parameters.Waiting_minimum
-  convertedParameters.AcceptanceTimeDiff = parameters.Acceptance_time_diff
+  convertedParameters.AcceptanceTimeDiff = parameters.Accepted_time_diff
   convertedParameters.SlashingWindowSize = parameters.Slashing_window_size
   convertedParameters.SlashingReward = parameters.Slash_reward
 
@@ -218,7 +218,7 @@ func SaveBlockAndTransactions(oneBlock *protocol.Block)  {
     WriteConfigTx(convertedTx)
   }
 
-  for _, stakeTxHash := rang oneBlock.StakeTxData{
+  for _, stakeTxHash := range oneBlock.StakeTxData{
     stakeTx := reqTx(p2p.STAKETX_REQ, stakeTxHash)
     convertedTx := utilities.ConvertStakeTransaction(stakeTx.(*protocol.StakeTx), oneBlock.Hash, stakeTxHash)
 

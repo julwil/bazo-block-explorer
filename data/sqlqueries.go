@@ -775,6 +775,8 @@ func createTables() {
                     create table staketx(
                     header bit(8),
                     hash char(64) primary key,
+                    blockhash char(64),
+                    timestamp bigint not null,
                     fee bigint not null,
                     account char(64) not null,
                     isstaking boolean,

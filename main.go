@@ -9,19 +9,21 @@ import (
 )
 
 func main() {
-  if len(os.Args) >= 3 {
+  if len(os.Args) == 4 {
     requestRouter := router.InitializeRouter()
 
     //drops all tables in the database and creates them again
-    data.SetupDB(os.Args[2], os.Args[3])
-    //retrieves data from the blockchain and stores it in the database
-    go data.RunDB()
+    data.SetupDB(os.Args[3], os.Args[4])
+    if os.Args[1] == "data" {
+      //retrieves data from the blockchain and stores it in the database
+      go data.RunDB()
+    }
     //starts the router
     fmt.Println("Listening...")
-    http.ListenAndServe(os.Args[1], requestRouter)
+    http.ListenAndServe(os.Args[2], requestRouter)
 
   } else {
-    fmt.Println("Not enough arguments!")
-    fmt.Println("./BazoBlockExplorer <<:PORT>> <<db_username>> <<password>>")
+    fmt.Println("Incorrect number of arguments")
+    fmt.Println("./BazoBlockExplorer <<data or nodata>> <<:WEB_PORT>> <<db_username>> <<password>>")
   }
 }

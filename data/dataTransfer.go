@@ -28,7 +28,7 @@ func RunDB() {
   loadAllBlocks()
 
   for 0 < 1 {
-    time.Sleep(time.Second * 60)
+    time.Sleep(time.Second * 120)
     RefreshState()
   }
 }

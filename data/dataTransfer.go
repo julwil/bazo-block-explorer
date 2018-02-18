@@ -25,10 +25,13 @@ func timeTrack(start time.Time, name string) {
 func RunDB() {
 
   saveInitialParameters()
-  loadAllBlocks()
 
+  for loadAllBlocks() == false{
+    time.Sleep(time.Second * 5)
+    //loadAllBlocks()
+  }
   for 0 < 1 {
-    time.Sleep(time.Second * 120)
+    time.Sleep(time.Second * 5)
     RefreshState()
   }
 }
@@ -52,9 +55,13 @@ func saveInitialParameters()  {
   WriteParameters(convertedParameters)
 }
 
-func loadAllBlocks() {
+func loadAllBlocks() bool {
   defer timeTrack(time.Now(), "Copying Database")
   block := reqBlock(nil)
+  var emptyBlock *protocol.Block
+  if block == emptyBlock {
+    return false
+  }
   newestBlock = block
   SaveBlockAndTransactions(block)
   prevHash := block.PrevHash
@@ -67,11 +74,16 @@ func loadAllBlocks() {
   RemoveRootFromDB()
   UpdateTotals()
   fmt.Println("All Blocks Loaded!")
+  return true
 }
 
 func RefreshState() {
   fmt.Println("Refreshing State...")
   block := reqBlock(nil)
+  var emptyBlock *protocol.Block
+  if block == emptyBlock {
+    return
+  }
   prevHash := block.PrevHash
   tempBlock := block
 
@@ -106,18 +118,25 @@ func RefreshState() {
   UpdateTotals()
 }
 
-func Connect(connectionString string) (conn net.Conn) {
-	conn, err := net.Dial("tcp", connectionString)
+func Connect(connectionString string) (conn net.Conn, err error) {
+	conn, err = net.Dial("tcp", connectionString)
+
 	if err != nil {
-		log.Fatal(err)
+    fmt.Println("Could not connect to a miner!")
+		log.Println(err)
+    return conn, err
 	}
 	conn.SetDeadline(time.Now().Add(20 * time.Second))
 
-	return conn
+	return conn, err
 }
 
 func reqBlock(blockHash []byte) (block *protocol.Block) {
-	conn := Connect(p2p.BOOTSTRAP_SERVER)
+	conn, err := Connect(p2p.BOOTSTRAP_SERVER)
+  if err != nil {
+    var emptyBlock *protocol.Block
+    return emptyBlock
+  }
 	packet := p2p.BuildPacket(p2p.BLOCK_REQ, blockHash[:])
 	conn.Write(packet)
 
@@ -135,7 +154,7 @@ func reqBlock(blockHash []byte) (block *protocol.Block) {
 }
 
 func reqTx(txType uint8, txHash [32]byte) interface{} {
-	conn := Connect(p2p.BOOTSTRAP_SERVER)
+	conn, _ := Connect(p2p.BOOTSTRAP_SERVER)
 	packet := p2p.BuildPacket(txType, txHash[:])
 	conn.Write(packet)
 

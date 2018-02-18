@@ -32,8 +32,8 @@ $ cd GODIRECTORY/src/github.com/bazo-blockchain/bazo-block-explorer
 $ sudo cp -r source/ ../../../../bin
 $ cd GODIRECTORY/bin
 ```
-From the explorer’s directory, it can now be started using the following arguments. The username and password are the values defined in the database setup step.
+From the explorer’s directory, it can now be started using the following arguments. The username and password are the values defined in the database setup step. DATA must either be "data" or "nodata", depending on whether the data retrieval mechanism should run.
 ```sh
-$ ./bazo-block-explorer :PORT USERNAME PASSWORD
+$ ./bazo-block-explorer DATA :PORT USERNAME PASSWORD
 ```
 A running Bazo Miner application is required on the bootstrap server to load blocks from the blockchain and a running Bazo Client to send Config Transactions.

@@ -27,11 +27,10 @@ func RunDB() {
   saveInitialParameters()
 
   for loadAllBlocks() == false{
-    time.Sleep(time.Second * 5)
-    //loadAllBlocks()
+    time.Sleep(time.Second * 120)
   }
   for 0 < 1 {
-    time.Sleep(time.Second * 5)
+    time.Sleep(time.Second * 120)
     RefreshState()
   }
 }

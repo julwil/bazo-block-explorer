@@ -14,6 +14,7 @@ func main() {
 
     //drops all tables in the database and creates them again
     data.SetupDB(os.Args[3], os.Args[4])
+
     if os.Args[1] == "data" {
       //retrieves data from the blockchain and stores it in the database
       go data.RunDB()
@@ -24,6 +25,6 @@ func main() {
 
   } else {
     fmt.Println("Incorrect number of arguments")
-    fmt.Println("./BazoBlockExplorer <<data or nodata>> <<:WEB_PORT>> <<db_username>> <<password>>")
+    fmt.Println("./BazoBlockExplorer <<data or nodata>> <<:WEB_PORT>> <<db_username>> <<db_password>>")
   }
 }

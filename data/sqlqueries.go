@@ -36,7 +36,7 @@ func connectToDB() {
 }
 
 func SetupDB(username string, userpassword string)  {
-
+  //arguments for database login gets stored in memory
   name = username
   password = userpassword
 
@@ -87,6 +87,7 @@ func ReturnOneBlock(UrlHash string) utilities.Block {
   err {
   case sql.ErrNoRows:
   case nil:
+    //convert tx-datastring into slice for all types of transactions
     if len(returnedblock.FundsTxDataString.String) > 0 {
       returnedblock.FundsTxData = strings.Split(returnedblock.FundsTxDataString.String[1:len(returnedblock.FundsTxDataString.String)-1], ",")
     }

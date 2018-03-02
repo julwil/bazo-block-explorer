@@ -56,20 +56,26 @@ func saveInitialParameters()  {
 
 func loadAllBlocks() bool {
   defer timeTrack(time.Now(), "Copying Database")
+
+  //request newest block with argument nil
   block := reqBlock(nil)
   var emptyBlock *protocol.Block
   if block == emptyBlock {
+    //connection to miner failed, will retry after interval in RunDB()
     return false
   }
+  //newestBlock is stored for the next iteration of RefreshState() to check if it changed
   newestBlock = block
   SaveBlockAndTransactions(block)
   prevHash := block.PrevHash
 
+  //using prevHash of block, every block gets requested recursively
   for block.Hash != [32]byte{} {
     block = reqBlock(prevHash[:])
     SaveBlockAndTransactions(block)
     prevHash = block.PrevHash
   }
+  //remove root account from database, since its balance makes no sense
   RemoveRootFromDB()
   UpdateTotals()
   fmt.Println("All Blocks Loaded!")
@@ -78,9 +84,12 @@ func loadAllBlocks() bool {
 
 func RefreshState() {
   fmt.Println("Refreshing State...")
+
+  //request newest block with argument nil
   block := reqBlock(nil)
   var emptyBlock *protocol.Block
   if block == emptyBlock {
+    //connection to miner failed, will retry after interval in RunDB()
     return
   }
   prevHash := block.PrevHash
@@ -131,6 +140,7 @@ func Connect(connectionString string) (conn net.Conn, err error) {
 }
 
 func reqBlock(blockHash []byte) (block *protocol.Block) {
+  //request data using modified code from bazo's p2p messaging system
 	conn, err := Connect(p2p.BOOTSTRAP_SERVER)
   if err != nil {
     var emptyBlock *protocol.Block
@@ -153,6 +163,7 @@ func reqBlock(blockHash []byte) (block *protocol.Block) {
 }
 
 func reqTx(txType uint8, txHash [32]byte) interface{} {
+  //request data using modified code from bazo's p2p messaging system
 	conn, _ := Connect(p2p.BOOTSTRAP_SERVER)
 	packet := p2p.BuildPacket(txType, txHash[:])
 	conn.Write(packet)
@@ -187,6 +198,7 @@ func reqTx(txType uint8, txHash [32]byte) interface{} {
 }
 
 func rcvData(c net.Conn) (header *p2p.Header, payload []byte, err error) {
+  //request data using modified code from bazo's p2p messaging system
 	reader := bufio.NewReader(c)
 	header, err = p2p.ReadHeader(reader)
 

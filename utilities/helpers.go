@@ -22,6 +22,16 @@ func ExtractParameters(tx Configtx, currentParams Systemparams) Systemparams {
     currentParams.BlockInterval = tx.Payload
   case 5:
     currentParams.BlockReward = tx.Payload
+  case 6:
+    currentParams.StakingMin = tx.Payload
+  case 7:
+    currentParams.WaitingMin = tx.Payload
+  case 8:
+    currentParams.AcceptanceTimeDiff = tx.Payload
+  case 9:
+    currentParams.SlashingWindowSize = tx.Payload
+  case 10:
+    currentParams.SlashingReward = tx.Payload
   default:
     return currentParams
   }

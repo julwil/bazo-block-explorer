@@ -21,6 +21,7 @@ func ConvertBlock(unconvertedBlock *protocol.Block) Block {
   convertedBlock.NrFundsTx = unconvertedBlock.NrFundsTx
   convertedBlock.NrAccTx = unconvertedBlock.NrAccTx
   convertedBlock.NrConfigTx = unconvertedBlock.NrConfigTx
+
   for _, hash := range unconvertedBlock.FundsTxData {
     convertedTxHash = fmt.Sprintf("%x", hash)
     convertedBlock.FundsTxData = append(convertedBlock.FundsTxData, convertedTxHash)
@@ -49,7 +50,7 @@ func ConvertFundsTransaction(unconvertedTx *protocol.FundsTx, unconvertedBlockHa
   convertedTx.From = fmt.Sprintf("%x", unconvertedTx.From)
   convertedTx.To = fmt.Sprintf("%x", unconvertedTx.To)
   convertedTx.Timestamp = time.Now().Unix()
-  convertedTx.Signature = fmt.Sprintf("%x", unconvertedTx.Sig)
+  convertedTx.Signature = fmt.Sprintf("%x", unconvertedTx.Sig1)
 
   return convertedTx
 }

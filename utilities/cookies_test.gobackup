@@ -1,0 +1,25 @@
+package utilities
+
+import (
+	"testing"
+  "net/http/httptest"
+)
+
+func TestCreateAndGetPublicKeyCookie(t *testing.T) {
+  testPubKey := "this_is_a_public_key"
+  resultCookie := CreateCookie(testPubKey)
+
+  if resultCookie.Value != testPubKey {
+    t.Error("failed cookie creation")
+  }
+
+  testRequest := httptest.NewRequest("GET", "example.com", nil)
+  testRequest.Method = "GET"
+  testRequest.AddCookie(&resultCookie)
+
+  newResultCookie, _ := GetPublicKeyCookie(testRequest)
+
+  if newResultCookie.Value != testPubKey {
+    t.Error("failed cookie getter")
+  }
+}

@@ -11,6 +11,7 @@ import (
 	"github.com/bazo-blockchain/bazo-miner/p2p"
   "github.com/bazo-blockchain/bazo-miner/miner"
 	"github.com/bazo-blockchain/bazo-miner/protocol"
+  "github.com/bazo-blockchain/bazo-miner/storage"
 )
 
 var newestBlock *protocol.Block
@@ -141,7 +142,7 @@ func Connect(connectionString string) (conn net.Conn, err error) {
 
 func reqBlock(blockHash []byte) (block *protocol.Block) {
   //request data using modified code from bazo's p2p messaging system
-	conn, err := Connect(p2p.BOOTSTRAP_SERVER)
+	conn, err := Connect(storage.BOOTSTRAP_SERVER)
   if err != nil {
     var emptyBlock *protocol.Block
     return emptyBlock
@@ -164,7 +165,7 @@ func reqBlock(blockHash []byte) (block *protocol.Block) {
 
 func reqTx(txType uint8, txHash [32]byte) interface{} {
   //request data using modified code from bazo's p2p messaging system
-	conn, _ := Connect(p2p.BOOTSTRAP_SERVER)
+	conn, _ := Connect(storage.BOOTSTRAP_SERVER)
 	packet := p2p.BuildPacket(txType, txHash[:])
 	conn.Write(packet)
 

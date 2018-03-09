@@ -1,0 +1,37 @@
+package utilities
+
+import (
+	"testing"
+  "time"
+  "github.com/bazo-blockchain/bazo-miner/protocol"
+  "reflect"
+)
+
+func TestConvertBlock(t *testing.T) {
+  referenceTime := time.Now().Unix()
+  unconvertedBlock := new(protocol.Block)
+	unconvertedBlock.Hash = [32]byte{0, 1, 2, 3, 4}
+	unconvertedBlock.PrevHash = [32]byte{0, 1, 2, 3, 4}
+	unconvertedBlock.Timestamp = referenceTime
+	unconvertedBlock.MerkleRoot = [32]byte{0, 1, 2, 3, 4}
+	unconvertedBlock.Beneficiary = [32]byte{0, 1, 2, 3, 4}
+	unconvertedBlock.NrAccTx = uint16(1)
+	unconvertedBlock.NrFundsTx = uint16(2)
+	unconvertedBlock.NrConfigTx = uint8(3)
+
+  convertedReferenceBlock := new(Block)
+  convertedReferenceBlock.Hash = "0001020304000000000000000000000000000000000000000000000000000000"
+  convertedReferenceBlock.PrevHash = "0001020304000000000000000000000000000000000000000000000000000000"
+  convertedReferenceBlock.Timestamp = referenceTime
+  convertedReferenceBlock.TimeString = time.Unix(referenceTime, 0).Format("02 Jan 2006 15:04")
+  convertedReferenceBlock.MerkleRoot = "0001020304000000000000000000000000000000000000000000000000000000"
+  convertedReferenceBlock.Beneficiary = "0001020304000000000000000000000000000000000000000000000000000000"
+  convertedReferenceBlock.NrAccTx = uint16(1)
+  convertedReferenceBlock.NrFundsTx = uint16(2)
+  convertedReferenceBlock.NrConfigTx = uint8(3)
+
+  convertedBlock := ConvertBlock(unconvertedBlock)
+  if reflect.DeepEqual(convertedBlock, convertedReferenceBlock) == false{
+    t.Error("failed")
+  }
+}

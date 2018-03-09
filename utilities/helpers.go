@@ -5,7 +5,6 @@ import (
   "time"
   "encoding/binary"
   "golang.org/x/crypto/sha3"
-  "github.com/bazo-blockchain/bazo-miner/protocol"
 )
 
 func ExtractParameters(tx Configtx, currentParams Systemparams) Systemparams {
@@ -36,14 +35,6 @@ func ExtractParameters(tx Configtx, currentParams Systemparams) Systemparams {
     return currentParams
   }
   return currentParams
-}
-
-func invertBlockArray(array []*protocol.Block) []*protocol.Block {
-	for i, j := 0, len(array)-1; i < j; i, j = i+1, j-1 {
-		array[i], array[j] = array[j], array[i]
-	}
-
-	return array
 }
 
 func SerializeHashContent(data interface{}) (hash [32]byte) {

@@ -153,7 +153,7 @@ func ReturnAllFundsTx(UrlHash string) []utilities.Fundstx {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, amount, fee, txcount, sender, recipient, signature FROM fundstx ORDER BY timestamp ASC LIMIT 100`
+  sqlStatement := `SELECT hash, amount, fee, txcount, sender, recipient, signature FROM fundstx ORDER BY timestamp DESC LIMIT 100`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -198,7 +198,7 @@ func ReturnAllAccTx(UrlHash string) []utilities.Acctx {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, issuer, fee, pubkey FROM acctx ORDER BY timestamp ASC LIMIT 100`
+  sqlStatement := `SELECT hash, issuer, fee, pubkey FROM acctx ORDER BY timestamp DESC LIMIT 100`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -243,7 +243,7 @@ func ReturnAllConfigTx(UrlHash string) []utilities.Configtx {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, id, payload, fee, txcount FROM configtx ORDER BY timestamp ASC LIMIT 100`
+  sqlStatement := `SELECT hash, id, payload, fee, txcount FROM configtx ORDER BY timestamp DESC LIMIT 100`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -288,7 +288,7 @@ func ReturnAllStakeTx(UrlHash string) []utilities.Staketx {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, account, isstaking, fee FROM staketx ORDER BY timestamp ASC LIMIT 100`
+  sqlStatement := `SELECT hash, account, isstaking, fee FROM staketx ORDER BY timestamp DESC LIMIT 100`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -336,7 +336,7 @@ func ReturnBlocksAndTransactions(UrlHash string) utilities.Blocksandtx {
     panic(err)
   }
 
-  sqlStatement = `SELECT hash, amount, fee, txcount, sender, recipient, signature FROM fundstx ORDER BY timestamp ASC LIMIT 6`
+  sqlStatement = `SELECT hash, amount, fee, txcount, sender, recipient, signature FROM fundstx ORDER BY timestamp DESC LIMIT 6`
   rows, err = db.Query(sqlStatement)
   if err != nil {
     panic(err)

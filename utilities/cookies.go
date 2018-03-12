@@ -25,8 +25,8 @@ func GetPublicKeyCookie(r *http.Request) (*http.Cookie, error) {
   }
 
 func RequestAccountInformation(publicKey string) JSONAccount {
-  //IP address is bootstrap server
-  RESTresponse, err := http.Get("http://192.41.136.199:443/account/" + publicKey)
+  //IP address is client
+  RESTresponse, err := http.Get("https://oysyone.westeurope.cloudapp.azure.com/account/" + publicKey)
   if err != nil {
     fmt.Print(err.Error())
   }

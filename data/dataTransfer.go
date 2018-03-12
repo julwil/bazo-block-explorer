@@ -65,6 +65,7 @@ func loadAllBlocks() bool {
     //connection to miner failed, will retry after interval in RunDB()
     return false
   }
+  fmt.Printf("Copying Data...")
   //newestBlock is stored for the next iteration of RefreshState() to check if it changed
   newestBlock = block
   SaveBlockAndTransactions(block)
@@ -223,7 +224,7 @@ func rcvData(c net.Conn) (header *p2p.Header, payload []byte, err error) {
 func SaveBlockAndTransactions(oneBlock *protocol.Block)  {
   for _, accTxHash := range oneBlock.AccTxData{
     accTx := reqTx(p2p.ACCTX_REQ, accTxHash)
-    convertedTx := utilities.ConvertAccTransaction(accTx.(*protocol.AccTx), oneBlock.Hash, accTxHash)
+    convertedTx := utilities.ConvertAccTransaction(accTx.(*protocol.AccTx), oneBlock.Hash, accTxHash, oneBlock.Timestamp)
     accountHashBytes := utilities.SerializeHashContent(accTx.(*protocol.AccTx).PubKey)
     accountHash := fmt.Sprintf("%x", accountHashBytes)
 
@@ -233,7 +234,7 @@ func SaveBlockAndTransactions(oneBlock *protocol.Block)  {
 
   for _, fundsTxHash := range oneBlock.FundsTxData{
     fundsTx := reqTx(p2p.FUNDSTX_REQ, fundsTxHash)
-    convertedTx := utilities.ConvertFundsTransaction(fundsTx.(*protocol.FundsTx), oneBlock.Hash, fundsTxHash)
+    convertedTx := utilities.ConvertFundsTransaction(fundsTx.(*protocol.FundsTx), oneBlock.Hash, fundsTxHash, oneBlock.Timestamp)
 
     UpdateAccountData(convertedTx)
     WriteFundsTx(convertedTx)
@@ -241,7 +242,7 @@ func SaveBlockAndTransactions(oneBlock *protocol.Block)  {
 
   for _, configTxHash := range oneBlock.ConfigTxData{
     configTx := reqTx(p2p.CONFIGTX_REQ, configTxHash)
-    convertedTx := utilities.ConvertConfigTransaction(configTx.(*protocol.ConfigTx), oneBlock.Hash, configTxHash)
+    convertedTx := utilities.ConvertConfigTransaction(configTx.(*protocol.ConfigTx), oneBlock.Hash, configTxHash, oneBlock.Timestamp)
     currentParams := ReturnNewestParameters()
     newParams := utilities.ExtractParameters(convertedTx, currentParams)
 
@@ -251,7 +252,7 @@ func SaveBlockAndTransactions(oneBlock *protocol.Block)  {
 
   for _, stakeTxHash := range oneBlock.StakeTxData{
     stakeTx := reqTx(p2p.STAKETX_REQ, stakeTxHash)
-    convertedTx := utilities.ConvertStakeTransaction(stakeTx.(*protocol.StakeTx), oneBlock.Hash, stakeTxHash)
+    convertedTx := utilities.ConvertStakeTransaction(stakeTx.(*protocol.StakeTx), oneBlock.Hash, stakeTxHash, oneBlock.Timestamp)
 
     UpdateAccountIsStaking(convertedTx)
     WriteStakeTx(convertedTx)

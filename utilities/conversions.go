@@ -38,7 +38,7 @@ func ConvertBlock(unconvertedBlock *protocol.Block) Block {
   return convertedBlock
 }
 
-func ConvertFundsTransaction(unconvertedTx *protocol.FundsTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte) Fundstx {
+func ConvertFundsTransaction(unconvertedTx *protocol.FundsTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte, blockTimestamp int64) Fundstx {
   var convertedTx Fundstx
 
   //convertedTx.Header = fmt.Sprintf("%x", unconvertedTx.Header)
@@ -49,13 +49,13 @@ func ConvertFundsTransaction(unconvertedTx *protocol.FundsTx, unconvertedBlockHa
   convertedTx.TxCount = unconvertedTx.TxCnt
   convertedTx.From = fmt.Sprintf("%x", unconvertedTx.From)
   convertedTx.To = fmt.Sprintf("%x", unconvertedTx.To)
-  convertedTx.Timestamp = time.Now().Unix()
+  convertedTx.Timestamp = blockTimestamp
   convertedTx.Signature = fmt.Sprintf("%x", unconvertedTx.Sig1)
 
   return convertedTx
 }
 
-func ConvertAccTransaction(unconvertedTx *protocol.AccTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte) Acctx {
+func ConvertAccTransaction(unconvertedTx *protocol.AccTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte, blockTimestamp int64) Acctx {
   var convertedTx Acctx
 
   //convertedTx.Header = fmt.Sprintf("%x", unconvertedTx.Header)
@@ -64,13 +64,13 @@ func ConvertAccTransaction(unconvertedTx *protocol.AccTx, unconvertedBlockHash [
   convertedTx.Fee = unconvertedTx.Fee
   convertedTx.Issuer = fmt.Sprintf("%x", unconvertedTx.Issuer)
   convertedTx.PubKey = fmt.Sprintf("%x", unconvertedTx.PubKey)
-  convertedTx.Timestamp = time.Now().Unix()
+  convertedTx.Timestamp = blockTimestamp
   convertedTx.Signature = fmt.Sprintf("%x", unconvertedTx.Sig)
 
   return convertedTx
 }
 
-func ConvertConfigTransaction(unconvertedTx *protocol.ConfigTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte) Configtx {
+func ConvertConfigTransaction(unconvertedTx *protocol.ConfigTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte, blockTimestamp int64) Configtx {
   var convertedTx Configtx
 
   //convertedTx.Header = fmt.Sprintf("%x", unconvertedTx.Header)
@@ -84,18 +84,18 @@ func ConvertConfigTransaction(unconvertedTx *protocol.ConfigTx, unconvertedBlock
     convertedTx.Payload = unconvertedTx.Payload
   }
   convertedTx.TxCount = unconvertedTx.TxCnt
-  convertedTx.Timestamp = time.Now().Unix()
+  convertedTx.Timestamp = blockTimestamp
   convertedTx.Signature = fmt.Sprintf("%x", unconvertedTx.Sig)
 
   return convertedTx
 }
 
-func ConvertStakeTransaction(unconvertedTx *protocol.StakeTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte) Staketx  {
+func ConvertStakeTransaction(unconvertedTx *protocol.StakeTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte, blockTimestamp int64) Staketx  {
   var convertedTx Staketx
 
   convertedTx.Hash = fmt.Sprintf("%x", unconvertedTxHash)
   convertedTx.BlockHash = fmt.Sprintf("%x", unconvertedBlockHash)
-  convertedTx.Timestamp = time.Now().Unix()
+  convertedTx.Timestamp = blockTimestamp
   convertedTx.Fee = unconvertedTx.Fee
   convertedTx.Account = fmt.Sprintf("%x", unconvertedTx.Account)
   convertedTx.IsStaking = unconvertedTx.IsStaking

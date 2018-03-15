@@ -53,8 +53,8 @@ func SetupDB(username string, userpassword string)  {
   defer db.Close()
 
   fmt.Println("Setting up Database...")
-  dropTables()
-  createTables()
+  //dropTables()
+  //createTables()
   fmt.Println("Setup Complete")
 }
 

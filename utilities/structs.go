@@ -88,12 +88,20 @@ type Account struct {
 }
 
 type JSONAccount struct {
-	Address       [64]byte `json:"-"`
-	AddressString string   `json:"address"`
-	Balance       uint64   `json:"balance"`
-	TxCnt         uint32   `json:"txCnt"`
-	IsCreated     bool     `json:"isCreated"`
-	IsRoot        bool     `json:"isRoot"`
+  Code          int      `json:"code"`
+  Message       string   `json:"message"`
+  Content       []Content `json:"content"`
+}
+
+type Content struct {
+  Name        string   `json:"name"`
+  Detail      struct {
+    Address   string   `json:"address"`
+    Balance   int   `json:"balance"`
+    TxCnt     int   `json:"txCnt"`
+    IsCreated bool   `json:"isCreated"`
+    IsRoot    bool   `json:"isRoot"`
+  } `json:"detail"`
 }
 
 type Systemparams struct {

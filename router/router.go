@@ -176,7 +176,7 @@ func adminfunc(w http.ResponseWriter, r *http.Request, params httprouter.Params)
 	}
 
   accountInformation := utilities.RequestAccountInformation(publicKeyCookie.Value)
-  if accountInformation.IsRoot {
+  if accountInformation.Content[0].Detail.IsRoot {
     parameters := data.ReturnNewestParameters()
     parameters.UrlLevel = ".."
     tpl.ExecuteTemplate(w, "admin.gohtml", parameters)
@@ -192,8 +192,11 @@ func loginFunc(w http.ResponseWriter, r *http.Request, params httprouter.Params)
   accountInformation := utilities.RequestAccountInformation(r.PostFormValue("public-key-field"))
   var url utilities.Emptyresponse
   url.UrlLevel = ".."
-
-  if accountInformation.IsRoot {
+  if accountInformation.Code == 500 {
+    tpl.ExecuteTemplate(w, "loginfail.gohtml", url)
+    return
+  }
+  if accountInformation.Content[0].Detail.IsRoot {
     cookie := utilities.CreateCookie(r.PostFormValue("public-key-field"))
     http.SetCookie(w, &cookie)
     tpl.ExecuteTemplate(w, "loginsuccess.gohtml", url)

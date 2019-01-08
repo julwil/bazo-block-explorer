@@ -1,17 +1,16 @@
 package data
 
 import (
-  "github.com/bazo-blockchain/bazo-block-explorer/utilities"
-  "net"
-  "fmt"
-  "log"
-  "time"
-  "errors"
-  "bufio"
+	"bufio"
+	"errors"
+	"fmt"
+	"github.com/bazo-blockchain/bazo-block-explorer/utilities"
+	"github.com/bazo-blockchain/bazo-miner/miner"
 	"github.com/bazo-blockchain/bazo-miner/p2p"
-  "github.com/bazo-blockchain/bazo-miner/miner"
 	"github.com/bazo-blockchain/bazo-miner/protocol"
-  "github.com/bazo-blockchain/bazo-miner/storage"
+	"log"
+	"net"
+	"time"
 )
 
 var newestBlock *protocol.Block
@@ -19,122 +18,122 @@ var logger *log.Logger
 var block1 *protocol.Block
 
 func timeTrack(start time.Time, name string) {
-    elapsed := time.Since(start)
-    fmt.Printf("%s took %s\n", name, elapsed)
+	elapsed := time.Since(start)
+	fmt.Printf("%s took %s\n", name, elapsed)
 }
 
 func RunDB() {
 
-  saveInitialParameters()
+	saveInitialParameters()
 
-  for loadAllBlocks() == false{
-    time.Sleep(time.Second * 120)
-  }
-  for 0 < 1 {
-    time.Sleep(time.Second * 120)
-    RefreshState()
-  }
+	for loadAllBlocks() == false {
+		time.Sleep(time.Second * 120)
+	}
+	for 0 < 1 {
+		time.Sleep(time.Second * 120)
+		RefreshState()
+	}
 }
 
-func saveInitialParameters()  {
-  var convertedParameters utilities.Systemparams
-  parameters := miner.NewDefaultParameters()
+func saveInitialParameters() {
+	var convertedParameters utilities.Systemparams
+	parameters := miner.NewDefaultParameters()
 
-  convertedParameters.Timestamp = time.Now().Unix()
-  convertedParameters.BlockSize = parameters.Block_size
-  convertedParameters.DiffInterval = parameters.Diff_interval
-  convertedParameters.MinFee = parameters.Fee_minimum
-  convertedParameters.BlockInterval = parameters.Block_interval
-  convertedParameters.BlockReward = parameters.Diff_interval
-  convertedParameters.StakingMin = parameters.Staking_minimum
-  convertedParameters.WaitingMin = parameters.Waiting_minimum
-  convertedParameters.AcceptanceTimeDiff = parameters.Accepted_time_diff
-  convertedParameters.SlashingWindowSize = parameters.Slashing_window_size
-  convertedParameters.SlashingReward = parameters.Slash_reward
+	convertedParameters.Timestamp = time.Now().Unix()
+	convertedParameters.BlockSize = parameters.Block_size
+	convertedParameters.DiffInterval = parameters.Diff_interval
+	convertedParameters.MinFee = parameters.Fee_minimum
+	convertedParameters.BlockInterval = parameters.Block_interval
+	convertedParameters.BlockReward = parameters.Diff_interval
+	convertedParameters.StakingMin = parameters.Staking_minimum
+	convertedParameters.WaitingMin = parameters.Waiting_minimum
+	convertedParameters.AcceptanceTimeDiff = parameters.Accepted_time_diff
+	convertedParameters.SlashingWindowSize = parameters.Slashing_window_size
+	convertedParameters.SlashingReward = parameters.Slash_reward
 
-  WriteParameters(convertedParameters)
+	WriteParameters(convertedParameters)
 }
 
 func loadAllBlocks() bool {
-  defer timeTrack(time.Now(), "Copying Database")
+	defer timeTrack(time.Now(), "Copying Database")
 
-  //request newest block with argument nil
-  block := reqBlock(nil)
-  var emptyBlock *protocol.Block
-  if block == emptyBlock {
-    //connection to miner failed, will retry after interval in RunDB()
-    return false
-  }
-  fmt.Printf("Copying Data...")
-  //newestBlock is stored for the next iteration of RefreshState() to check if it changed
-  newestBlock = block
-  SaveBlockAndTransactions(block)
-  prevHash := block.PrevHash
+	//request newest block with argument nil
+	block := reqBlock(nil)
+	var emptyBlock *protocol.Block
+	if block == emptyBlock {
+		//connection to miner failed, will retry after interval in RunDB()
+		return false
+	}
+	fmt.Printf("Copying Data...")
+	//newestBlock is stored for the next iteration of RefreshState() to check if it changed
+	newestBlock = block
+	SaveBlockAndTransactions(block)
+	prevHash := block.PrevHash
 
-  //using prevHash of block, every block gets requested recursively
-  for block.Hash != [32]byte{} {
-    block = reqBlock(prevHash[:])
-    SaveBlockAndTransactions(block)
-    prevHash = block.PrevHash
-  }
-  //remove root account from database, since its balance makes no sense
-  RemoveRootFromDB()
-  UpdateTotals()
-  fmt.Println("All Blocks Loaded!")
-  return true
+	//using prevHash of block, every block gets requested recursively
+	for block.Hash != [32]byte{} {
+		block = reqBlock(prevHash[:])
+		SaveBlockAndTransactions(block)
+		prevHash = block.PrevHash
+	}
+	//remove root account from database, since its balance makes no sense
+	RemoveRootFromDB()
+	UpdateTotals()
+	fmt.Println("All Blocks Loaded!")
+	return true
 }
 
 func RefreshState() {
-  fmt.Println("Refreshing State...")
+	fmt.Println("Refreshing State...")
 
-  //request newest block with argument nil
-  block := reqBlock(nil)
-  var emptyBlock *protocol.Block
-  if block == emptyBlock {
-    //connection to miner failed, will retry after interval in RunDB()
-    return
-  }
-  prevHash := block.PrevHash
-  tempBlock := block
+	//request newest block with argument nil
+	block := reqBlock(nil)
+	var emptyBlock *protocol.Block
+	if block == emptyBlock {
+		//connection to miner failed, will retry after interval in RunDB()
+		return
+	}
+	prevHash := block.PrevHash
+	tempBlock := block
 
-  if block.Hash == newestBlock.Hash {
-    //No new Blocks
-    RemoveRootFromDB()
-    UpdateTotals()
-    return
+	if block.Hash == newestBlock.Hash {
+		//No new Blocks
+		RemoveRootFromDB()
+		UpdateTotals()
+		return
 
-  } else if prevHash == newestBlock.Hash {
-    //One new Block
-    SaveBlockAndTransactions(block)
-    newestBlock = block
+	} else if prevHash == newestBlock.Hash {
+		//One new Block
+		SaveBlockAndTransactions(block)
+		newestBlock = block
 
-    RemoveRootFromDB()
-    UpdateTotals()
-    return
+		RemoveRootFromDB()
+		UpdateTotals()
+		return
 
-  } else if block.Hash != newestBlock.Hash {
-    //Multiple new Blocks
-    SaveBlockAndTransactions(block)
-  }
+	} else if block.Hash != newestBlock.Hash {
+		//Multiple new Blocks
+		SaveBlockAndTransactions(block)
+	}
 
-  for block.PrevHash != newestBlock.Hash {
-    block = reqBlock(prevHash[:])
-    prevHash = block.PrevHash
-    SaveBlockAndTransactions(block)
-  }
-  newestBlock = tempBlock
+	for block.PrevHash != newestBlock.Hash {
+		block = reqBlock(prevHash[:])
+		prevHash = block.PrevHash
+		SaveBlockAndTransactions(block)
+	}
+	newestBlock = tempBlock
 
-  RemoveRootFromDB()
-  UpdateTotals()
+	RemoveRootFromDB()
+	UpdateTotals()
 }
 
 func Connect(connectionString string) (conn net.Conn, err error) {
 	conn, err = net.Dial("tcp", connectionString)
 
 	if err != nil {
-    fmt.Println("Could not connect to a miner!")
+		fmt.Println("Could not connect to a miner!")
 		log.Println(err)
-    return conn, err
+		return conn, err
 	}
 	conn.SetDeadline(time.Now().Add(20 * time.Second))
 
@@ -142,12 +141,12 @@ func Connect(connectionString string) (conn net.Conn, err error) {
 }
 
 func reqBlock(blockHash []byte) (block *protocol.Block) {
-  //request data using modified code from bazo's p2p messaging system
-	conn, err := Connect(storage.BOOTSTRAP_SERVER)
-  if err != nil {
-    var emptyBlock *protocol.Block
-    return emptyBlock
-  }
+	//request data using modified code from bazo's p2p messaging system
+	conn, err := Connect("104.40.213.93:9001")
+	if err != nil {
+		var emptyBlock *protocol.Block
+		return emptyBlock
+	}
 	packet := p2p.BuildPacket(p2p.BLOCK_REQ, blockHash[:])
 	conn.Write(packet)
 
@@ -165,8 +164,8 @@ func reqBlock(blockHash []byte) (block *protocol.Block) {
 }
 
 func reqTx(txType uint8, txHash [32]byte) interface{} {
-  //request data using modified code from bazo's p2p messaging system
-	conn, _ := Connect(storage.BOOTSTRAP_SERVER)
+	//request data using modified code from bazo's p2p messaging system
+	conn, _ := Connect("104.40.213.93:9001")
 	packet := p2p.BuildPacket(txType, txHash[:])
 	conn.Write(packet)
 
@@ -175,7 +174,7 @@ func reqTx(txType uint8, txHash [32]byte) interface{} {
 		logger.Printf("Disconnected: %v\n", err)
 		panic(err)
 	}
-  defer conn.Close()
+	defer conn.Close()
 
 	switch header.TypeID {
 	case p2p.ACCTX_RES:
@@ -190,17 +189,17 @@ func reqTx(txType uint8, txHash [32]byte) interface{} {
 		var fundsTx *protocol.FundsTx
 		fundsTx = fundsTx.Decode(payload)
 		return fundsTx
-  case p2p.STAKETX_RES:
-    var stakeTx *protocol.StakeTx
-    stakeTx = stakeTx.Decode(payload)
-    return stakeTx
-  default:
-    panic(err)
+	case p2p.STAKETX_RES:
+		var stakeTx *protocol.StakeTx
+		stakeTx = stakeTx.Decode(payload)
+		return stakeTx
+	default:
+		panic(err)
 	}
 }
 
 func rcvData(c net.Conn) (header *p2p.Header, payload []byte, err error) {
-  //request data using modified code from bazo's p2p messaging system
+	//request data using modified code from bazo's p2p messaging system
 	reader := bufio.NewReader(c)
 	header, err = p2p.ReadHeader(reader)
 
@@ -221,43 +220,43 @@ func rcvData(c net.Conn) (header *p2p.Header, payload []byte, err error) {
 	return header, payload, nil
 }
 
-func SaveBlockAndTransactions(oneBlock *protocol.Block)  {
-  for _, accTxHash := range oneBlock.AccTxData{
-    accTx := reqTx(p2p.ACCTX_REQ, accTxHash)
-    convertedTx := utilities.ConvertAccTransaction(accTx.(*protocol.AccTx), oneBlock.Hash, accTxHash, oneBlock.Timestamp)
-    accountHashBytes := utilities.SerializeHashContent(accTx.(*protocol.AccTx).PubKey)
-    accountHash := fmt.Sprintf("%x", accountHashBytes)
+func SaveBlockAndTransactions(oneBlock *protocol.Block) {
+	for _, accTxHash := range oneBlock.AccTxData {
+		accTx := reqTx(p2p.ACCTX_REQ, accTxHash)
+		convertedTx := utilities.ConvertAccTransaction(accTx.(*protocol.AccTx), oneBlock.Hash, accTxHash, oneBlock.Timestamp)
+		accountHashBytes := utilities.SerializeHashContent(accTx.(*protocol.AccTx).PubKey)
+		accountHash := fmt.Sprintf("%x", accountHashBytes)
 
-    WriteAccountWithAddress(convertedTx, accountHash)
-    WriteAccTx(convertedTx)
-  }
+		WriteAccountWithAddress(convertedTx, accountHash)
+		WriteAccTx(convertedTx)
+	}
 
-  for _, fundsTxHash := range oneBlock.FundsTxData{
-    fundsTx := reqTx(p2p.FUNDSTX_REQ, fundsTxHash)
-    convertedTx := utilities.ConvertFundsTransaction(fundsTx.(*protocol.FundsTx), oneBlock.Hash, fundsTxHash, oneBlock.Timestamp)
+	for _, fundsTxHash := range oneBlock.FundsTxData {
+		fundsTx := reqTx(p2p.FUNDSTX_REQ, fundsTxHash)
+		convertedTx := utilities.ConvertFundsTransaction(fundsTx.(*protocol.FundsTx), oneBlock.Hash, fundsTxHash, oneBlock.Timestamp)
 
-    UpdateAccountData(convertedTx)
-    WriteFundsTx(convertedTx)
-  }
+		UpdateAccountData(convertedTx)
+		WriteFundsTx(convertedTx)
+	}
 
-  for _, configTxHash := range oneBlock.ConfigTxData{
-    configTx := reqTx(p2p.CONFIGTX_REQ, configTxHash)
-    convertedTx := utilities.ConvertConfigTransaction(configTx.(*protocol.ConfigTx), oneBlock.Hash, configTxHash, oneBlock.Timestamp)
-    currentParams := ReturnNewestParameters()
-    newParams := utilities.ExtractParameters(convertedTx, currentParams)
+	for _, configTxHash := range oneBlock.ConfigTxData {
+		configTx := reqTx(p2p.CONFIGTX_REQ, configTxHash)
+		convertedTx := utilities.ConvertConfigTransaction(configTx.(*protocol.ConfigTx), oneBlock.Hash, configTxHash, oneBlock.Timestamp)
+		currentParams := ReturnNewestParameters()
+		newParams := utilities.ExtractParameters(convertedTx, currentParams)
 
-    WriteParameters(newParams)
-    WriteConfigTx(convertedTx)
-  }
+		WriteParameters(newParams)
+		WriteConfigTx(convertedTx)
+	}
 
-  for _, stakeTxHash := range oneBlock.StakeTxData{
-    stakeTx := reqTx(p2p.STAKETX_REQ, stakeTxHash)
-    convertedTx := utilities.ConvertStakeTransaction(stakeTx.(*protocol.StakeTx), oneBlock.Hash, stakeTxHash, oneBlock.Timestamp)
+	for _, stakeTxHash := range oneBlock.StakeTxData {
+		stakeTx := reqTx(p2p.STAKETX_REQ, stakeTxHash)
+		convertedTx := utilities.ConvertStakeTransaction(stakeTx.(*protocol.StakeTx), oneBlock.Hash, stakeTxHash, oneBlock.Timestamp)
 
-    UpdateAccountIsStaking(convertedTx)
-    WriteStakeTx(convertedTx)
-  }
+		UpdateAccountIsStaking(convertedTx)
+		WriteStakeTx(convertedTx)
+	}
 
-  convertedBlock := utilities.ConvertBlock(oneBlock)
-  WriteBlock(convertedBlock)
+	convertedBlock := utilities.ConvertBlock(oneBlock)
+	WriteBlock(convertedBlock)
 }

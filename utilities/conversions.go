@@ -2,25 +2,35 @@ package utilities
 
 import (
   "fmt"
-  "time"
   "github.com/bazo-blockchain/bazo-miner/protocol"
+  "time"
 )
 
 func ConvertBlock(unconvertedBlock *protocol.Block) Block {
   var convertedBlock Block
   var convertedTxHash string
 
-  //convertedBlock.Header = fmt.Sprintf("%x", unconvertedBlock.Header)
+  convertedBlock.Header = fmt.Sprintf("%x", unconvertedBlock.Header)
   convertedBlock.Hash = fmt.Sprintf("%x", unconvertedBlock.Hash)
   convertedBlock.PrevHash = fmt.Sprintf("%x", unconvertedBlock.PrevHash)
-  //convertedBlock.Nonce = fmt.Sprintf("%x", unconvertedBlock.Nonce)
+  convertedBlock.NrConfigTx = unconvertedBlock.NrConfigTx
+  convertedBlock.Height = unconvertedBlock.Height
+  convertedBlock.Beneficiary = fmt.Sprintf("%x", unconvertedBlock.Beneficiary)
+
+  convertedBlock.Nonce = fmt.Sprintf("%x", unconvertedBlock.Nonce)
   convertedBlock.Timestamp = unconvertedBlock.Timestamp
   convertedBlock.TimeString = time.Unix(unconvertedBlock.Timestamp, 0).Format("02 Jan 2006 15:04")
   convertedBlock.MerkleRoot = fmt.Sprintf("%x", unconvertedBlock.MerkleRoot)
-  convertedBlock.Beneficiary = fmt.Sprintf("%x", unconvertedBlock.Beneficiary)
-  convertedBlock.NrFundsTx = unconvertedBlock.NrFundsTx
   convertedBlock.NrAccTx = unconvertedBlock.NrAccTx
-  convertedBlock.NrConfigTx = unconvertedBlock.NrConfigTx
+  convertedBlock.NrFundsTx = unconvertedBlock.NrFundsTx
+  convertedBlock.NrStakeTx = unconvertedBlock.NrStakeTx
+
+  //TODO
+  //SlashedAddress
+  //Seed
+  //HashedSeed
+  //ConflictingBlockHash1
+  //ConflictingBlockHash2
 
   for _, hash := range unconvertedBlock.FundsTxData {
     convertedTxHash = fmt.Sprintf("%x", hash)
@@ -33,6 +43,11 @@ func ConvertBlock(unconvertedBlock *protocol.Block) Block {
   for _, hash := range unconvertedBlock.ConfigTxData {
     convertedTxHash = fmt.Sprintf("%x", hash)
     convertedBlock.ConfigTxData = append(convertedBlock.ConfigTxData, convertedTxHash)
+  }
+
+  for _, hash := range unconvertedBlock.StakeTxData {
+    convertedTxHash = fmt.Sprintf("%x", hash)
+    convertedBlock.StakeTxData = append(convertedBlock.StakeTxData, convertedTxHash)
   }
 
   return convertedBlock

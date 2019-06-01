@@ -1,15 +1,14 @@
 package data
 
 import (
-	"bufio"
-	"errors"
+	"encoding/hex"
 	"fmt"
 	"github.com/bazo-blockchain/bazo-block-explorer/utilities"
+	"github.com/bazo-blockchain/bazo-client/network"
 	"github.com/bazo-blockchain/bazo-miner/miner"
 	"github.com/bazo-blockchain/bazo-miner/p2p"
 	"github.com/bazo-blockchain/bazo-miner/protocol"
 	"log"
-	"net"
 	"time"
 )
 
@@ -23,16 +22,9 @@ func timeTrack(start time.Time, name string) {
 }
 
 func RunDB() {
-
 	saveInitialParameters()
-
-	for loadAllBlocks() == false {
-		time.Sleep(time.Second * 120)
-	}
-	for 0 < 1 {
-		time.Sleep(time.Second * 120)
-		RefreshState()
-	}
+	network.Uptodate = true
+	incomingBlocks()
 }
 
 func saveInitialParameters() {
@@ -54,177 +46,80 @@ func saveInitialParameters() {
 	WriteParameters(convertedParameters)
 }
 
-func loadAllBlocks() bool {
-	defer timeTrack(time.Now(), "Copying Database")
+func incomingBlocks() {
+	for {
+		blockIn := <-network.BlockIn
+		blockInConverted := utilities.ConvertBlock(blockIn)
 
-	//request newest block with argument nil
-	block := reqBlock(nil)
-	var emptyBlock *protocol.Block
-	if block == emptyBlock {
-		//connection to miner failed, will retry after interval in RunDB()
-		return false
-	}
-	fmt.Printf("Copying Data...")
-	//newestBlock is stored for the next iteration of RefreshState() to check if it changed
-	newestBlock = block
-	SaveBlockAndTransactions(block)
-	prevHash := block.PrevHash
+		//The block does not exist in DB
+		if ReturnOneBlock(blockInConverted.Hash).Hash == "" {
+			if err := SaveBlockAndTransactions(blockIn, true); err != nil {
 
-	//using prevHash of block, every block gets requested recursively
-	for block.Hash != [32]byte{} {
-		block = reqBlock(prevHash[:])
-		SaveBlockAndTransactions(block)
-		prevHash = block.PrevHash
+			}
+		}
+
+		lastBlockConverted := blockInConverted;
+		for ReturnOneBlock(lastBlockConverted.PrevHash).Hash == "" && lastBlockConverted.Height > 1 {
+			network.Uptodate = false
+			hash, _ := hex.DecodeString(lastBlockConverted.PrevHash)
+
+			var lastBlock *protocol.Block
+			if lastBlock = fetchBlock(hash[:]); lastBlock == nil {
+				for lastBlock == nil {
+					fmt.Printf("Try to fetch header %x again\n", hash[:])
+					lastBlock = fetchBlock(hash[:])
+				}
+			}
+
+			lastBlockConverted = utilities.ConvertBlock(lastBlock)
+			if err := SaveBlockAndTransactions(lastBlock, false); err != nil {
+				log.Fatal(fmt.Sprintf("Save block %x and transactions: %v", lastBlock.Hash[8], err))
+			}
+		}
+
+		network.Uptodate = true
 	}
-	//remove root account from database, since its balance makes no sense
-	RemoveRootFromDB()
-	UpdateTotals()
-	fmt.Println("All Blocks Loaded!")
-	return true
 }
 
-func RefreshState() {
-	fmt.Println("Refreshing State...")
-
-	//request newest block with argument nil
-	block := reqBlock(nil)
-	var emptyBlock *protocol.Block
-	if block == emptyBlock {
-		//connection to miner failed, will retry after interval in RunDB()
-		return
-	}
-	prevHash := block.PrevHash
-	tempBlock := block
-
-	if block.Hash == newestBlock.Hash {
-		//No new Blocks
-		RemoveRootFromDB()
-		UpdateTotals()
-		return
-
-	} else if prevHash == newestBlock.Hash {
-		//One new Block
-		SaveBlockAndTransactions(block)
-		newestBlock = block
-
-		RemoveRootFromDB()
-		UpdateTotals()
-		return
-
-	} else if block.Hash != newestBlock.Hash {
-		//Multiple new Blocks
-		SaveBlockAndTransactions(block)
+func fetchBlock(blockHash []byte) (block *protocol.Block) {
+	var errormsg string
+	if blockHash != nil {
+		errormsg = fmt.Sprintf("Loading header %x failed: ", blockHash[:8])
 	}
 
-	for block.PrevHash != newestBlock.Hash {
-		block = reqBlock(prevHash[:])
-		prevHash = block.PrevHash
-		SaveBlockAndTransactions(block)
-	}
-	newestBlock = tempBlock
-
-	RemoveRootFromDB()
-	UpdateTotals()
-}
-
-func Connect(connectionString string) (conn net.Conn, err error) {
-	conn, err = net.Dial("tcp", connectionString)
-
+	err := network.BlockReq(blockHash[:])
 	if err != nil {
-		fmt.Println("Could not connect to a miner!")
-		log.Println(err)
-		return conn, err
+		fmt.Println(errormsg + err.Error())
+		return nil
 	}
-	conn.SetDeadline(time.Now().Add(20 * time.Second))
 
-	return conn, err
-}
-
-func reqBlock(blockHash []byte) (block *protocol.Block) {
-	//request data using modified code from bazo's p2p messaging system
-	conn, err := Connect("104.40.213.93:9001")
+	blockI, err := network.Fetch(network.BlockChan)
 	if err != nil {
-		var emptyBlock *protocol.Block
-		return emptyBlock
+		fmt.Println(errormsg + err.Error())
+		return nil
 	}
-	packet := p2p.BuildPacket(p2p.BLOCK_REQ, blockHash[:])
-	conn.Write(packet)
 
-	header, payload, err := rcvData(conn)
-	if err != nil {
-		logger.Printf("Disconnected: %v\n", err)
-		return
-	}
-	if header.TypeID == p2p.BLOCK_RES {
-		block = block.Decode(payload)
-	}
-	conn.Close()
+	block = blockI.(*protocol.Block)
 
 	return block
 }
 
-func reqTx(txType uint8, txHash [32]byte) interface{} {
-	//request data using modified code from bazo's p2p messaging system
-	conn, _ := Connect("104.40.213.93:9001")
-	packet := p2p.BuildPacket(txType, txHash[:])
-	conn.Write(packet)
-
-	header, payload, err := rcvData(conn)
-	if err != nil {
-		logger.Printf("Disconnected: %v\n", err)
-		panic(err)
-	}
-	defer conn.Close()
-
-	switch header.TypeID {
-	case p2p.ACCTX_RES:
-		var accTx *protocol.AccTx
-		accTx = accTx.Decode(payload)
-		return accTx
-	case p2p.CONFIGTX_RES:
-		var configTx *protocol.ConfigTx
-		configTx = configTx.Decode(payload)
-		return configTx
-	case p2p.FUNDSTX_RES:
-		var fundsTx *protocol.FundsTx
-		fundsTx = fundsTx.Decode(payload)
-		return fundsTx
-	case p2p.STAKETX_RES:
-		var stakeTx *protocol.StakeTx
-		stakeTx = stakeTx.Decode(payload)
-		return stakeTx
-	default:
-		panic(err)
-	}
-}
-
-func rcvData(c net.Conn) (header *p2p.Header, payload []byte, err error) {
-	//request data using modified code from bazo's p2p messaging system
-	reader := bufio.NewReader(c)
-	header, err = p2p.ReadHeader(reader)
-
-	if err != nil {
-		c.Close()
-		return nil, nil, errors.New(fmt.Sprintf("Connection to aborted: (%v)\n", err))
-	}
-	payload = make([]byte, header.Len)
-
-	for cnt := 0; cnt < int(header.Len); cnt++ {
-		payload[cnt], err = reader.ReadByte()
-		if err != nil {
-			c.Close()
-			return nil, nil, errors.New(fmt.Sprintf("Connection to aborted: %v\n", err))
-		}
-	}
-
-	return header, payload, nil
-}
-
-func SaveBlockAndTransactions(oneBlock *protocol.Block) {
+func SaveBlockAndTransactions(oneBlock *protocol.Block, doPostSave bool) error {
 	for _, accTxHash := range oneBlock.AccTxData {
-		accTx := reqTx(p2p.ACCTX_REQ, accTxHash)
-		convertedTx := utilities.ConvertAccTransaction(accTx.(*protocol.AccTx), oneBlock.Hash, accTxHash, oneBlock.Timestamp)
-		accountHashBytes := utilities.SerializeHashContent(accTx.(*protocol.AccTx).PubKey)
+		err := network.TxReq(p2p.ACCTX_REQ, accTxHash)
+		if err != nil {
+			return err
+		}
+
+		txI, err := network.Fetch(network.AccTxChan)
+		if err != nil {
+			return err
+		}
+
+		accTx := txI.(*protocol.AccTx)
+
+		convertedTx := utilities.ConvertAccTransaction(accTx, oneBlock.Hash, accTxHash, oneBlock.Timestamp)
+		accountHashBytes := utilities.SerializeHashContent(accTx.PubKey)
 		accountHash := fmt.Sprintf("%x", accountHashBytes)
 
 		WriteAccountWithAddress(convertedTx, accountHash)
@@ -232,16 +127,38 @@ func SaveBlockAndTransactions(oneBlock *protocol.Block) {
 	}
 
 	for _, fundsTxHash := range oneBlock.FundsTxData {
-		fundsTx := reqTx(p2p.FUNDSTX_REQ, fundsTxHash)
-		convertedTx := utilities.ConvertFundsTransaction(fundsTx.(*protocol.FundsTx), oneBlock.Hash, fundsTxHash, oneBlock.Timestamp)
+		err := network.TxReq(p2p.FUNDSTX_REQ, fundsTxHash)
+		if err != nil {
+			return err
+		}
+
+		txI, err := network.Fetch(network.FundsTxChan)
+		if err != nil {
+			return err
+		}
+
+		fundsTx := txI.(*protocol.FundsTx)
+
+		convertedTx := utilities.ConvertFundsTransaction(fundsTx, oneBlock.Hash, fundsTxHash, oneBlock.Timestamp)
 
 		UpdateAccountData(convertedTx)
 		WriteFundsTx(convertedTx)
 	}
 
 	for _, configTxHash := range oneBlock.ConfigTxData {
-		configTx := reqTx(p2p.CONFIGTX_REQ, configTxHash)
-		convertedTx := utilities.ConvertConfigTransaction(configTx.(*protocol.ConfigTx), oneBlock.Hash, configTxHash, oneBlock.Timestamp)
+		err := network.TxReq(p2p.CONFIGTX_REQ, configTxHash)
+		if err != nil {
+			return err
+		}
+
+		txI, err := network.Fetch(network.ConfigTxChan)
+		if err != nil {
+			return err
+		}
+
+		configTx := txI.(*protocol.ConfigTx)
+
+		convertedTx := utilities.ConvertConfigTransaction(configTx, oneBlock.Hash, configTxHash, oneBlock.Timestamp)
 		currentParams := ReturnNewestParameters()
 		newParams := utilities.ExtractParameters(convertedTx, currentParams)
 
@@ -250,8 +167,19 @@ func SaveBlockAndTransactions(oneBlock *protocol.Block) {
 	}
 
 	for _, stakeTxHash := range oneBlock.StakeTxData {
-		stakeTx := reqTx(p2p.STAKETX_REQ, stakeTxHash)
-		convertedTx := utilities.ConvertStakeTransaction(stakeTx.(*protocol.StakeTx), oneBlock.Hash, stakeTxHash, oneBlock.Timestamp)
+		err := network.TxReq(p2p.STAKETX_REQ, stakeTxHash)
+		if err != nil {
+			return err
+		}
+
+		txI, err := network.Fetch(network.StakeTxChan)
+		if err != nil {
+			return err
+		}
+
+		stakeTx := txI.(*protocol.StakeTx)
+
+		convertedTx := utilities.ConvertStakeTransaction(stakeTx, oneBlock.Hash, stakeTxHash, oneBlock.Timestamp)
 
 		UpdateAccountIsStaking(convertedTx)
 		WriteStakeTx(convertedTx)
@@ -259,4 +187,15 @@ func SaveBlockAndTransactions(oneBlock *protocol.Block) {
 
 	convertedBlock := utilities.ConvertBlock(oneBlock)
 	WriteBlock(convertedBlock)
+
+	if doPostSave {
+		postSaveBlockAndTransactions()
+	}
+
+	return nil
+}
+
+func postSaveBlockAndTransactions() {
+	RemoveRootFromDB()
+	UpdateTotals()
 }

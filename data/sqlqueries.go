@@ -53,15 +53,15 @@ func SetupDB(username string, userpassword string)  {
   defer db.Close()
 
   fmt.Println("Setting up Database...")
-  //dropTables()
-  //createTables()
-  fmt.Println("Setup Complete")
+  dropTables()
+  createTables()
+  fmt.Println("Setup complete")
 }
 
 func dropTables() {
   connectToDB()
   defer db.Close()
-  fmt.Println("Dropping Tables...")
+  fmt.Println("Dropping tables...")
   sqlStatement := `drop table blocks;
                    drop table fundstx;
                    drop table acctx;
@@ -72,7 +72,7 @@ func dropTables() {
                    drop table stats;
                    drop table txhistory;`
   db.Exec(sqlStatement)
-  fmt.Println("Dropped Tables")
+  fmt.Println("Tables dropped")
 
 }
 
@@ -716,7 +716,7 @@ func Return14Hours() []utilities.Serie  {
 func createTables() {
   connectToDB()
   defer db.Close()
-  fmt.Println("Creating Tables...")
+  fmt.Println("Creating tables...")
 
   sqlStatement1 :=  `create table blocks (
                     header char(1) not null,
@@ -843,5 +843,5 @@ func createTables() {
     panic(err)
   }
 
-  fmt.Println("Created Tables Successfully")
+  fmt.Println("Tables created")
 }

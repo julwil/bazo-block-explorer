@@ -12,9 +12,10 @@ type Block struct {
   TimeString string
   MerkleRoot string
   Beneficiary string
+  Nonce string
   Seed string
   HashedSeed string
-  Height uint16
+  Height uint32
   NrFundsTx uint16
   NrAccTx uint16
   NrConfigTx uint8

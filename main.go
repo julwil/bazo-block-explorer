@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/bazo-blockchain/bazo-block-explorer/data"
 	"github.com/bazo-blockchain/bazo-block-explorer/router"
+	"github.com/bazo-blockchain/bazo-client/network"
+	"github.com/bazo-blockchain/bazo-client/util"
 	"github.com/bazo-blockchain/bazo-miner/p2p"
 	"net/http"
 	"os"
@@ -11,6 +13,8 @@ import (
 
 func main() {
 	p2p.InitLogging()
+	util.Config = util.LoadConfiguration()
+	network.Init(p2p.MINER_PING)
 
 	if len(os.Args) == 5 {
 		requestRouter := router.InitializeRouter()

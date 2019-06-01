@@ -1,12 +1,12 @@
 package data
 
 import (
-  "github.com/bazo-blockchain/bazo-block-explorer/utilities"
-  "fmt"
   "database/sql"
-  "time"
+  "fmt"
+  "github.com/bazo-blockchain/bazo-block-explorer/utilities"
   "github.com/lib/pq"
   "strings"
+  "time"
 )
 
 const (
@@ -80,10 +80,10 @@ func ReturnOneBlock(UrlHash string) utilities.Block {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, prevhash, timestamp, timestring, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata FROM blocks WHERE hash = $1;`
+  sqlStatement := `SELECT hash, prevhash, timestamp, timestring, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, nrstaketx, fundstxdata, acctxdata, configtxdata, staketxdata FROM blocks WHERE hash = $1;`
   var returnedblock utilities.Block
   row := db.QueryRow(sqlStatement, UrlHash)
-  switch err := row.Scan(&returnedblock.Hash, &returnedblock.PrevHash, &returnedblock.Timestamp, &returnedblock.TimeString, &returnedblock.MerkleRoot, &returnedblock.Beneficiary, &returnedblock.NrFundsTx, &returnedblock.NrAccTx, &returnedblock.NrConfigTx, &returnedblock.FundsTxDataString, &returnedblock.AccTxDataString, &returnedblock.ConfigTxDataString)
+  switch err := row.Scan(&returnedblock.Hash, &returnedblock.PrevHash, &returnedblock.Timestamp, &returnedblock.TimeString, &returnedblock.MerkleRoot, &returnedblock.Beneficiary, &returnedblock.NrFundsTx, &returnedblock.NrAccTx, &returnedblock.NrConfigTx, &returnedblock.NrStakeTx, &returnedblock.FundsTxDataString, &returnedblock.AccTxDataString, &returnedblock.ConfigTxDataString, &returnedblock.StakeTxDataString)
   err {
   case sql.ErrNoRows:
   case nil:
@@ -96,6 +96,9 @@ func ReturnOneBlock(UrlHash string) utilities.Block {
     }
     if len(returnedblock.ConfigTxDataString.String) > 0 {
       returnedblock.ConfigTxData = strings.Split(returnedblock.ConfigTxDataString.String[1:len(returnedblock.ConfigTxDataString.String)-1], ",")
+    }
+    if len(returnedblock.StakeTxDataString.String) > 0 {
+      returnedblock.StakeTxData = strings.Split(returnedblock.StakeTxDataString.String[1:len(returnedblock.StakeTxDataString.String)-1], ",")
     }
     return returnedblock
   default:
@@ -366,9 +369,9 @@ func WriteBlock(block utilities.Block)  {
   defer db.Close()
 
   sqlStatement = `
-    INSERT INTO blocks (hash, prevhash, timestamp, timestring, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`
-  _, err = db.Exec(sqlStatement, block.Hash, block.PrevHash, block.Timestamp, block.TimeString, block.MerkleRoot, block.Beneficiary, block.NrFundsTx, block.NrAccTx, block.NrConfigTx, pq.Array(block.FundsTxData), pq.Array(block.AccTxData), pq.Array(block.ConfigTxData))
+    INSERT INTO blocks (header, hash, prevhash, nonce, timestamp, timestring, merkleroot, beneficiary, seed, hashedseed, height, nrfundstx, nracctx, nrconfigtx, nrstaketx, fundstxdata, acctxdata, configtxdata, staketxdata)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)`
+  _, err = db.Exec(sqlStatement, block.Header, block.Hash, block.PrevHash, block.Nonce, block.Timestamp, block.TimeString, block.MerkleRoot, block.Beneficiary, block.Seed, block.HashedSeed, block.Height, block.NrFundsTx, block.NrAccTx, block.NrConfigTx, block.NrStakeTx, pq.Array(block.FundsTxData), pq.Array(block.AccTxData), pq.Array(block.ConfigTxData), pq.Array(block.StakeTxData))
   if err != nil {
     panic(err)
   }

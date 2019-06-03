@@ -141,7 +141,7 @@ func SaveBlockAndTransactions(oneBlock *protocol.Block, doPostSave bool) error {
 
 		convertedTx := utilities.ConvertFundsTransaction(fundsTx, oneBlock.Hash, fundsTxHash, oneBlock.Timestamp)
 
-		UpdateAccountData(convertedTx)
+		UpdateAccountDataFunds(convertedTx)
 		WriteFundsTx(convertedTx)
 	}
 
@@ -181,7 +181,7 @@ func SaveBlockAndTransactions(oneBlock *protocol.Block, doPostSave bool) error {
 
 		convertedTx := utilities.ConvertStakeTransaction(stakeTx, oneBlock.Hash, stakeTxHash, oneBlock.Timestamp)
 
-		UpdateAccountIsStaking(convertedTx)
+		UpdateAccountDataStaking(convertedTx)
 		WriteStakeTx(convertedTx)
 	}
 

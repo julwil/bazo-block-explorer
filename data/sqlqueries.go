@@ -112,7 +112,7 @@ func ReturnAllBlocks(UrlHash string) []utilities.Block {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, timestamp, timestring, beneficiary, nrFundsTx, nrAccTx, nrConfigTx FROM blocks ORDER BY timestamp DESC LIMIT 100`
+  sqlStatement := `SELECT hash, timestamp, timestring, beneficiary, nrFundsTx, nrAccTx, nrConfigTx, nrStakeTx FROM blocks ORDER BY timestamp DESC LIMIT 100`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -121,7 +121,7 @@ func ReturnAllBlocks(UrlHash string) []utilities.Block {
   returnedrows := make([]utilities.Block, 0)
   for rows.Next() {
     var returnedrow utilities.Block
-    err = rows.Scan(&returnedrow.Hash, &returnedrow.Timestamp, &returnedrow.TimeString, &returnedrow.Beneficiary, &returnedrow.NrFundsTx, &returnedrow.NrAccTx, &returnedrow.NrConfigTx)
+    err = rows.Scan(&returnedrow.Hash, &returnedrow.Timestamp, &returnedrow.TimeString, &returnedrow.Beneficiary, &returnedrow.NrFundsTx, &returnedrow.NrAccTx, &returnedrow.NrConfigTx, &returnedrow.NrStakeTx)
     if err != nil {
       panic(err)
     }
@@ -448,7 +448,7 @@ func checkEmptyDB() bool {
   return true
 }
 
-func UpdateAccountData(tx utilities.Fundstx) {
+func UpdateAccountDataFunds(tx utilities.Fundstx) {
   connectToDB()
   defer db.Close()
 
@@ -486,8 +486,16 @@ func WriteAccountWithAddress(tx utilities.Acctx, accountHash string) {
   }
 }
 
-func UpdateAccountIsStaking(tx utilities.Staketx)  {
-  return
+func UpdateAccountDataStaking(tx utilities.Staketx)  {
+  connectToDB()
+  defer db.Close()
+
+  sqlStatement := `INSERT INTO accounts (hash, balance, isstaking, txcount) VALUES ($1, $2 * -1, $3, 0) ON CONFLICT (hash) DO UPDATE SET isstaking = $3, balance = (SELECT balance FROM accounts WHERE accounts.hash = $1) - $2 WHERE accounts.hash = $1`
+
+  _, err = db.Exec(sqlStatement, tx.Account, tx.Fee, tx.IsStaking)
+  if err != nil {
+    panic(err)
+  }
 }
 
 func ReturnOneAccount(UrlHash string) utilities.Accountwithtxs {
@@ -496,10 +504,10 @@ func ReturnOneAccount(UrlHash string) utilities.Accountwithtxs {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, address, balance, txcount FROM accounts WHERE hash = $1 OR address = $1`
+  sqlStatement := `SELECT hash, address, balance, txcount, isstaking FROM accounts WHERE hash = $1 OR address = $1`
   var returnedaccount utilities.Account
   row := db.QueryRow(sqlStatement, UrlHash)
-  switch err = row.Scan(&returnedaccount.Hash, &returnedaccount.Address, &returnedaccount.Balance, &returnedaccount.TxCount)
+  switch err = row.Scan(&returnedaccount.Hash, &returnedaccount.Address, &returnedaccount.Balance, &returnedaccount.TxCount, &returnedaccount.IsStaking)
   err {
   case sql.ErrNoRows:
     returnedData.Account = returnedaccount
@@ -537,7 +545,7 @@ func ReturnTopAccounts(UrlHash string) []utilities.Account {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, address, balance, txcount FROM accounts ORDER BY balance DESC LIMIT 20`
+  sqlStatement := `SELECT hash, address, balance, isstaking FROM accounts ORDER BY balance DESC LIMIT 20`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -546,7 +554,7 @@ func ReturnTopAccounts(UrlHash string) []utilities.Account {
   returnedrows := make([]utilities.Account, 0)
   for rows.Next() {
     var returnedrow utilities.Account
-    err = rows.Scan(&returnedrow.Hash, &returnedrow.Address, &returnedrow.Balance, &returnedrow.TxCount)
+    err = rows.Scan(&returnedrow.Hash, &returnedrow.Address, &returnedrow.Balance, &returnedrow.IsStaking)
     if err != nil {
       panic(err)
     }

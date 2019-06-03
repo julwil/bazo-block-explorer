@@ -25,7 +25,7 @@
                 <th>Hash</th>
                 <th>Address</th>
                 <th style="width: 10%;">Balance</th>
-                <th style="width: 10%;">TxCount</th>
+                <th style="width: 10%;">IsStaking</th>
               </tr>
             </thead>
             <tbody>
@@ -34,7 +34,7 @@
                 <td><a href="../account/{{.Hash}}">{{.Hash}}</a></td>
                 <td><a href="../account/{{.Address}}">{{.Address}}</a></td>
                 <td>{{.Balance}}</td>
-                <td>{{.TxCount}}</td>
+                <td>{{.IsStaking}}</td>
               </tr>
               {{end}}
             </tbody>

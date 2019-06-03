@@ -836,20 +836,22 @@ func createTables() {
 
   _, err := db.Exec(sqlStatement1)
   if err != nil {
-    panic(err)
+    fmt.Println(err)
   }
   _, err = db.Exec(sqlStatement2)
   if err != nil {
-    panic(err)
+    fmt.Println(err)
   }
   _, err = db.Exec(sqlStatement3)
   if err != nil {
-    panic(err)
+    fmt.Println(err)
   }
   _, err = db.Exec(sqlStatement4)
   if err != nil {
-    panic(err)
+    fmt.Println(err)
   }
 
-  fmt.Println("Tables created")
+  if err == nil {
+    fmt.Println("Tables created")
+  }
 }

@@ -50,7 +50,7 @@ func incomingBlocks() {
 		//The block does not exist in DB
 		if ReturnOneBlock(blockInConverted.Hash).Hash == "" {
 			if err := SaveBlockAndTransactions(blockIn, true); err != nil {
-
+				log.Fatal(fmt.Sprintf("Saving block %x and its transactions failed: %v", blockIn.Hash[8], err))
 			}
 		}
 
@@ -62,14 +62,14 @@ func incomingBlocks() {
 			var lastBlock *protocol.Block
 			if lastBlock = fetchBlock(hash[:]); lastBlock == nil {
 				for lastBlock == nil {
-					fmt.Printf("Try to fetch header %x again\n", hash[:])
+					fmt.Printf("Try to fetch block %x again\n", hash[:])
 					lastBlock = fetchBlock(hash[:])
 				}
 			}
 
 			lastBlockConverted = utilities.ConvertBlock(lastBlock)
 			if err := SaveBlockAndTransactions(lastBlock, false); err != nil {
-				log.Fatal(fmt.Sprintf("Save block %x and transactions: %v", lastBlock.Hash[8], err))
+				log.Fatal(fmt.Sprintf("Saving block %x and its transactions failed: %v", lastBlock.Hash[8], err))
 			}
 		}
 
@@ -80,7 +80,7 @@ func incomingBlocks() {
 func fetchBlock(blockHash []byte) (block *protocol.Block) {
 	var errormsg string
 	if blockHash != nil {
-		errormsg = fmt.Sprintf("Loading header %x failed: ", blockHash[:8])
+		errormsg = fmt.Sprintf("Loading block %x failed: ", blockHash[:8])
 	}
 
 	err := network.BlockReq(blockHash[:])
@@ -187,6 +187,8 @@ func SaveBlockAndTransactions(oneBlock *protocol.Block, doPostSave bool) error {
 	if doPostSave {
 		postSaveBlockAndTransactions()
 	}
+
+	fmt.Printf("Block with height %v loaded and saved\n", oneBlock.Height)
 
 	return nil
 }

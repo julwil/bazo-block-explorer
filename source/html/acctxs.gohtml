@@ -1,49 +1,49 @@
 <!DOCTYPE html>
 <html>
 
-  <head>
+<head>
 
     {{template "head"}}
 
-  </head>
+</head>
 
-  <body>
+<body>
 
-    {{template "navBar"}}
+{{template "navBar"}}
 
-    <div class="clr"></div>
+<div class="clr"></div>
 
-    <section>
-      <div class="container">
+<section>
+    <div class="container">
         <div class="table-title">
-          <h3>Latest Account Creation Transactions</h3>
+            <h3>Latest Account Creation Transactions</h3>
         </div>
         <div class="data-table" id="transactions-table">
-          <table class="table">
-            <thead>
-              <tr id="header-row">
-                <th>Hash</th>
-                <th>Issuer</th>
-                <th>PubKey</th>
-                <th style="width: 10%;">Header</th>
-              </tr>
-            </thead>
-            <tbody>
-              {{range .Txs}}
-              <tr>
-                <td> <a href="../../tx/acc/{{.Hash}}">{{.Hash}}</a></td>
-                <td> <a href="../../account/{{.Issuer}}">{{.Issuer}}</a></td>
-                <td> <a href="../../account/{{.PubKey}}">{{.PubKey}}</a></td>
-                <td>{{.Header}}</td>
-              </tr>
-              {{end}}
-            </tbody>
-          </table>
+            <table class="table">
+                <thead>
+                <tr id="header-row">
+                    <th>Hash</th>
+                    <th>Issuer</th>
+                    <th>PubKey</th>
+                    <th style="width: 10%;">Header</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{range .Txs}}
+                    <tr>
+                        <td><a href="../../tx/acc/{{.Hash}}">{{.Hash}}</a></td>
+                        <td><a href="../../account/{{.Issuer}}">{{.Issuer}}</a></td>
+                        <td><a href="../../account/{{.PubKey}}">{{.PubKey}}</a></td>
+                        <td>{{.Header}}</td>
+                    </tr>
+                {{end}}
+                </tbody>
+            </table>
         </div>
-      </div>
-    </section>
+    </div>
+</section>
 
-    {{template "scriptImports"}}
+{{template "scriptImports"}}
 
-  </body>
+</body>
 </html>

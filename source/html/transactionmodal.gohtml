@@ -1,27 +1,30 @@
 {{define "transactionModal"}}
 
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Sign Transaction</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        Enter Private Key
-          <div class="input-group">
-            <input v-model="accountinfo.privatekey" class="form-control" type="text" name="root-key-field" placeholder="Root Key">
-            <span class="input-group-btn">
-              <button class="btn btn-primary" type="button" v-on:click="signTransaction(accountinfo.privatekey, accountinfo.txhash)">Sign</button>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Sign Transaction</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Enter Private Key
+                    <div class="input-group">
+                        <input v-model="accountinfo.privatekey" class="form-control" type="text" name="root-key-field"
+                               placeholder="Root Key">
+                        <span class="input-group-btn">
+              <button class="btn btn-primary" type="button"
+                      v-on:click="signTransaction(accountinfo.privatekey, accountinfo.txhash)">Sign</button>
             </span>
-          </div>
-      </div>
-      <div class="modal-footer">
-      </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
 {{end}}

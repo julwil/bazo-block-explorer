@@ -1,43 +1,43 @@
 <!DOCTYPE html>
 <html>
 
-  <head>
+<head>
 
     {{template "head"}}
-    <link rel="stylesheet" href="https://cdn.anychart.com/releases/8.1.0/css/anychart-ui.min.css" />
+    <link rel="stylesheet" href="https://cdn.anychart.com/releases/8.1.0/css/anychart-ui.min.css"/>
 
-  </head>
+</head>
 
-  <body>
+<body>
 
-    {{template "navBar"}}
+{{template "navBar"}}
 
-    <div class="clr"></div>
+<div class="clr"></div>
 
-    <div class="container">
-      <div id="chartContainer" style="height:500px">
+<div class="container">
+    <div id="chartContainer" style="height:500px">
         <!-- Chart goes here-->
-      </div>
-
-      <p>Total Bazo Supply: {{.TotalSupply}}</p>
-      <p>Total Bazo Accounts: {{.TotalNrAccounts}}</p>
-      <p>Blocksize: {{.Parameters.BlockSize}}</p>
-      <p>Difficulty Interval: {{.Parameters.DiffInterval}}</p>
-      <p>Minimum Fee: {{.Parameters.MinFee}}</p>
-      <p>Block Interval:{{.Parameters.BlockInterval}}</p>
-      <p>Block Reward:{{.Parameters.BlockReward}}</p>
-
     </div>
 
-    <div class="clr"></div>
+    <p>Total Bazo Supply: {{.TotalSupply}}</p>
+    <p>Total Bazo Accounts: {{.TotalNrAccounts}}</p>
+    <p>Blocksize: {{.Parameters.BlockSize}}</p>
+    <p>Difficulty Interval: {{.Parameters.DiffInterval}}</p>
+    <p>Minimum Fee: {{.Parameters.MinFee}}</p>
+    <p>Block Interval:{{.Parameters.BlockInterval}}</p>
+    <p>Block Reward:{{.Parameters.BlockReward}}</p>
 
-    {{template "scriptImports"}}
-    <script src="https://cdn.anychart.com/releases/8.1.0/js/anychart-bundle.min.js"></script>
-    <script src="https://cdn.anychart.com/releases/8.1.0/js/anychart-base.min.js"></script>
-    <script src="https://cdn.anychart.com/releases/8.1.0/js/anychart-exports.min.js"></script>
-    <script src="https://cdn.anychart.com/releases/8.1.0/js/anychart-ui.min.js"></script>
-    <script>
-      anychart.onDocumentReady(function() {
+</div>
+
+<div class="clr"></div>
+
+{{template "scriptImports"}}
+<script src="https://cdn.anychart.com/releases/8.1.0/js/anychart-bundle.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.1.0/js/anychart-base.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.1.0/js/anychart-exports.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.1.0/js/anychart-ui.min.js"></script>
+<script>
+    anychart.onDocumentReady(function () {
         chart = anychart.line();
         var series = chart.spline(JSON.parse({{.ChartData}}));
 
@@ -50,8 +50,8 @@
 
         chart.container("chartContainer");
         chart.draw();
-      });
-    </script>
+    });
+</script>
 
-  </body>
+</body>
 </html>

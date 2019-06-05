@@ -1,69 +1,69 @@
 <!DOCTYPE html>
 <html>
 
-  <head>
+<head>
 
     {{template "head"}}
 
-  </head>
+</head>
 
-  <body>
+<body>
 
-    {{template "navBar"}}
+{{template "navBar"}}
 
-    <div class="clr"></div>
+<div class="clr"></div>
 
-    <section>
-      <div class="container">
+<section>
+    <div class="container">
         <div class="table-title">
-          <h3>Transaction {{.Hash}}</h3>
+            <h3>Transaction {{.Hash}}</h3>
         </div>
         <div class="data-table" id="transactions-table">
-          <table class="table">
-            <thead>
-            <tr style="width: 30%;">
-              <th>Header</th>
-              <td>{{.Header}}</td>
-            </tr>
-              <tr>
-                <th>Hash</th>
-                <td> <a href="{{.UrlLevel}}/tx/funds/{{.Hash}}">{{.Hash}}</a></td>
-              </tr>
-              <tr>
-                <th>Block</th>
-                <td> <a href="{{.UrlLevel}}/block/{{.BlockHash}}">{{.BlockHash}}</a></td>
-              </tr>
-              <tr>
-                <th>From</th>
-                <td> <a href="{{.UrlLevel}}/account/{{.From}}">{{.From}}</a></td>
-              </tr>
-              <tr>
-                <th>To</th>
-                <td> <a href="{{.UrlLevel}}/account/{{.To}}">{{.To}}</a></td>
-              </tr>
-              <tr>
-                <th>Transaction Count</th>
-                <td>{{.TxCount}}</td>
-              </tr>
-              <tr>
-                <th>Amount</th>
-                <td>{{.Amount}}</td>
-              </tr>
+            <table class="table">
+                <thead>
+                <tr style="width: 30%;">
+                    <th>Header</th>
+                    <td>{{.Header}}</td>
+                </tr>
+                <tr>
+                    <th>Hash</th>
+                    <td><a href="{{.UrlLevel}}/tx/funds/{{.Hash}}">{{.Hash}}</a></td>
+                </tr>
+                <tr>
+                    <th>Block</th>
+                    <td><a href="{{.UrlLevel}}/block/{{.BlockHash}}">{{.BlockHash}}</a></td>
+                </tr>
+                <tr>
+                    <th>From</th>
+                    <td><a href="{{.UrlLevel}}/account/{{.From}}">{{.From}}</a></td>
+                </tr>
+                <tr>
+                    <th>To</th>
+                    <td><a href="{{.UrlLevel}}/account/{{.To}}">{{.To}}</a></td>
+                </tr>
+                <tr>
+                    <th>Transaction Count</th>
+                    <td>{{.TxCount}}</td>
+                </tr>
+                <tr>
+                    <th>Amount</th>
+                    <td>{{.Amount}}</td>
+                </tr>
                 <th>Fee</th>
                 <td>{{.Fee}}</td>
-              </tr>
-              <tr>
-                <th>Signature</th>
-                <td>{{.Signature}}</td>
-              </tr>
-            </thead>
+                </tr>
+                <tr>
+                    <th>Signature</th>
+                    <td>{{.Signature}}</td>
+                </tr>
+                </thead>
 
-          </table>
+            </table>
         </div>
-      </div>
-    </section>
+    </div>
+</section>
 
-    {{template "scriptImports"}}
+{{template "scriptImports"}}
 
-  </body>
+</body>
 </html>

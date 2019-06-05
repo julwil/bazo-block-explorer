@@ -1,122 +1,141 @@
 <!DOCTYPE html>
 <html>
 
-  <head>
+<head>
 
     {{template "head"}}
 
 
-  </head>
+</head>
 
-  <body>
+<body>
 
-    {{template "navBarLoggedIn"}}
+{{template "navBarLoggedIn"}}
 
-    <div class="clr"></div>
-    <section id="parameter-list">
+<div class="clr"></div>
+<section id="parameter-list">
 
-      {{template "transactionModal"}}
+    {{template "transactionModal"}}
 
-      <div class="container">
+    <div class="container">
         <h3>Change System Parameters</h3>
-            <h5>Current Blocksize: {{.BlockSize}} Bytes</h5>
-            <form class="form-group form-horizontal">
-              <div class="row">
+        <h5>Current Blocksize: {{.BlockSize}} Bytes</h5>
+        <form class="form-group form-horizontal">
+            <div class="row">
                 <div class="col-sm-3">
-                  <label>Change Block Size</label>
-                  <input type="number" name="new-blocksize" v-model="blocksize.blocksize" class="form-control" placeholder="Bytes">
+                    <label>Change Block Size</label>
+                    <input type="number" name="new-blocksize" v-model="blocksize.blocksize" class="form-control"
+                           placeholder="Bytes">
                 </div>
                 <div class="col-sm-3">
-                  <label>Fee</label>
-                  <input type="number" name="fee" v-model="blocksize.fee" class="form-control" placeholder="Bazo Coins">
+                    <label>Fee</label>
+                    <input type="number" name="fee" v-model="blocksize.fee" class="form-control"
+                           placeholder="Bazo Coins">
                 </div>
                 <div class="col-sm-2">
-                  <label class="text-white">.....</label>
-                  <button v-on:click="changeBlockSize(blocksize.blocksize, blocksize.fee)" type="button" class="btn btn-primary btn-block" href="#">Send</button>
+                    <label class="text-white">.....</label>
+                    <button v-on:click="changeBlockSize(blocksize.blocksize, blocksize.fee)" type="button"
+                            class="btn btn-primary btn-block" href="#">Send
+                    </button>
                 </div>
-              </div>
-            </form>
-          <div class="clr"></div>
-            <h5>Current Difficulty Interval: {{.DiffInterval}} Blocks</h5>
-            <form class="form-group form-horizontal">
-              <div class="row">
+            </div>
+        </form>
+        <div class="clr"></div>
+        <h5>Current Difficulty Interval: {{.DiffInterval}} Blocks</h5>
+        <form class="form-group form-horizontal">
+            <div class="row">
                 <div class="col-sm-3">
-                  <label>Change Difficulty Interval</label>
-                  <input type="number" name="new-diffinterval" v-model="diffinterval.diffinterval" class="form-control" placeholder="Nr. of Blocks">
+                    <label>Change Difficulty Interval</label>
+                    <input type="number" name="new-diffinterval" v-model="diffinterval.diffinterval"
+                           class="form-control" placeholder="Nr. of Blocks">
                 </div>
                 <div class="col-sm-3">
-                  <label>Fee</label>
-                  <input type="number" name="fee" v-model="diffinterval.fee" class="form-control" placeholder="Bazo Coins">
+                    <label>Fee</label>
+                    <input type="number" name="fee" v-model="diffinterval.fee" class="form-control"
+                           placeholder="Bazo Coins">
                 </div>
                 <div class="col-sm-2">
-                  <label class="text-white">.....</label>
-                  <button v-on:click="changeDiffInterval(diffinterval.diffinterval, diffinterval.fee)" type="button" class="btn btn-primary btn-block" href="#">Send</button>
+                    <label class="text-white">.....</label>
+                    <button v-on:click="changeDiffInterval(diffinterval.diffinterval, diffinterval.fee)" type="button"
+                            class="btn btn-primary btn-block" href="#">Send
+                    </button>
                 </div>
-              </div>
-            </form>
-          <div class="clr"></div>
-            <h5>Current Minimum Fee: {{.MinFee}} Bazo Coins</h5>
-            <form class="config-form">
-              <div class="row">
+            </div>
+        </form>
+        <div class="clr"></div>
+        <h5>Current Minimum Fee: {{.MinFee}} Bazo Coins</h5>
+        <form class="config-form">
+            <div class="row">
                 <div class="col-sm-3">
-                  <label>Change Minimum Fee</label>
-                  <input type="number" name="new-minfee" v-model="minfee.minfee" class="form-control" placeholder="Bazo Coins">
+                    <label>Change Minimum Fee</label>
+                    <input type="number" name="new-minfee" v-model="minfee.minfee" class="form-control"
+                           placeholder="Bazo Coins">
                 </div>
                 <div class="col-sm-3">
-                  <label>Fee</label>
-                  <input type="number" name="fee" v-model="minfee.fee" class="form-control" placeholder="Bazo Coins">
+                    <label>Fee</label>
+                    <input type="number" name="fee" v-model="minfee.fee" class="form-control" placeholder="Bazo Coins">
                 </div>
                 <div class="col-sm-2">
-                  <label class="text-white">.....</label>
-                  <button v-on:click="changeMinFee(minfee.minfee, minfee.fee)" type="button" class="btn btn-primary btn-block" href="#">Send</button>
+                    <label class="text-white">.....</label>
+                    <button v-on:click="changeMinFee(minfee.minfee, minfee.fee)" type="button"
+                            class="btn btn-primary btn-block" href="#">Send
+                    </button>
                 </div>
-              </div>
-            </form>
-          <div class="clr"></div>
-            <h5>Current Block Interval: {{.BlockInterval}} Seconds</h5>
-            <form class="congif-form">
-              <div class="row">
+            </div>
+        </form>
+        <div class="clr"></div>
+        <h5>Current Block Interval: {{.BlockInterval}} Seconds</h5>
+        <form class="congif-form">
+            <div class="row">
                 <div class="col-sm-3">
-                  <label>Change Block Interval</label>
-                  <input type="number" name="new-blockinterval" v-model="blockinterval.blockinterval" class="form-control" placeholder="Seconds">
+                    <label>Change Block Interval</label>
+                    <input type="number" name="new-blockinterval" v-model="blockinterval.blockinterval"
+                           class="form-control" placeholder="Seconds">
                 </div>
                 <div class="col-sm-3">
-                  <label>Fee</label>
-                  <input type="number" name="fee" v-model="blockinterval.fee" class="form-control" placeholder="Bazo Coins">
+                    <label>Fee</label>
+                    <input type="number" name="fee" v-model="blockinterval.fee" class="form-control"
+                           placeholder="Bazo Coins">
                 </div>
                 <div class="col-sm-2">
-                  <label class="text-white">.....</label>
-                  <button v-on:click="changeBlockInterval(blockinterval.blockinterval, blockinterval.fee)" type="button" class="btn btn-primary btn-block" href="#">Send</button>
+                    <label class="text-white">.....</label>
+                    <button v-on:click="changeBlockInterval(blockinterval.blockinterval, blockinterval.fee)"
+                            type="button" class="btn btn-primary btn-block" href="#">Send
+                    </button>
                 </div>
-              </div>
-            </form>
-          <div class="clr"></div>
-            <h5>Current Block Reward: {{.BlockReward}} Bazo Coins</h5>
-            <form class="config-form">
-              <div class="row">
+            </div>
+        </form>
+        <div class="clr"></div>
+        <h5>Current Block Reward: {{.BlockReward}} Bazo Coins</h5>
+        <form class="config-form">
+            <div class="row">
                 <div class="col-sm-3">
-                  <label>Change Block Reward</label>
-                  <input type="number" name="new-blockreward" v-model="blockreward.blockreward" class="form-control" placeholder="Bazo Coins">
+                    <label>Change Block Reward</label>
+                    <input type="number" name="new-blockreward" v-model="blockreward.blockreward" class="form-control"
+                           placeholder="Bazo Coins">
                 </div>
                 <div class="col-sm-3">
-                  <label>Fee</label>
-                  <input type="number" name="fee" v-model="blockreward.fee"class="form-control" placeholder="Bazo Coins">
+                    <label>Fee</label>
+                    <input type="number" name="fee" v-model="blockreward.fee" class="form-control"
+                           placeholder="Bazo Coins">
                 </div>
                 <div class="col-sm-2">
-                  <label class="text-white">.....</label>
-                  <button v-on:click="changeBlockReward(blockreward.blockreward, blockreward.fee)" type="button" class="btn btn-primary btn-block" href="#">Send</button>
+                    <label class="text-white">.....</label>
+                    <button v-on:click="changeBlockReward(blockreward.blockreward, blockreward.fee)" type="button"
+                            class="btn btn-primary btn-block" href="#">Send
+                    </button>
                 </div>
-              </div>
-            </form>
-      </div>
-    </section>
-    <br>
+            </div>
+        </form>
+    </div>
+</section>
+<br>
 
-    {{template "vueImports"}}
+{{template "vueImports"}}
 
-    <script src="/source/js/adminjs.js"></script>
+<script src="/source/js/adminjs.js"></script>
 
-    {{template "scriptImports"}}
+{{template "scriptImports"}}
 
-  </body>
+</body>
 </html>

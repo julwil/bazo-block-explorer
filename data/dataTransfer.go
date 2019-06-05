@@ -54,7 +54,7 @@ func incomingBlocks() {
 			}
 		}
 
-		lastBlockConverted := blockInConverted;
+		lastBlockConverted := blockInConverted
 		for ReturnOneBlock(lastBlockConverted.PrevHash).Hash == "" && lastBlockConverted.Height > 1 {
 			network.Uptodate = false
 			hash, _ := hex.DecodeString(lastBlockConverted.PrevHash)

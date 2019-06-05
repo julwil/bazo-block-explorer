@@ -1,100 +1,100 @@
 <!DOCTYPE html>
 <html>
 
-  <head>
+<head>
 
     {{template "head"}}
 
-  </head>
+</head>
 
-  <body>
+<body>
 
-    {{template "navBar"}}
+{{template "navBar"}}
 
-    <div class="clr"></div>
+<div class="clr"></div>
 
-    <section>
-      <div class="container">
+<section>
+    <div class="container">
         <div class="table-title">
-          <h3>Block {{.Hash}}</h3>
+            <h3>Block {{.Hash}}</h3>
         </div>
         <div class="data-table" id="block-table">
-          <table class="table">
-            <thead>
-              <tr>
-                <th style="width: 30%;">Hash</th>
-                <td> <a href="{{.UrlLevel}}/block/{{.Hash}}">{{.Hash}}</a></td>
-              </tr>
-              <tr>
-                <th>Previous Block</th>
-                <td> <a href="{{.UrlLevel}}/block/{{.PrevHash}}">{{.PrevHash}}</a></td>
-              </tr>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th style="width: 30%;">Hash</th>
+                    <td><a href="{{.UrlLevel}}/block/{{.Hash}}">{{.Hash}}</a></td>
+                </tr>
+                <tr>
+                    <th>Previous Block</th>
+                    <td><a href="{{.UrlLevel}}/block/{{.PrevHash}}">{{.PrevHash}}</a></td>
+                </tr>
                 <th>Timestamp</th>
                 <td>{{.TimeString}}</td>
-              </tr>
-              <tr>
-                <th>Merkle Root</th>
-                <td>{{.MerkleRoot}}</td>
-              </tr>
-              <tr>
-                <th>Beneficiary</th>
-                <td>{{.Beneficiary}}</td>
-              </tr>
-              <tr>
-                <th>Seed</th>
-                <td>{{.Seed}}</td>
-              </tr>
-              <tr>
-                <th>Hashed Seed</th>
-                <td>{{.HashedSeed}}</td>
-              </tr>
-              <tr>
-                <th>NrFundsTX</th>
-                <td>{{.NrFundsTx}}</td>
-              </tr>
-              <tr>
-                <th>NrAccTX</th>
-                <td>{{.NrAccTx}}</td>
-              </tr>
-              <tr>
-                <th>NrConfigTX</th>
-                <td>{{.NrConfigTx}}</td>
-              </tr>
-              <tr>
-                <th>NrStakeTX</th>
-                <td>{{.NrStakeTx}}</td>
-              </tr>
-              {{range .FundsTxData}}
-              <tr>
-                <th>Funds Transaction Hash</th>
-                <td><a href="../../tx/funds/{{.}}">{{.}}</a></td>
-              </tr>
-              {{end}}
-              {{range .AccTxData}}
-              <tr>
-                <th>Account Creation Transaction Hash</th>
-                <td><a href="../../tx/acc/{{.}}">{{.}}</a></td>
-              </tr>
-              {{end}}
-              {{range .ConfigTxData}}
-              <tr>
-                <th>System Configuration Transaction Hash</th>
-                <td><a href="../../tx/config/{{.}}">{{.}}</a></td>
-              </tr>
-              {{end}}
-              {{range .StakeTxData}}
-              <tr>
-                <th>Stake Transaction Hash</th>
-                <td><a href="../../tx/stake/{{.}}">{{.}}</a></td>
-              </tr>
-              {{end}}
-            </thead>
-          </table>
+                </tr>
+                <tr>
+                    <th>Merkle Root</th>
+                    <td>{{.MerkleRoot}}</td>
+                </tr>
+                <tr>
+                    <th>Beneficiary</th>
+                    <td>{{.Beneficiary}}</td>
+                </tr>
+                <tr>
+                    <th>Seed</th>
+                    <td>{{.Seed}}</td>
+                </tr>
+                <tr>
+                    <th>Hashed Seed</th>
+                    <td>{{.HashedSeed}}</td>
+                </tr>
+                <tr>
+                    <th>NrFundsTX</th>
+                    <td>{{.NrFundsTx}}</td>
+                </tr>
+                <tr>
+                    <th>NrAccTX</th>
+                    <td>{{.NrAccTx}}</td>
+                </tr>
+                <tr>
+                    <th>NrConfigTX</th>
+                    <td>{{.NrConfigTx}}</td>
+                </tr>
+                <tr>
+                    <th>NrStakeTX</th>
+                    <td>{{.NrStakeTx}}</td>
+                </tr>
+                {{range .FundsTxData}}
+                    <tr>
+                        <th>Funds Transaction Hash</th>
+                        <td><a href="../../tx/funds/{{.}}">{{.}}</a></td>
+                    </tr>
+                {{end}}
+                {{range .AccTxData}}
+                    <tr>
+                        <th>Account Creation Transaction Hash</th>
+                        <td><a href="../../tx/acc/{{.}}">{{.}}</a></td>
+                    </tr>
+                {{end}}
+                {{range .ConfigTxData}}
+                    <tr>
+                        <th>System Configuration Transaction Hash</th>
+                        <td><a href="../../tx/config/{{.}}">{{.}}</a></td>
+                    </tr>
+                {{end}}
+                {{range .StakeTxData}}
+                    <tr>
+                        <th>Stake Transaction Hash</th>
+                        <td><a href="../../tx/stake/{{.}}">{{.}}</a></td>
+                    </tr>
+                {{end}}
+                </thead>
+            </table>
         </div>
-      </div>
-    </section>
+    </div>
+</section>
 
-    {{template "scriptImports"}}
+{{template "scriptImports"}}
 
-  </body>
+</body>
 </html>

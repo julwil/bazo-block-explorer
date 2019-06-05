@@ -476,8 +476,8 @@ func WriteAccountWithAddress(tx utilities.Acctx, accountHash string) {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `INSERT INTO accounts (hash, address, balance, txcount)
-                    VALUES ($1, $2, $3, $4)
+  sqlStatement := `INSERT INTO accounts (hash, address, balance, txcount, isstaking)
+                    VALUES ($1, $2, $3, $4, false)
                     ON CONFLICT (hash) DO UPDATE SET address = $2`
 
   _, err = db.Exec(sqlStatement, accountHash, tx.PubKey, 0, 0)

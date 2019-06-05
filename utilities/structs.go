@@ -32,6 +32,7 @@ type Block struct {
 }
 
 type Fundstx struct {
+	Header string
   Hash string
   BlockHash string
   Amount uint64
@@ -45,6 +46,7 @@ type Fundstx struct {
 }
 
 type Acctx struct {
+  Header string
   Hash string
   BlockHash string
   Issuer string
@@ -56,6 +58,7 @@ type Acctx struct {
 }
 
 type Configtx struct {
+  Header string
   Hash string
   BlockHash string
 	Id uint8
@@ -68,6 +71,7 @@ type Configtx struct {
 }
 
 type Staketx struct {
+	Header string
   Hash string
   BlockHash string
   Timestamp int64

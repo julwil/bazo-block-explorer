@@ -80,10 +80,10 @@ func ReturnOneBlock(UrlHash string) utilities.Block {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, prevhash, timestamp, timestring, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, nrstaketx, fundstxdata, acctxdata, configtxdata, staketxdata FROM blocks WHERE hash = $1;`
+  sqlStatement := `SELECT header, hash, prevhash, timestamp, timestring, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, nrstaketx, fundstxdata, acctxdata, configtxdata, staketxdata FROM blocks WHERE hash = $1;`
   var returnedblock utilities.Block
   row := db.QueryRow(sqlStatement, UrlHash)
-  switch err := row.Scan(&returnedblock.Hash, &returnedblock.PrevHash, &returnedblock.Timestamp, &returnedblock.TimeString, &returnedblock.MerkleRoot, &returnedblock.Beneficiary, &returnedblock.NrFundsTx, &returnedblock.NrAccTx, &returnedblock.NrConfigTx, &returnedblock.NrStakeTx, &returnedblock.FundsTxDataString, &returnedblock.AccTxDataString, &returnedblock.ConfigTxDataString, &returnedblock.StakeTxDataString)
+  switch err := row.Scan(&returnedblock.Header, &returnedblock.Hash, &returnedblock.PrevHash, &returnedblock.Timestamp, &returnedblock.TimeString, &returnedblock.MerkleRoot, &returnedblock.Beneficiary, &returnedblock.NrFundsTx, &returnedblock.NrAccTx, &returnedblock.NrConfigTx, &returnedblock.NrStakeTx, &returnedblock.FundsTxDataString, &returnedblock.AccTxDataString, &returnedblock.ConfigTxDataString, &returnedblock.StakeTxDataString)
   err {
   case sql.ErrNoRows:
   case nil:
@@ -112,7 +112,7 @@ func ReturnAllBlocks(UrlHash string) []utilities.Block {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, timestamp, timestring, beneficiary, nrFundsTx, nrAccTx, nrConfigTx, nrStakeTx FROM blocks ORDER BY timestamp DESC LIMIT 100`
+  sqlStatement := `SELECT header, hash, timestamp, timestring, beneficiary, nrFundsTx, nrAccTx, nrConfigTx, nrStakeTx FROM blocks ORDER BY timestamp DESC LIMIT 100`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -121,7 +121,7 @@ func ReturnAllBlocks(UrlHash string) []utilities.Block {
   returnedrows := make([]utilities.Block, 0)
   for rows.Next() {
     var returnedrow utilities.Block
-    err = rows.Scan(&returnedrow.Hash, &returnedrow.Timestamp, &returnedrow.TimeString, &returnedrow.Beneficiary, &returnedrow.NrFundsTx, &returnedrow.NrAccTx, &returnedrow.NrConfigTx, &returnedrow.NrStakeTx)
+    err = rows.Scan(&returnedrow.Header, &returnedrow.Hash, &returnedrow.Timestamp, &returnedrow.TimeString, &returnedrow.Beneficiary, &returnedrow.NrFundsTx, &returnedrow.NrAccTx, &returnedrow.NrConfigTx, &returnedrow.NrStakeTx)
     if err != nil {
       panic(err)
     }
@@ -138,10 +138,10 @@ func ReturnOneFundsTx(UrlHash string) utilities.Fundstx {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, blockhash, amount, fee, txcount, sender, recipient, signature FROM fundstx WHERE hash = $1;`
+  sqlStatement := `SELECT header, hash, blockhash, amount, fee, txcount, sender, recipient, signature FROM fundstx WHERE hash = $1;`
   var returnedrow utilities.Fundstx
   row := db.QueryRow(sqlStatement, UrlHash)
-  switch err = row.Scan(&returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Amount, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.From, &returnedrow.To, &returnedrow.Signature)
+  switch err = row.Scan(&returnedrow.Header, &returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Amount, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.From, &returnedrow.To, &returnedrow.Signature)
   err {
   case sql.ErrNoRows:
   case nil:
@@ -156,7 +156,7 @@ func ReturnAllFundsTx(UrlHash string) []utilities.Fundstx {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, amount, fee, txcount, sender, recipient, signature FROM fundstx ORDER BY timestamp DESC LIMIT 100`
+  sqlStatement := `SELECT header, hash, amount, fee, txcount, sender, recipient, signature FROM fundstx ORDER BY timestamp DESC LIMIT 100`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -165,7 +165,7 @@ func ReturnAllFundsTx(UrlHash string) []utilities.Fundstx {
   returnedrows := make([]utilities.Fundstx, 0)
   for rows.Next() {
     var returnedrow utilities.Fundstx
-    err = rows.Scan(&returnedrow.Hash, &returnedrow.Amount, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.From, &returnedrow.To, &returnedrow.Signature)
+    err = rows.Scan(&returnedrow.Header, &returnedrow.Hash, &returnedrow.Amount, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.From, &returnedrow.To, &returnedrow.Signature)
     if err != nil {
       panic(err)
     }
@@ -182,10 +182,10 @@ func ReturnOneAccTx(UrlHash string) utilities.Acctx {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, blockhash, issuer, fee, pubkey, signature FROM acctx WHERE hash = $1;`
+  sqlStatement := `SELECT header, hash, blockhash, issuer, fee, pubkey, signature FROM acctx WHERE hash = $1;`
   var returnedrow utilities.Acctx
   row := db.QueryRow(sqlStatement, UrlHash)
-  switch err = row.Scan(&returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Issuer, &returnedrow.Fee, &returnedrow.PubKey, &returnedrow.Signature)
+  switch err = row.Scan(&returnedrow.Header, &returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Issuer, &returnedrow.Fee, &returnedrow.PubKey, &returnedrow.Signature)
   err {
   case sql.ErrNoRows:
   case nil:
@@ -201,7 +201,7 @@ func ReturnAllAccTx(UrlHash string) []utilities.Acctx {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, issuer, fee, pubkey FROM acctx ORDER BY timestamp DESC LIMIT 100`
+  sqlStatement := `SELECT header, hash, issuer, fee, pubkey FROM acctx ORDER BY timestamp DESC LIMIT 100`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -210,7 +210,7 @@ func ReturnAllAccTx(UrlHash string) []utilities.Acctx {
   returnedrows := make([]utilities.Acctx, 0)
   for rows.Next() {
     var returnedrow utilities.Acctx
-    err = rows.Scan(&returnedrow.Hash, &returnedrow.Issuer, &returnedrow.Fee, &returnedrow.PubKey)
+    err = rows.Scan(&returnedrow.Header, &returnedrow.Hash, &returnedrow.Issuer, &returnedrow.Fee, &returnedrow.PubKey)
     if err != nil {
       panic(err)
     }
@@ -227,10 +227,10 @@ func ReturnOneConfigTx(UrlHash string) utilities.Configtx {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, blockhash, id, payload, fee, txcount, signature FROM configtx WHERE hash = $1;`
+  sqlStatement := `SELECT header, hash, blockhash, id, payload, fee, txcount, signature FROM configtx WHERE hash = $1;`
   var returnedrow utilities.Configtx
   row := db.QueryRow(sqlStatement, UrlHash)
-  switch err = row.Scan(&returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Id, &returnedrow.Payload, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.Signature)
+  switch err = row.Scan(&returnedrow.Header, &returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Id, &returnedrow.Payload, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.Signature)
   err {
   case sql.ErrNoRows:
   case nil:
@@ -246,7 +246,7 @@ func ReturnAllConfigTx(UrlHash string) []utilities.Configtx {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, id, payload, fee, txcount FROM configtx ORDER BY timestamp DESC LIMIT 100`
+  sqlStatement := `SELECT header, hash, id, payload, fee, txcount FROM configtx ORDER BY timestamp DESC LIMIT 100`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -255,7 +255,7 @@ func ReturnAllConfigTx(UrlHash string) []utilities.Configtx {
   returnedrows := make([]utilities.Configtx, 0)
   for rows.Next() {
     var returnedrow utilities.Configtx
-    err = rows.Scan(&returnedrow.Hash, &returnedrow.Id, &returnedrow.Payload, &returnedrow.Fee, &returnedrow.TxCount)
+    err = rows.Scan(&returnedrow.Header, &returnedrow.Hash, &returnedrow.Id, &returnedrow.Payload, &returnedrow.Fee, &returnedrow.TxCount)
     if err != nil {
       panic(err)
     }
@@ -272,10 +272,10 @@ func ReturnOneStakeTx(UrlHash string) utilities.Staketx {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, blockhash, fee, account, isstaking, signature FROM staketx WHERE hash = $1;`
+  sqlStatement := `SELECT header, hash, blockhash, fee, account, isstaking, signature FROM staketx WHERE hash = $1;`
   var returnedrow utilities.Staketx
   row := db.QueryRow(sqlStatement, UrlHash)
-  switch err = row.Scan(&returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Fee, &returnedrow.Account, &returnedrow.IsStaking, &returnedrow.Signature)
+  switch err = row.Scan(&returnedrow.Header, &returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Fee, &returnedrow.Account, &returnedrow.IsStaking, &returnedrow.Signature)
   err {
   case sql.ErrNoRows:
   case nil:
@@ -291,7 +291,7 @@ func ReturnAllStakeTx(UrlHash string) []utilities.Staketx {
   connectToDB()
   defer db.Close()
 
-  sqlStatement := `SELECT hash, account, isstaking, fee FROM staketx ORDER BY timestamp DESC LIMIT 100`
+  sqlStatement := `SELECT header, hash, account, isstaking, fee FROM staketx ORDER BY timestamp DESC LIMIT 100`
   rows, err := db.Query(sqlStatement)
   if err != nil {
     panic(err)
@@ -300,7 +300,7 @@ func ReturnAllStakeTx(UrlHash string) []utilities.Staketx {
   returnedrows := make([]utilities.Staketx, 0)
   for rows.Next() {
     var returnedrow utilities.Staketx
-    err = rows.Scan(&returnedrow.Hash, &returnedrow.Account, &returnedrow.IsStaking, &returnedrow.Fee)
+    err = rows.Scan(&returnedrow.Header, &returnedrow.Hash, &returnedrow.Account, &returnedrow.IsStaking, &returnedrow.Fee)
     if err != nil {
       panic(err)
     }
@@ -382,9 +382,9 @@ func WriteFundsTx(tx utilities.Fundstx) {
   defer db.Close()
 
   sqlStatement = `
-    INSERT INTO fundstx (hash, blockhash, amount, fee, txcount, sender, recipient, timestamp, signature)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
-  _, err = db.Exec(sqlStatement, tx.Hash, tx.BlockHash, tx.Amount, tx.Fee, tx.TxCount, tx.From, tx.To, tx.Timestamp, tx.Signature)
+    INSERT INTO fundstx (header, hash, blockhash, amount, fee, txcount, sender, recipient, timestamp, signature)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`
+  _, err = db.Exec(sqlStatement, tx.Header, tx.Hash, tx.BlockHash, tx.Amount, tx.Fee, tx.TxCount, tx.From, tx.To, tx.Timestamp, tx.Signature)
   if err != nil {
     panic(err)
   }
@@ -395,9 +395,9 @@ func WriteAccTx(tx utilities.Acctx) {
   defer db.Close()
 
   sqlStatement = `
-    INSERT INTO acctx (hash, blockhash, fee, issuer, pubkey, timestamp, signature)
-    VALUES ($1, $2, $3, $4, $5, $6, $7)`
-  _, err = db.Exec(sqlStatement, tx.Hash, tx.BlockHash, tx.Fee, tx.Issuer, tx.PubKey, tx.Timestamp, tx.Signature)
+    INSERT INTO acctx (header, hash, blockhash, fee, issuer, pubkey, timestamp, signature)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
+  _, err = db.Exec(sqlStatement, tx.Header, tx.Hash, tx.BlockHash, tx.Fee, tx.Issuer, tx.PubKey, tx.Timestamp, tx.Signature)
   if err != nil {
     panic(err)
   }
@@ -408,9 +408,9 @@ func WriteConfigTx(tx utilities.Configtx) {
   defer db.Close()
 
   sqlStatement = `
-    INSERT INTO configtx (hash, blockhash, id, payload, fee, txcount, timestamp, signature)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
-  _, err = db.Exec(sqlStatement, tx.Hash, tx.BlockHash, tx.Id, tx.Payload, tx.Fee, tx.TxCount, tx.Timestamp, tx.Signature)
+    INSERT INTO configtx (header, hash, blockhash, id, payload, fee, txcount, timestamp, signature)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
+  _, err = db.Exec(sqlStatement, tx.Header, tx.Hash, tx.BlockHash, tx.Id, tx.Payload, tx.Fee, tx.TxCount, tx.Timestamp, tx.Signature)
   if err != nil {
     panic(err)
   }
@@ -421,9 +421,9 @@ func WriteStakeTx(tx utilities.Staketx) {
   defer db.Close()
 
   sqlStatement = `
-    INSERT INTO staketx (hash, blockhash, timestamp, fee, account, isstaking, signature)
-    VALUES ($1, $2, $3, $4, $5, $6, $7)`
-  _, err = db.Exec(sqlStatement, tx.Hash, tx.BlockHash, tx.Timestamp, tx.Fee, tx.Account, tx.IsStaking, tx.Signature)
+    INSERT INTO staketx (header, hash, blockhash, timestamp, fee, account, isstaking, signature)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
+  _, err = db.Exec(sqlStatement, tx.Header, tx.Hash, tx.BlockHash, tx.Timestamp, tx.Fee, tx.Account, tx.IsStaking, tx.Signature)
   if err != nil {
     panic(err)
   }
@@ -749,7 +749,7 @@ func createTables() {
                     );
 
                     create table fundstx (
-                    header bit(8),
+                    header char(1) not null,
                     hash char(64) primary key,
                     blockhash char(64) not null,
                     amount bigint not null,
@@ -762,7 +762,7 @@ func createTables() {
                     );`
 
   sqlStatement2 :=  `create table acctx(
-                    header bit(8),
+                    header char(1) not null,
                     hash char(64) primary key,
                     blockhash char(64),
                     issuer char(64) not null,
@@ -773,7 +773,7 @@ func createTables() {
                     );
 
                     create table configtx(
-                    header bit(8),
+                    header char(1) not null,
                     hash char(64) primary key,
                     blockhash char(64),
                     id int not null,
@@ -785,7 +785,7 @@ func createTables() {
                     );
 
                     create table staketx(
-                    header bit(8),
+                    header char(1) not null,
                     hash char(64) primary key,
                     blockhash char(64),
                     timestamp bigint not null,

@@ -56,7 +56,7 @@ func ConvertBlock(unconvertedBlock *protocol.Block) Block {
 func ConvertFundsTransaction(unconvertedTx *protocol.FundsTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte, blockTimestamp int64) Fundstx {
   var convertedTx Fundstx
 
-  //convertedTx.Header = fmt.Sprintf("%x", unconvertedTx.Header)
+  convertedTx.Header = fmt.Sprintf("%x", unconvertedTx.Header)
   convertedTx.Hash = fmt.Sprintf("%x", unconvertedTxHash)
   convertedTx.BlockHash = fmt.Sprintf("%x", unconvertedBlockHash)
   convertedTx.Amount = unconvertedTx.Amount
@@ -73,7 +73,7 @@ func ConvertFundsTransaction(unconvertedTx *protocol.FundsTx, unconvertedBlockHa
 func ConvertAccTransaction(unconvertedTx *protocol.AccTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte, blockTimestamp int64) Acctx {
   var convertedTx Acctx
 
-  //convertedTx.Header = fmt.Sprintf("%x", unconvertedTx.Header)
+  convertedTx.Header = fmt.Sprintf("%x", unconvertedTx.Header)
   convertedTx.Hash = fmt.Sprintf("%x", unconvertedTxHash)
   convertedTx.BlockHash = fmt.Sprintf("%x", unconvertedBlockHash)
   convertedTx.Fee = unconvertedTx.Fee
@@ -88,7 +88,7 @@ func ConvertAccTransaction(unconvertedTx *protocol.AccTx, unconvertedBlockHash [
 func ConvertConfigTransaction(unconvertedTx *protocol.ConfigTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte, blockTimestamp int64) Configtx {
   var convertedTx Configtx
 
-  //convertedTx.Header = fmt.Sprintf("%x", unconvertedTx.Header)
+  convertedTx.Header = fmt.Sprintf("%x", unconvertedTx.Header)
   convertedTx.Hash = fmt.Sprintf("%x", unconvertedTxHash)
   convertedTx.BlockHash = fmt.Sprintf("%x", unconvertedBlockHash)
   convertedTx.Id = unconvertedTx.Id
@@ -108,6 +108,7 @@ func ConvertConfigTransaction(unconvertedTx *protocol.ConfigTx, unconvertedBlock
 func ConvertStakeTransaction(unconvertedTx *protocol.StakeTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte, blockTimestamp int64) Staketx  {
   var convertedTx Staketx
 
+  convertedTx.Header = fmt.Sprintf("%x", unconvertedTx.Header)
   convertedTx.Hash = fmt.Sprintf("%x", unconvertedTxHash)
   convertedTx.BlockHash = fmt.Sprintf("%x", unconvertedBlockHash)
   convertedTx.Timestamp = blockTimestamp

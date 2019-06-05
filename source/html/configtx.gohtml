@@ -21,8 +21,12 @@
         <div class="data-table" id="transactions-table">
           <table class="table">
             <thead>
+            <tr style="width: 30%;">
+              <th>Header</th>
+              <td>{{.Header}}</td>
+            </tr>
               <tr>
-                <th style="width: 30%;">Hash</th>
+                <th>Hash</th>
                 <td> <a href="{{.UrlLevel}}/tx/config/{{.Hash}}">{{.Hash}}</a></td>
               </tr>
               <tr>

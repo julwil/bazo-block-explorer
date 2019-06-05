@@ -21,8 +21,12 @@
         <div class="data-table" id="transactions-table">
           <table class="table">
             <thead>
+            <tr>
+              <th style="width: 25%;">Header</th>
+              <td>{{.Header}}</td>
+            </tr>
               <tr>
-                <th style="width: 25%;">Hash</th>
+                <th>Hash</th>
                 <td> <a href="{{.UrlLevel}}/tx/acc/{{.Hash}}">{{.Hash}}</a></td>
               </tr>
               <tr>
@@ -37,6 +41,7 @@
                 <th>New PubKey</th>
                 <td> <a href="{{.UrlLevel}}/account/{{.PubKey}}">{{.PubKey}}</a></td>
               </tr>
+              <tr>
                 <th>Fee</th>
                 <td>{{.Fee}}</td>
               </tr>

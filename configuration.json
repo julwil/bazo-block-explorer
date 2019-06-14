@@ -1,10 +1,10 @@
 {
   "this_client": {
-    "ip": "127.0.0.1",
-    "port": "8020"
+    "ip": "oysyexplorer.westeurope.cloudapp.azure.com",
+    "port": "9030"
   },
   "bootstrap_server": {
-    "ip": "127.0.0.1",
-    "port": "9011"
+    "ip": "oysyone.westeurope.cloudapp.azure.com",
+    "port": "9001"
   }
 }

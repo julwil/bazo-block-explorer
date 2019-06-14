@@ -53,7 +53,7 @@ func SetupDB(username string, userpassword string) {
 	defer db.Close()
 
 	fmt.Println("Setting up Database...")
-	//dropTables()
+	dropTables()
 	createTables()
 	fmt.Println("Setup complete")
 }
@@ -470,8 +470,8 @@ func WriteAccountWithAddress(tx utilities.Acctx, accountHash string) {
 	connectToDB()
 	defer db.Close()
 
-	sqlStatement := `INSERT INTO accounts (hash, address, balance, txcount, isstaking)
-                    VALUES ($1, $2, $3, $4, false)
+	sqlStatement := `INSERT INTO accounts (hash, address, balance, txcount)
+                    VALUES ($1, $2, $3, $4)
                     ON CONFLICT (hash) DO UPDATE SET address = $2`
 
 	_, err = db.Exec(sqlStatement, accountHash, tx.PubKey, 0, 0)
@@ -789,7 +789,7 @@ func createTables() {
                     address char(128),
                     balance bigint not null,
                     txcount int not null,
-                    isstaking boolean
+                    isstaking boolean not null default false
                     );
 
                     create table parameters(

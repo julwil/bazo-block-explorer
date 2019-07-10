@@ -5,6 +5,6 @@
   },
   "bootstrap_server": {
     "ip": "oysyone.westeurope.cloudapp.azure.com",
-    "port": "9001"
+    "port": "8001"
   }
 }

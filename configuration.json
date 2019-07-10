@@ -1,7 +1,7 @@
 {
   "this_client": {
     "ip": "oysyexplorer.westeurope.cloudapp.azure.com",
-    "port": "9030"
+    "port": "8030"
   },
   "bootstrap_server": {
     "ip": "oysyone.westeurope.cloudapp.azure.com",

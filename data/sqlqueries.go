@@ -67,6 +67,7 @@ func dropTables() {
                    drop table acctx;
                    drop table configtx;
                    drop table staketx;
+                   drop table updatetx;
                    drop table accounts;
                    drop table parameters;
                    drop table stats;
@@ -74,6 +75,158 @@ func dropTables() {
 	db.Exec(sqlStatement)
 	fmt.Println("Dropped Tables")
 
+}
+
+func createTables() {
+	connectToDB()
+	defer db.Close()
+	fmt.Println("Creating Tables...")
+
+	sqlStatement1 := `create table blocks (
+                    header bit(8),
+                    hash char(64) primary key,
+                    prevHash char(64) not null,
+                    nonce char(16),
+                    timestamp bigint not null,
+                    timestring varchar(100) not null,
+                    merkleRoot char(64) not null,
+                    beneficiary char(64) not null,
+                    seed varchar(100),
+                    hashedseed varchar(100),
+                    height smallint,
+                    nrFundsTx smallint not null,
+                    nrAccTx smallint not null,
+                    nrConfigTx smallint not null,
+                    nrStakeTx smallint,
+                    nrUpdateTx smallint,
+                    fundsTxData varchar(100)[],
+                    accTxData varchar(100)[],
+                    configTxData varchar(100)[],
+                    stakeTxData varchar(100)[],
+                    updateTxData varchar(100)[],
+                    nrUpdates smallint not null
+                    );
+
+                    create table fundstx (
+                    header bit(8),
+                    hash char(64) primary key,
+                    blockhash char(64) not null,
+                    amount bigint not null,
+                    fee bigint not null,
+                    txcount int not null,
+                    sender char(64) not null,
+                    recipient char(64) not null,
+                    timestamp bigint not null,
+                    signature char(128) not null,
+                    data varchar(512) default null
+                    );
+                    
+                    create table updatetx (
+                    header bit(8),
+                    hash char(64) primary key,
+                    blockhash char(64) not null,
+                    fee bigint not null,
+                    toUpdateHash char(64),
+                    toUpdateData varchar(512) default null,
+                    issuer char(64) not null,
+                    timestamp bigint not null,
+                    signature char(128) not null,
+                    data varchar(512) default null
+                    );
+                    `
+
+	sqlStatement2 := `create table acctx(
+                    header bit(8),
+                    hash char(64) primary key,
+                    blockhash char(64),
+                    issuer char(64) not null,
+                    fee bigint not null,
+                    pubkey char(128) not null,
+                    timestamp bigint not null,
+                    signature char(128) not null,
+                    data varchar(512) default null
+                    );
+
+                    create table configtx(
+                    header bit(8),
+                    hash char(64) primary key,
+                    blockhash char(64),
+                    id int not null,
+                    payload bigint not null,
+                    fee bigint not null,
+                    txcount int not null,
+                    timestamp bigint not null,
+                    signature char(128) not null
+                    );
+
+                    create table staketx(
+                    header bit(8),
+                    hash char(64) primary key,
+                    blockhash char(64),
+                    timestamp bigint not null,
+                    fee bigint not null,
+                    account char(64) not null,
+                    isstaking boolean,
+                    signature char(128) not null
+                    );`
+
+	sqlStatement3 := `create table accounts(
+                    hash char(64) primary key,
+                    address char(128),
+                    balance bigint not null,
+                    txcount int not null,
+                    isstaking boolean
+                    );
+
+                    create table parameters(
+                    timestamp bigint not null,
+                    blocksize int not null,
+                    diffinterval int not null,
+                    minfee int not null,
+                    blockinterval int not null,
+                    blockreward int not null,
+                    stakingmin int,
+                    waitingmin int,
+                    accepancetimediff int,
+                    slashingwindowsize int,
+                    slashingreward int
+                    );
+
+                    create table stats(
+                    totalsupply bigint,
+                    nraccounts bigint,
+                    timestamp bigint
+                    );
+
+                    create table txhistory(
+                    timestring varchar(100) not null,
+                    timestamp bigint not null,
+                    txnumber bigint DEFAULT 0
+                    );`
+
+	sqlStatement4 := `create index timestamp_idx on blocks (timestamp);
+                      create index sender_idx on fundstx (sender);
+                      create index recipient_idx on fundstx (recipient);
+                      create index address_idx on accounts (address);`
+
+	_, err := db.Exec(sqlStatement1)
+	if err != nil {
+		panic(err)
+	}
+	_, err = db.Exec(sqlStatement2)
+	if err != nil {
+		panic(err)
+	}
+	_, err = db.Exec(sqlStatement3)
+	if err != nil {
+		panic(err)
+	}
+	_, err = db.Exec(sqlStatement4)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Created Tables Successfully")
 }
 
 func ReturnOneBlock(UrlHash string) utilities.Block {
@@ -96,6 +249,9 @@ func ReturnOneBlock(UrlHash string) utilities.Block {
 		if len(returnedblock.ConfigTxDataString.String) > 0 {
 			returnedblock.ConfigTxData = strings.Split(returnedblock.ConfigTxDataString.String[1:len(returnedblock.ConfigTxDataString.String)-1], ",")
 		}
+		if len(returnedblock.UpdateTxDataString.String) > 0 {
+			returnedblock.UpdateTxData = strings.Split(returnedblock.UpdateTxDataString.String[1:len(returnedblock.UpdateTxDataString.String)-1], ",")
+		}
 		return returnedblock
 	default:
 		panic(err)
@@ -108,7 +264,7 @@ func ReturnAllBlocks(UrlHash string) []utilities.Block {
 	connectToDB()
 	defer db.Close()
 
-	sqlStatement := `SELECT hash, timestamp, timestring, beneficiary, nrFundsTx, nrAccTx, nrConfigTx FROM blocks ORDER BY timestamp DESC LIMIT 100`
+	sqlStatement := `SELECT hash, timestamp, timestring, beneficiary, nrFundsTx, nrAccTx, nrConfigTx, nrUpdateTx FROM blocks ORDER BY timestamp DESC LIMIT 100`
 	rows, err := db.Query(sqlStatement)
 	if err != nil {
 		panic(err)
@@ -117,7 +273,16 @@ func ReturnAllBlocks(UrlHash string) []utilities.Block {
 	returnedrows := make([]utilities.Block, 0)
 	for rows.Next() {
 		var returnedrow utilities.Block
-		err = rows.Scan(&returnedrow.Hash, &returnedrow.Timestamp, &returnedrow.TimeString, &returnedrow.Beneficiary, &returnedrow.NrFundsTx, &returnedrow.NrAccTx, &returnedrow.NrConfigTx)
+		err = rows.Scan(
+			&returnedrow.Hash,
+			&returnedrow.Timestamp,
+			&returnedrow.TimeString,
+			&returnedrow.Beneficiary,
+			&returnedrow.NrFundsTx,
+			&returnedrow.NrAccTx,
+			&returnedrow.NrConfigTx,
+			&returnedrow.NrUpdateTx,
+		)
 		if err != nil {
 			panic(err)
 		}
@@ -134,10 +299,20 @@ func ReturnOneFundsTx(UrlHash string) utilities.Fundstx {
 	connectToDB()
 	defer db.Close()
 
-	sqlStatement := `SELECT hash, blockhash, amount, fee, txcount, sender, recipient, signature FROM fundstx WHERE hash = $1;`
+	sqlStatement := `SELECT hash, blockhash, amount, fee, txcount, sender, recipient, signature, data FROM fundstx WHERE hash = $1;`
 	var returnedrow utilities.Fundstx
 	row := db.QueryRow(sqlStatement, UrlHash)
-	switch err = row.Scan(&returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Amount, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.From, &returnedrow.To, &returnedrow.Signature); err {
+	switch err = row.Scan(
+		&returnedrow.Hash,
+		&returnedrow.BlockHash,
+		&returnedrow.Amount,
+		&returnedrow.Fee,
+		&returnedrow.TxCount,
+		&returnedrow.From,
+		&returnedrow.To,
+		&returnedrow.Signature,
+		&returnedrow.Data,
+	); err {
 	case sql.ErrNoRows:
 	case nil:
 		return returnedrow
@@ -151,7 +326,7 @@ func ReturnAllFundsTx(UrlHash string) []utilities.Fundstx {
 	connectToDB()
 	defer db.Close()
 
-	sqlStatement := `SELECT hash, amount, fee, txcount, sender, recipient, signature FROM fundstx ORDER BY timestamp DESC LIMIT 100`
+	sqlStatement := `SELECT hash, amount, fee, txcount, sender, recipient, signature, data FROM fundstx ORDER BY timestamp DESC LIMIT 100`
 	rows, err := db.Query(sqlStatement)
 	if err != nil {
 		panic(err)
@@ -160,7 +335,16 @@ func ReturnAllFundsTx(UrlHash string) []utilities.Fundstx {
 	returnedrows := make([]utilities.Fundstx, 0)
 	for rows.Next() {
 		var returnedrow utilities.Fundstx
-		err = rows.Scan(&returnedrow.Hash, &returnedrow.Amount, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.From, &returnedrow.To, &returnedrow.Signature)
+		err = rows.Scan(
+			&returnedrow.Hash,
+			&returnedrow.Amount,
+			&returnedrow.Fee,
+			&returnedrow.TxCount,
+			&returnedrow.From,
+			&returnedrow.To,
+			&returnedrow.Signature,
+			&returnedrow.Data,
+		)
 		if err != nil {
 			panic(err)
 		}
@@ -177,10 +361,18 @@ func ReturnOneAccTx(UrlHash string) utilities.Acctx {
 	connectToDB()
 	defer db.Close()
 
-	sqlStatement := `SELECT hash, blockhash, issuer, fee, pubkey, signature FROM acctx WHERE hash = $1;`
+	sqlStatement := `SELECT hash, blockhash, issuer, fee, pubkey, signature, data FROM acctx WHERE hash = $1;`
 	var returnedrow utilities.Acctx
 	row := db.QueryRow(sqlStatement, UrlHash)
-	switch err = row.Scan(&returnedrow.Hash, &returnedrow.BlockHash, &returnedrow.Issuer, &returnedrow.Fee, &returnedrow.PubKey, &returnedrow.Signature); err {
+	switch err = row.Scan(
+		&returnedrow.Hash,
+		&returnedrow.BlockHash,
+		&returnedrow.Issuer,
+		&returnedrow.Fee,
+		&returnedrow.PubKey,
+		&returnedrow.Signature,
+		&returnedrow.Data,
+	); err {
 	case sql.ErrNoRows:
 	case nil:
 		return returnedrow
@@ -195,7 +387,7 @@ func ReturnAllAccTx(UrlHash string) []utilities.Acctx {
 	connectToDB()
 	defer db.Close()
 
-	sqlStatement := `SELECT hash, issuer, fee, pubkey FROM acctx ORDER BY timestamp DESC LIMIT 100`
+	sqlStatement := `SELECT hash, issuer, fee, pubkey, data FROM acctx ORDER BY timestamp DESC LIMIT 100`
 	rows, err := db.Query(sqlStatement)
 	if err != nil {
 		panic(err)
@@ -204,7 +396,65 @@ func ReturnAllAccTx(UrlHash string) []utilities.Acctx {
 	returnedrows := make([]utilities.Acctx, 0)
 	for rows.Next() {
 		var returnedrow utilities.Acctx
-		err = rows.Scan(&returnedrow.Hash, &returnedrow.Issuer, &returnedrow.Fee, &returnedrow.PubKey)
+		err = rows.Scan(&returnedrow.Hash, &returnedrow.Issuer, &returnedrow.Fee, &returnedrow.PubKey, &returnedrow.Data)
+		if err != nil {
+			panic(err)
+		}
+		returnedrows = append(returnedrows, returnedrow)
+	}
+	err = rows.Err()
+	if err != nil {
+		panic(err)
+	}
+	return returnedrows
+}
+
+func ReturnOneUpdateTx(UrlHash string) utilities.Updatetx {
+	connectToDB()
+	defer db.Close()
+
+	sqlStatement := `SELECT hash, blockhash, issuer, toupdatehash, toupdatedata, signature, data FROM updatetx WHERE hash = $1;`
+	var returnedrow utilities.Updatetx
+	row := db.QueryRow(sqlStatement, UrlHash)
+	switch err = row.Scan(
+		&returnedrow.Hash,
+		&returnedrow.BlockHash,
+		&returnedrow.Issuer,
+		&returnedrow.ToUpdateHash,
+		&returnedrow.ToUpdateData,
+		&returnedrow.Signature,
+		&returnedrow.Data,
+	); err {
+	case sql.ErrNoRows:
+	case nil:
+		return returnedrow
+	default:
+		panic(err)
+	}
+
+	return returnedrow
+}
+
+func ReturnAllUpdateTx(UrlHash string) []utilities.Updatetx {
+	connectToDB()
+	defer db.Close()
+
+	sqlStatement := `SELECT hash, issuer, toupdatehash, toupdatedata, data FROM updatetx ORDER BY timestamp DESC LIMIT 100`
+	rows, err := db.Query(sqlStatement)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+	returnedrows := make([]utilities.Updatetx, 0)
+	for rows.Next() {
+		var returnedrow utilities.Updatetx
+		err = rows.Scan(
+			&returnedrow.Hash,
+			&returnedrow.Issuer,
+			&returnedrow.ToUpdateHash,
+			&returnedrow.ToUpdateData,
+			&returnedrow.Data,
+		)
 		if err != nil {
 			panic(err)
 		}
@@ -310,7 +560,7 @@ func ReturnBlocksAndTransactions(UrlHash string) utilities.Blocksandtx {
 	connectToDB()
 	defer db.Close()
 
-	sqlStatement := `SELECT hash, timestamp, timestring, beneficiary, nrFundsTx, nrAccTx, nrConfigTx FROM blocks ORDER BY timestamp DESC LIMIT 6`
+	sqlStatement := `SELECT hash, timestamp, timestring, beneficiary, nrFundsTx, nrAccTx, nrConfigTx, nrUpdateTx, nrUpdates FROM blocks ORDER BY timestamp DESC LIMIT 6`
 	rows, err := db.Query(sqlStatement)
 	if err != nil {
 		panic(err)
@@ -319,7 +569,17 @@ func ReturnBlocksAndTransactions(UrlHash string) utilities.Blocksandtx {
 	returnedblocks := make([]utilities.Block, 0)
 	for rows.Next() {
 		var returnedrow utilities.Block
-		err = rows.Scan(&returnedrow.Hash, &returnedrow.Timestamp, &returnedrow.TimeString, &returnedrow.Beneficiary, &returnedrow.NrFundsTx, &returnedrow.NrAccTx, &returnedrow.NrConfigTx)
+		err = rows.Scan(
+			&returnedrow.Hash,
+			&returnedrow.Timestamp,
+			&returnedrow.TimeString,
+			&returnedrow.Beneficiary,
+			&returnedrow.NrFundsTx,
+			&returnedrow.NrAccTx,
+			&returnedrow.NrConfigTx,
+			&returnedrow.NrUpdateTx,
+			&returnedrow.NrUpdates,
+		)
 		//returnedrow.Timestamp = returnedrow.Timestamp[:19]
 		if err != nil {
 			panic(err)
@@ -361,9 +621,27 @@ func WriteBlock(block utilities.Block) {
 	defer db.Close()
 
 	sqlStatement = `
-    INSERT INTO blocks (hash, prevhash, timestamp, timestring, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`
-	_, err = db.Exec(sqlStatement, block.Hash, block.PrevHash, block.Timestamp, block.TimeString, block.MerkleRoot, block.Beneficiary, block.NrFundsTx, block.NrAccTx, block.NrConfigTx, pq.Array(block.FundsTxData), pq.Array(block.AccTxData), pq.Array(block.ConfigTxData))
+    INSERT INTO blocks 
+    (hash, prevhash, timestamp, timestring, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, 
+     nrupdatetx, fundstxdata, acctxdata, configtxdata, updatetxdata, nrupdates)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`
+	_, err = db.Exec(sqlStatement,
+		block.Hash,
+		block.PrevHash,
+		block.Timestamp,
+		block.TimeString,
+		block.MerkleRoot,
+		block.Beneficiary,
+		block.NrFundsTx,
+		block.NrAccTx,
+		block.NrConfigTx,
+		block.NrUpdateTx,
+		pq.Array(block.FundsTxData),
+		pq.Array(block.AccTxData),
+		pq.Array(block.ConfigTxData),
+		pq.Array(block.UpdateTxData),
+		block.NrUpdates,
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -374,9 +652,20 @@ func WriteFundsTx(tx utilities.Fundstx) {
 	defer db.Close()
 
 	sqlStatement = `
-    INSERT INTO fundstx (hash, blockhash, amount, fee, txcount, sender, recipient, timestamp, signature)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
-	_, err = db.Exec(sqlStatement, tx.Hash, tx.BlockHash, tx.Amount, tx.Fee, tx.TxCount, tx.From, tx.To, tx.Timestamp, tx.Signature)
+    INSERT INTO fundstx (hash, blockhash, amount, fee, txcount, sender, recipient, timestamp, signature, data)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`
+	_, err = db.Exec(sqlStatement,
+		tx.Hash,
+		tx.BlockHash,
+		tx.Amount,
+		tx.Fee,
+		tx.TxCount,
+		tx.From,
+		tx.To,
+		tx.Timestamp,
+		tx.Signature,
+		tx.Data,
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -387,9 +676,18 @@ func WriteAccTx(tx utilities.Acctx) {
 	defer db.Close()
 
 	sqlStatement = `
-    INSERT INTO acctx (hash, blockhash, fee, issuer, pubkey, timestamp, signature)
-    VALUES ($1, $2, $3, $4, $5, $6, $7)`
-	_, err = db.Exec(sqlStatement, tx.Hash, tx.BlockHash, tx.Fee, tx.Issuer, tx.PubKey, tx.Timestamp, tx.Signature)
+    INSERT INTO acctx (hash, blockhash, fee, issuer, pubkey, timestamp, signature, data)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
+	_, err = db.Exec(sqlStatement,
+		tx.Hash,
+		tx.BlockHash,
+		tx.Fee,
+		tx.Issuer,
+		tx.PubKey,
+		tx.Timestamp,
+		tx.Signature,
+		tx.Data,
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -416,6 +714,52 @@ func WriteStakeTx(tx utilities.Staketx) {
     INSERT INTO staketx (hash, blockhash, timestamp, fee, account, isstaking, signature)
     VALUES ($1, $2, $3, $4, $5, $6, $7)`
 	_, err = db.Exec(sqlStatement, tx.Hash, tx.BlockHash, tx.Timestamp, tx.Fee, tx.Account, tx.IsStaking, tx.Signature)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func WriteUpdateTx(tx utilities.Updatetx) {
+	connectToDB()
+	defer db.Close()
+
+	sqlStatement = `
+    INSERT INTO updatetx (hash, blockhash, fee, toUpdateHash, toUpdateData, issuer, timestamp, signature, data)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
+	_, err = db.Exec(sqlStatement,
+		tx.Hash,
+		tx.BlockHash,
+		tx.Fee,
+		tx.ToUpdateHash,
+		tx.ToUpdateData,
+		tx.Issuer,
+		tx.Timestamp,
+		tx.Signature,
+		tx.Data,
+	)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func UpdateTxToUpdate(tx utilities.Updatetx) {
+	connectToDB()
+	defer db.Close()
+
+	sqlStatement := `UPDATE fundstx SET data = $1 WHERE hash = $2;`
+	_, err = db.Exec(sqlStatement, tx.ToUpdateData, tx.ToUpdateHash)
+	if err != nil {
+		panic(err)
+	}
+
+	sqlStatement = `UPDATE acctx SET data = $1 WHERE hash = $2;`
+	_, err = db.Exec(sqlStatement, tx.ToUpdateData, tx.ToUpdateHash)
+	if err != nil {
+		panic(err)
+	}
+
+	sqlStatement = `UPDATE updatetx SET data = $1 WHERE hash = $2;`
+	_, err = db.Exec(sqlStatement, tx.ToUpdateData, tx.ToUpdateHash)
 	if err != nil {
 		panic(err)
 	}
@@ -495,7 +839,7 @@ func ReturnOneAccount(UrlHash string) utilities.Accountwithtxs {
 		returnedData.Account = returnedaccount
 		return returnedData
 	case nil:
-		sqlStatement = `SELECT hash, amount, fee, txcount, sender, recipient FROM fundstx WHERE sender = $1 OR recipient = $1`
+		sqlStatement = `SELECT hash, amount, fee, txcount, sender, recipient, data FROM fundstx WHERE sender = $1 OR recipient = $1`
 		rows, err := db.Query(sqlStatement, returnedaccount.Hash)
 		if err != nil {
 			panic(err)
@@ -504,7 +848,15 @@ func ReturnOneAccount(UrlHash string) utilities.Accountwithtxs {
 		returnedrows := make([]utilities.Fundstx, 0)
 		for rows.Next() {
 			var returnedrow utilities.Fundstx
-			err = rows.Scan(&returnedrow.Hash, &returnedrow.Amount, &returnedrow.Fee, &returnedrow.TxCount, &returnedrow.From, &returnedrow.To)
+			err = rows.Scan(
+				&returnedrow.Hash,
+				&returnedrow.Amount,
+				&returnedrow.Fee,
+				&returnedrow.TxCount,
+				&returnedrow.From,
+				&returnedrow.To,
+				&returnedrow.Data,
+			)
 			if err != nil {
 				panic(err)
 			}
@@ -697,137 +1049,4 @@ func Return14Hours() []utilities.Serie {
 	series = append(series, utilities.Serie{timeThreshold.Format("15:04"), currentHourTxs})
 
 	return series
-}
-
-func createTables() {
-	connectToDB()
-	defer db.Close()
-	fmt.Println("Creating Tables...")
-
-	sqlStatement1 := `create table blocks (
-                    header bit(8),
-                    hash char(64) primary key,
-                    prevHash char(64) not null,
-                    nonce char(16),
-                    timestamp bigint not null,
-                    timestring varchar(100) not null,
-                    merkleRoot char(64) not null,
-                    beneficiary char(64) not null,
-                    seed varchar(100),
-                    hashedseed varchar(100),
-                    height smallint,
-                    nrFundsTx smallint not null,
-                    nrAccTx smallint not null,
-                    nrConfigTx smallint not null,
-                    nrStakeTx smallint,
-                    fundsTxData varchar(100)[],
-                    accTxData varchar(100)[],
-                    configTxData varchar(100)[],
-                    stakeTxData varchar(100)[]
-                    );
-
-                    create table fundstx (
-                    header bit(8),
-                    hash char(64) primary key,
-                    blockhash char(64) not null,
-                    amount bigint not null,
-                    fee bigint not null,
-                    txcount int not null,
-                    sender char(64) not null,
-                    recipient char(64) not null,
-                    timestamp bigint not null,
-                    signature char(128) not null
-                    );`
-
-	sqlStatement2 := `create table acctx(
-                    header bit(8),
-                    hash char(64) primary key,
-                    blockhash char(64),
-                    issuer char(64) not null,
-                    fee bigint not null,
-                    pubkey char(128) not null,
-                    timestamp bigint not null,
-                    signature char(128) not null
-                    );
-
-                    create table configtx(
-                    header bit(8),
-                    hash char(64) primary key,
-                    blockhash char(64),
-                    id int not null,
-                    payload bigint not null,
-                    fee bigint not null,
-                    txcount int not null,
-                    timestamp bigint not null,
-                    signature char(128) not null
-                    );
-
-                    create table staketx(
-                    header bit(8),
-                    hash char(64) primary key,
-                    blockhash char(64),
-                    timestamp bigint not null,
-                    fee bigint not null,
-                    account char(64) not null,
-                    isstaking boolean,
-                    signature char(128) not null
-                    );`
-
-	sqlStatement3 := `create table accounts(
-                    hash char(64) primary key,
-                    address char(128),
-                    balance bigint not null,
-                    txcount int not null,
-                    isstaking boolean
-                    );
-
-                    create table parameters(
-                    timestamp bigint not null,
-                    blocksize int not null,
-                    diffinterval int not null,
-                    minfee int not null,
-                    blockinterval int not null,
-                    blockreward int not null,
-                    stakingmin int,
-                    waitingmin int,
-                    accepancetimediff int,
-                    slashingwindowsize int,
-                    slashingreward int
-                    );
-
-                    create table stats(
-                    totalsupply bigint,
-                    nraccounts bigint,
-                    timestamp bigint
-                    );
-
-                    create table txhistory(
-                    timestring varchar(100) not null,
-                    timestamp bigint not null,
-                    txnumber bigint DEFAULT 0
-                    );`
-
-	sqlStatement4 := `create index timestamp_idx on blocks (timestamp);
-                      create index sender_idx on fundstx (sender);
-                      create index recipient_idx on fundstx (recipient);
-                      create index address_idx on accounts (address);`
-
-	_, err := db.Exec(sqlStatement1)
-	if err != nil {
-		panic(err)
-	}
-	_, err = db.Exec(sqlStatement2)
-	if err != nil {
-		panic(err)
-	}
-	_, err = db.Exec(sqlStatement3)
-	if err != nil {
-		panic(err)
-	}
-	_, err = db.Exec(sqlStatement4)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("Created Tables Successfully")
 }

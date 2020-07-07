@@ -6,11 +6,10 @@ import (
 	"github.com/julwil/bazo-block-explorer/router"
 	"net/http"
 	"os"
-	"time"
 )
 
 func main() {
-	time.Sleep(10 * time.Second)
+	//time.Sleep(10 * time.Second)
 	if len(os.Args) == 5 {
 		requestRouter := router.InitializeRouter()
 

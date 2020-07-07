@@ -24,6 +24,8 @@ func InitializeRouter() *httprouter.Router {
 	router.GET("/tx/funds/:hash", getOneFundsTx)
 	router.GET("/tx/acc", getAllAccTx)
 	router.GET("/tx/acc/:hash", getOneAccTx)
+	router.GET("/tx/update", getAllUpdateTx)
+	router.GET("/tx/update/:hash", getOneUpdateTx)
 	router.GET("/tx/config", getAllConfigTx)
 	router.GET("/tx/config/:hash", getOneConfigTx)
 	router.GET("/tx/stake", getAllStakeTx)
@@ -77,6 +79,19 @@ func getOneAccTx(w http.ResponseWriter, r *http.Request, params httprouter.Param
 	returnedtx := data.ReturnOneAccTx(params.ByName("hash"))
 	returnedtx.UrlLevel = "../../.."
 	tpl.ExecuteTemplate(w, "acctx.gohtml", returnedtx)
+}
+
+func getAllUpdateTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	var txs utilities.Updatesandurl
+	txs.Txs = data.ReturnAllUpdateTx(params.ByName("hash"))
+	txs.UrlLevel = "../.."
+	tpl.ExecuteTemplate(w, "updatetxs.gohtml", txs)
+}
+
+func getOneUpdateTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	returnedtx := data.ReturnOneUpdateTx(params.ByName("hash"))
+	returnedtx.UrlLevel = "../../.."
+	tpl.ExecuteTemplate(w, "updatetx.gohtml", returnedtx)
 }
 
 func getAllAccTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

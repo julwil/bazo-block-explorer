@@ -23,27 +23,19 @@
             <thead>
               <tr>
                 <th style="width: 30%;">Hash</th>
-                <td> <a href="{{.UrlLevel}}/tx/funds/{{.Hash}}">{{.Hash}}</a></td>
+                <td>{{.Hash}}</td>
               </tr>
               <tr>
                 <th>Block</th>
                 <td> <a href="{{.UrlLevel}}/block/{{.BlockHash}}">{{.BlockHash}}</a></td>
               </tr>
               <tr>
-                <th>From</th>
-                <td> <a href="{{.UrlLevel}}/account/{{.From}}">{{.From}}</a></td>
+                <th>Tx to update</th>
+                <td> <a href="{{.UrlLevel}}/tx/acc/{{.ToUpdateHash}}">{{.ToUpdateHash}}</a></td>
               </tr>
               <tr>
-                <th>To</th>
-                <td> <a href="{{.UrlLevel}}/account/{{.To}}">{{.To}}</a></td>
-              </tr>
-              <tr>
-                <th>Transaction Count</th>
-                <td>{{.TxCount}}</td>
-              </tr>
-              <tr>
-                <th>Amount</th>
-                <td>{{.Amount}}</td>
+                <th>Data to be updated</th>
+                <td>{{.ToUpdateData}}</td>
               </tr>
               <tr>
                 <th>Fee</th>

@@ -1,90 +1,110 @@
 package utilities
 
 import (
-  "database/sql"
+	"database/sql"
 )
 
 type Block struct {
-  Header string
-  Hash string
-  PrevHash string
-  Timestamp int64
-  TimeString string
-  MerkleRoot string
-  Beneficiary string
-  Seed string
-  HashedSeed string
-  Height uint16
-  NrFundsTx uint16
-  NrAccTx uint16
-  NrConfigTx uint8
-  NrStakeTx uint16
-  FundsTxDataString sql.NullString
-  FundsTxData []string
-  AccTxDataString sql.NullString
-  AccTxData []string
-  ConfigTxDataString sql.NullString
-  ConfigTxData []string
-  StakeTxDataString sql.NullString
-  StakeTxData []string
-  UrlLevel string
+	Header             string
+	Hash               string
+	PrevHash           string
+	Timestamp          int64
+	TimeString         string
+	MerkleRoot         string
+	Beneficiary        string
+	Seed               string
+	HashedSeed         string
+	Height             uint16
+	NrFundsTx          uint16
+	NrAccTx            uint16
+	NrConfigTx         uint8
+	NrStakeTx          uint16
+	NrUpdateTx         uint16
+	FundsTxDataString  sql.NullString
+	FundsTxData        []string
+	AccTxDataString    sql.NullString
+	AccTxData          []string
+	ConfigTxDataString sql.NullString
+	ConfigTxData       []string
+	StakeTxDataString  sql.NullString
+	StakeTxData        []string
+	UpdateTxDataString sql.NullString
+	UpdateTxData       []string
+	UrlLevel           string
+	NrUpdates          uint16
 }
 
 type Fundstx struct {
-  Hash string
-  BlockHash string
-  Amount uint64
-  Fee uint64
-  TxCount uint32
-  From string
-  To string
-  Timestamp int64
-  Signature string
-  UrlLevel string
+	Hash      string
+	BlockHash string
+	Amount    uint64
+	Fee       uint64
+	TxCount   uint32
+	From      string
+	To        string
+	Timestamp int64
+	Signature string
+	UrlLevel  string
+	Data      string
 }
 
 type Acctx struct {
-  Hash string
-  BlockHash string
-  Issuer string
-  Fee uint64
-  PubKey string
-  Timestamp int64
-  Signature string
-  UrlLevel string
+	Hash      string
+	BlockHash string
+	Issuer    string
+	Fee       uint64
+	PubKey    string
+	Timestamp int64
+	Signature string
+	UrlLevel  string
+	Data      string
 }
 
 type Configtx struct {
-  Hash string
-  BlockHash string
-	Id uint8
-	Payload uint64
-	Fee uint64
-	TxCount uint8
-  Timestamp int64
+	Hash      string
+	BlockHash string
+	Id        uint8
+	Payload   uint64
+	Fee       uint64
+	TxCount   uint8
+	Timestamp int64
 	Signature string
-  UrlLevel string
+	UrlLevel  string
 }
 
 type Staketx struct {
-  Hash string
-  BlockHash string
-  Timestamp int64
-  Fee uint64
-  IsStaking bool
-  Account string
-  Signature string
-  UrlLevel string
+	Hash      string
+	BlockHash string
+	Timestamp int64
+	Fee       uint64
+	IsStaking bool
+	Account   string
+	Signature string
+	UrlLevel  string
+}
+
+type Updatetx struct {
+	Hash           string
+	BlockHash      string
+	Fee            uint64
+	ToUpdateTxType string
+	ToUpdateHash   string
+	ToUpdateData   string
+	Issuer         string
+	Timestamp      int64
+	Signature      string
+	UrlLevel       string
+	Data           string
 }
 
 type Account struct {
-  Hash string
-  Address string
-  Balance int64
-  TxCount int32
-  FundsTxData []string
-  IsStaking bool
-  UrlLevel string
+	Hash        string
+	Address     string
+	Balance     int64
+	TxCount     int32
+	FundsTxData []string
+	IsStaking   bool
+	UrlLevel    string
 }
 
 type JSONAccount struct {
@@ -97,78 +117,82 @@ type JSONAccount struct {
 }
 
 type Systemparams struct {
-  Timestamp int64
-  BlockHash string
-  BlockSize uint64
-  DiffInterval uint64
-  MinFee uint64
-  BlockInterval uint64
-  BlockReward uint64
-  StakingMin uint64
-  WaitingMin uint64
-  AcceptanceTimeDiff uint64
-  SlashingWindowSize uint64
-  SlashingReward uint64
-  UrlLevel string
-
+	Timestamp          int64
+	BlockHash          string
+	BlockSize          uint64
+	DiffInterval       uint64
+	MinFee             uint64
+	BlockInterval      uint64
+	BlockReward        uint64
+	StakingMin         uint64
+	WaitingMin         uint64
+	AcceptanceTimeDiff uint64
+	SlashingWindowSize uint64
+	SlashingReward     uint64
+	UrlLevel           string
 }
 
 type Blocksandtx struct {
-  Blocks []Block
-  Txs []Fundstx
-  UrlLevel string
+	Blocks   []Block
+	Txs      []Fundstx
+	UrlLevel string
 }
 
 type Blocksandurl struct {
-  Blocks []Block
-  UrlLevel string
+	Blocks   []Block
+	UrlLevel string
 }
 
 type Fundsandurl struct {
-  Txs []Fundstx
-  UrlLevel string
+	Txs      []Fundstx
+	UrlLevel string
 }
 
 type Accsandurl struct {
-  Txs []Acctx
-  UrlLevel string
+	Txs      []Acctx
+	UrlLevel string
+}
+
+type Updatesandurl struct {
+	Txs      []Updatetx
+	UrlLevel string
 }
 
 type Configsandurl struct {
-  Txs []Configtx
-  UrlLevel string
+	Txs      []Configtx
+	UrlLevel string
 }
 
 type Stakesandurl struct {
-  Txs []Staketx
-  UrlLevel string
+	Txs      []Staketx
+	UrlLevel string
 }
 
 type Accountsandurl struct {
-  Accounts []Account
-  UrlLevel string
+	Accounts []Account
+	UrlLevel string
 }
 
 type Emptyresponse struct {
-  value int
-  UrlLevel string
+	value    int
+	UrlLevel string
 }
 
 type Accountwithtxs struct {
-  Account Account
-  Txs []Fundstx
-  UrlLevel string
+	Account  Account
+	Txs      []Fundstx
+	UrlLevel string
 }
 
 type Stats struct {
-  ChartData string
-  TotalSupply int
-  TotalNrAccounts int
-  Parameters Systemparams
-  UrlLevel string
+	ChartData       string
+	TotalSupply     int
+	TotalNrAccounts int
+	Parameters      Systemparams
+	UrlLevel        string
 }
 
 type Serie struct {
-  Name  string `json:"x"`
+	Name  string `json:"x"`
 	Value int    `json:"value"`
 }

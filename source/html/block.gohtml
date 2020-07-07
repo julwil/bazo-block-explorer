@@ -64,6 +64,14 @@
                 <th>NrStakeTX</th>
                 <td>{{.NrStakeTx}}</td>
               </tr>
+              <tr>
+                <th>NrUpdateTX</th>
+                <td>{{.NrUpdateTx}}</td>
+              </tr>
+              <tr>
+                <th>Nr updates on block</th>
+                <td>{{.NrUpdates}}</td>
+              </tr>
               {{range .FundsTxData}}
               <tr>
                 <th>Funds Transaction Hash</th>
@@ -87,6 +95,12 @@
                 <th>Stake Transaction Hash</th>
                 <td><a href="../../tx/stake/{{.}}">{{.}}</a></td>
               </tr>
+              {{end}}
+              {{range .UpdateTxData}}
+                <tr>
+                  <th>Update Transaction Hash</th>
+                  <td><a href="../../tx/update/{{.}}">{{.}}</a></td>
+                </tr>
               {{end}}
             </thead>
           </table>

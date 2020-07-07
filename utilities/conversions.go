@@ -21,6 +21,8 @@ func ConvertBlock(unconvertedBlock *protocol.Block) Block {
 	convertedBlock.NrFundsTx = unconvertedBlock.NrFundsTx
 	convertedBlock.NrAccTx = unconvertedBlock.NrAccTx
 	convertedBlock.NrConfigTx = unconvertedBlock.NrConfigTx
+	convertedBlock.NrUpdateTx = unconvertedBlock.NrUpdateTx
+	convertedBlock.NrUpdates = unconvertedBlock.NrUpdates
 
 	for _, hash := range unconvertedBlock.FundsTxData {
 		convertedTxHash = fmt.Sprintf("%x", hash)
@@ -33,6 +35,10 @@ func ConvertBlock(unconvertedBlock *protocol.Block) Block {
 	for _, hash := range unconvertedBlock.ConfigTxData {
 		convertedTxHash = fmt.Sprintf("%x", hash)
 		convertedBlock.ConfigTxData = append(convertedBlock.ConfigTxData, convertedTxHash)
+	}
+	for _, hash := range unconvertedBlock.UpdateTxData {
+		convertedTxHash = fmt.Sprintf("%x", hash)
+		convertedBlock.UpdateTxData = append(convertedBlock.UpdateTxData, convertedTxHash)
 	}
 
 	return convertedBlock
@@ -51,6 +57,7 @@ func ConvertFundsTransaction(unconvertedTx *protocol.FundsTx, unconvertedBlockHa
 	convertedTx.To = fmt.Sprintf("%x", unconvertedTx.To)
 	convertedTx.Timestamp = blockTimestamp
 	convertedTx.Signature = fmt.Sprintf("%x", unconvertedTx.Sig1)
+	convertedTx.Data = fmt.Sprintf("%s", unconvertedTx.Data)
 
 	return convertedTx
 }
@@ -66,6 +73,7 @@ func ConvertAccTransaction(unconvertedTx *protocol.AccTx, unconvertedBlockHash [
 	convertedTx.PubKey = fmt.Sprintf("%x", unconvertedTx.PubKey)
 	convertedTx.Timestamp = blockTimestamp
 	convertedTx.Signature = fmt.Sprintf("%x", unconvertedTx.Sig)
+	convertedTx.Data = fmt.Sprintf("%s", unconvertedTx.Data)
 
 	return convertedTx
 }
@@ -100,6 +108,22 @@ func ConvertStakeTransaction(unconvertedTx *protocol.StakeTx, unconvertedBlockHa
 	convertedTx.Account = fmt.Sprintf("%x", unconvertedTx.Account)
 	convertedTx.IsStaking = unconvertedTx.IsStaking
 	convertedTx.Signature = fmt.Sprintf("%x", unconvertedTx.Sig)
+
+	return convertedTx
+}
+
+func ConvertUpdateTransaction(unconvertedTx *protocol.UpdateTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte, blockTimestamp int64) Updatetx {
+	var convertedTx Updatetx
+
+	convertedTx.Hash = fmt.Sprintf("%x", unconvertedTxHash)
+	convertedTx.BlockHash = fmt.Sprintf("%x", unconvertedBlockHash)
+	convertedTx.Timestamp = blockTimestamp
+	convertedTx.Fee = unconvertedTx.Fee
+	convertedTx.ToUpdateHash = fmt.Sprintf("%x", unconvertedTx.TxToUpdateHash)
+	convertedTx.ToUpdateData = fmt.Sprintf("%s", unconvertedTx.TxToUpdateData)
+	convertedTx.Issuer = fmt.Sprintf("%x", unconvertedTx.Issuer)
+	convertedTx.Signature = fmt.Sprintf("%x", unconvertedTx.Sig)
+	convertedTx.Data = fmt.Sprintf("%s", unconvertedTx.Data)
 
 	return convertedTx
 }

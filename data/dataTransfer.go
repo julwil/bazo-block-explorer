@@ -30,7 +30,7 @@ func RunDB() {
 		time.Sleep(time.Second * 120)
 	}
 	for 0 < 1 {
-		time.Sleep(time.Second * 120)
+		time.Sleep(time.Second * 30)
 		RefreshState()
 	}
 }
@@ -198,6 +198,10 @@ func reqTx(txType uint8, txHash [32]byte) interface{} {
 		var stakeTx *protocol.StakeTx
 		stakeTx = stakeTx.Decode(payload)
 		return stakeTx
+	case p2p.UPDATETX_RES:
+		var updateTx *protocol.UpdateTx
+		updateTx = updateTx.Decode(payload)
+		return updateTx
 	default:
 		panic(err)
 	}
@@ -260,6 +264,14 @@ func SaveBlockAndTransactions(oneBlock *protocol.Block) {
 
 		UpdateAccountIsStaking(convertedTx)
 		WriteStakeTx(convertedTx)
+	}
+
+	for _, updateTxHash := range oneBlock.UpdateTxData {
+		updateTx := reqTx(p2p.UPDATETX_REQ, updateTxHash)
+		convertedTx := utilities.ConvertUpdateTransaction(updateTx.(*protocol.UpdateTx), oneBlock.Hash, updateTxHash, oneBlock.Timestamp)
+
+		UpdateTxToUpdate(convertedTx)
+		WriteUpdateTx(convertedTx)
 	}
 
 	convertedBlock := utilities.ConvertBlock(oneBlock)

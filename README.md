@@ -32,7 +32,7 @@ $ cd GODIRECTORY/src/github.com/bazo-blockchain/bazo-block-explorer
 $ sudo cp -r source/ ../../../../bin
 $ cd GODIRECTORY/bin
 ```
-From the explorer’s directory, it can now be started using the following arguments. The username and password are the values defined in the database setup step. DATA must either be "data" or "nodata", depending on whether the data retrieval mechanism should run.
+From the explorer’s directory, it can now be started using the following arguments. DATA must either be "data" or "nodata", depending on whether the data retrieval mechanism should run. PORT on which the block-explorer should reachable on localhost. The username and password are the values defined in the database setup step.
 ```sh
 $ ./bazo-block-explorer DATA :PORT USERNAME PASSWORD
 ```

@@ -1,3 +1,4 @@
+import config from './config'
 
 var app = new Vue({
   el: '#parameter-list',
@@ -20,7 +21,7 @@ var app = new Vue({
       var signature = privatekey.sign(app.accountinfo.txhash)
       var signatureHexString = signature.r.toJSON() + signature.s.toJSON()
 
-      axios.post(`http://192.41.136.199:443/sendConfigTx/${app.accountinfo.txhash}/${signatureHexString}`).then(
+      axios.post(`${config.baseUrl}/sendConfigTx/${app.accountinfo.txhash}/${signatureHexString}`).then(
         function() {
           app.closeModal()
         }
@@ -30,12 +31,12 @@ var app = new Vue({
       console.log("Changing blocksize: ", blocksize, fee)
       app.setPublicKeyFromCookie()
       if (app.isPositiveInt(blocksize) && app.isPositiveInt(fee)) {
-        axios.get('http://192.41.136.199:443/account/' + app.accountinfo.rootpublickey).then(
+        axios.get(`${config.baseUrl}/account/'${app.accountinfo.rootpublickey}`).then(
           function(response) {
             console.log(response.data)
             app.accountinfo.txcount = response.data.txCnt
             if (response.data.isRoot) {
-              axios.post(`http://192.41.136.199:443/createConfigTx/${0}/${1}/${app.blocksize.blocksize}/${app.blocksize.fee}/${app.accountinfo.txcount}`).then(
+              axios.post(`${config.baseUrl}/createConfigTx/${0}/${1}/${app.blocksize.blocksize}/${app.blocksize.fee}/${app.accountinfo.txcount}`).then(
                 function(response) {
                   $("#myModal").modal()
                   console.log(response.data);
@@ -53,12 +54,12 @@ var app = new Vue({
       console.log("Changing difficulty interval: ", diffinterval, fee)
       app.setPublicKeyFromCookie()
       if (app.isPositiveInt(diffinterval) && app.isPositiveInt(fee)) {
-        axios.get('http://192.41.136.199:443/account/' + app.accountinfo.rootpublickey).then(
+        axios.get(`${config.baseUrl}/account/${app.accountinfo.rootpublickey}`).then(
           function(response) {
             console.log(response.data)
             app.accountinfo.txcount = response.data.txCnt
             if (response.data.isRoot) {
-              axios.post(`http://192.41.136.199:443/createConfigTx/${0}/${2}/${app.diffinterval.diffinterval}/${app.diffinterval.fee}/${app.accountinfo.txcount}`).then(
+              axios.post(`${config.baseUrl}/createConfigTx/${0}/${2}/${app.diffinterval.diffinterval}/${app.diffinterval.fee}/${app.accountinfo.txcount}`).then(
                 function(response) {
                   $("#myModal").modal()
                   console.log(response.data);
@@ -76,12 +77,12 @@ var app = new Vue({
       console.log("Changing minimum fee: ", minfee, fee)
       app.setPublicKeyFromCookie()
       if (app.isPositiveInt(minfee) && app.isPositiveInt(fee)) {
-        axios.get('http://192.41.136.199:443/account/' + app.accountinfo.rootpublickey).then(
+        axios.get(`${config.baseUrl}/account/${app.accountinfo.rootpublickey}`).then(
           function(response) {
             console.log(response.data)
             app.accountinfo.txcount = response.data.txCnt
             if (response.data.isRoot) {
-              axios.post(`http://192.41.136.199:443/createConfigTx/${0}/${3}/${app.minfee.minfee}/${app.minfee.fee}/${app.accountinfo.txcount}`).then(
+              axios.post(`${config.baseUrl}/createConfigTx/${0}/${3}/${app.minfee.minfee}/${app.minfee.fee}/${app.accountinfo.txcount}`).then(
                 function(response) {
                   $("#myModal").modal()
                   console.log(response.data);
@@ -99,12 +100,12 @@ var app = new Vue({
       console.log("Changing block interval: ", blockinterval, fee)
       app.setPublicKeyFromCookie()
       if (app.isPositiveInt(blockinterval) && app.isPositiveInt(fee)) {
-        axios.get('http://192.41.136.199:443/account/' + app.accountinfo.rootpublickey).then(
+        axios.get(`${config.baseUrl}/account/${app.accountinfo.rootpublickey}`).then(
           function(response) {
             console.log(response.data)
             app.accountinfo.txcount = response.data.txCnt
             if (response.data.isRoot) {
-              axios.post(`http://192.41.136.199:443/createConfigTx/${0}/${4}/${app.blockinterval.blockinterval}/${app.blockinterval.fee}/${app.accountinfo.txcount}`).then(
+              axios.post(`${config.baseUrl}/createConfigTx/${0}/${4}/${app.blockinterval.blockinterval}/${app.blockinterval.fee}/${app.accountinfo.txcount}`).then(
                 function(response) {
                   $("#myModal").modal()
                   console.log(response.data);
@@ -122,12 +123,12 @@ var app = new Vue({
       console.log("Changing block reward: ", blockreward, fee)
       app.setPublicKeyFromCookie()
       if (app.isPositiveInt(blockreward) && app.isPositiveInt(fee)) {
-        axios.get('http://192.41.136.199:443/account/' + app.accountinfo.rootpublickey).then(
+        axios.get(`${config.baseUrl}/account/${app.accountinfo.rootpublickey}`).then(
           function(response) {
             console.log(response.data)
             app.accountinfo.txcount = response.data.txCnt
             if (response.data.isRoot) {
-              axios.post(`http://192.41.136.199:443/createConfigTx/${0}/${5}/${app.blockreward.blockreward}/${app.blockreward.fee}/${app.accountinfo.txcount}`).then(
+              axios.post(`${config.baseUrl}/createConfigTx/${0}/${5}/${app.blockreward.blockreward}/${app.blockreward.fee}/${app.accountinfo.txcount}`).then(
                 function(response) {
                   $("#myModal").modal()
                   console.log(response.data);

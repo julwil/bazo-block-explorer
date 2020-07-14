@@ -116,6 +116,14 @@ type JSONAccount struct {
 	IsRoot        bool     `json:"isRoot"`
 }
 
+type JSONAccountResponseBody struct {
+	Code    int `json:"code"`
+	Content []struct {
+		Name   string      `json:"name"`
+		Detail JSONAccount `json:"detail"`
+	} `json:"content"`
+}
+
 type Systemparams struct {
 	Timestamp          int64
 	BlockHash          string

@@ -1,3 +1,4 @@
+import config from './config'
 
 var app = new Vue({
   el: '#loginModal',
@@ -7,7 +8,7 @@ var app = new Vue({
     },
     checkPublicKey: function(publickey) {
       console.log("Checking Public Key: ", publickey)
-      axios.get('http://192.41.136.199:8001/account/' + publickey).then(
+      axios.get(`${config.baseUrl}/account/${publickey}`).then(
         function(response) {
           console.log(response.data)
           if (response.data.isRoot === undefined) {

@@ -1,5 +1,5 @@
 var app = new Vue({
-  el: '#parameter-list',
+  el: '#createTxModal',
   methods:{
     isPositiveInt: function(value) {
       return value >>> 0 === parseFloat(value);
@@ -140,39 +140,24 @@ var app = new Vue({
         alert("Not all values are positive integers!");
       }
     },
+
+      saveTransaction: function() {
+        const array = [this.txType, this.publicKey, this.chParams, this.funds.from, this.funds.to, this.funds.txcount, this.funds.amount]
+        console.table(array)
+    }
   },
   data: {
     baseUrl: 'http://localhost:8010',
-    blocksize: {
-      blocksize: '',
-      fee: ''
-    },
-    diffinterval: {
-      diffinterval: '',
-      fee: ''
-    },
-    minfee: {
-      minfee: '',
-      fee: ''
-    },
-    blockinterval: {
-      blockinterval: '',
-      fee: ''
-    },
-    blockreward: {
-      blockreward: '',
-      fee: ''
-    },
-    accountinfo: {
-      privatekey: '',
-      rootpublickey: '',
-      txhash: '',
-      txcount: ''
-    },
-
-    tx: {
-        type: '',
+    txType: '',
+    publicKey: '',
+    chParams: '',
+    funds: {
+        from: '',
+        to: '',
+        txcount: '',
+        amount: '',
     }
+
   },
   delimiters: ["<%","%>"]
 })

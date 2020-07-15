@@ -1,8 +1,12 @@
 {{define "navBar"}}
+  {{ template "createTxModal"}}
 
-    <nav class="navbar navbar-dark bg-dark justify-content-between">
+  <nav class="navbar navbar-dark bg-dark justify-content-between">
       <a class="navbar-brand text-white" href="{{.UrlLevel}}/">Bazo Blockchain Explorer</a>
       <ul class="nav">
+        <li class="nav-item">
+          <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createTxModal">+ New Transaction</button>
+        </li>
         <li class="nav-item">
           <a class="nav-link active text-white" href="{{.UrlLevel}}/blocks">Blocks</a>
         </li>
@@ -46,7 +50,6 @@
       </div>
     </nav>
     <br>
-
     {{template "loginModal"}}
 
 {{end}}

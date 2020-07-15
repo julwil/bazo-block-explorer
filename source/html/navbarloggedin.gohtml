@@ -4,6 +4,9 @@
       <a class="navbar-brand text-white" href="{{.UrlLevel}}/">Bazo Blockchain Explorer</a>
       <ul class="nav">
         <li class="nav-item">
+          <button type="button" class="btn btn-success">+ New Transaction</button>
+        </li>
+        <li class="nav-item">
           <a class="nav-link active text-white" href="{{.UrlLevel}}/blocks">Blocks</a>
         </li>
         <li class="nav-item dropdown">
@@ -13,7 +16,9 @@
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
             <a class="dropdown-item" href="{{.UrlLevel}}/tx/funds">Funds Transactions</a>
             <a class="dropdown-item" href="{{.UrlLevel}}/tx/acc">Account Creation Transactions</a>
+            <a class="dropdown-item" href="{{.UrlLevel}}/tx/update">Update Transactions</a>
             <a class="dropdown-item" href="{{.UrlLevel}}/tx/config">System Configuration Transactions</a>
+            <a class="dropdown-item" href="{{.UrlLevel}}/tx/stake">Stake Transactions</a>
           </div>
         </li>
         <li class="nav-item">

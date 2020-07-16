@@ -10,9 +10,18 @@
         </button>
       </div>
       <div class="modal-body">
+
+        <div class="alert alert-success" role="alert" id="alert-success" style="display: none;">
+          Transaction successfully created!
+        </div>
+
+        <div class="alert alert-danger" role="alert" id="alert-failed" style="display: none;">
+          Creation of transaction failed!
+        </div>
+
         <div class="create-tx-form">
           <div class="form-group" id="tx-type">
-            <label for="tx-type">Transaction type</label>
+            <label for="tx-type">Transaction Type</label>
             <select type="select" v-model="txType" class="form-control" id="tx-type">
               <option disabled="" value="">Please select</option>
               <option>Account Tx</option>
@@ -32,25 +41,35 @@
             <input type="text" v-model="funds.to" class="form-control" placeholder="Account Address"/>
           </div>
 
-{{/*          <div class="form-group" id="funds-tx-count">*/}}
-{{/*            <label for="funds-from">Tx Count</label>*/}}
-{{/*            <input type="number" min="0" v-model="funds.txcount" class="form-control" placeholder="Number"/>*/}}
-{{/*          </div>*/}}
+          <div class="form-group" id="funds-tx-count">
+            <label for="funds-from">Tx Count</label>
+            <input type="number" min="0" v-model="funds.txCount" class="form-control" placeholder="Number"/>
+          </div>
 
-{{/*          <div class="form-group" id="funds-amount">*/}}
-{{/*            <label for="funds-from">Amount</label>*/}}
-{{/*            <input type="number" min="0" v-model="funds.amount" class="form-control" placeholder="Number of Coins"/>*/}}
-{{/*          </div>*/}}
+          <div class="form-group" id="funds-amount">
+            <label for="funds-from">Amount</label>
+            <input type="number" min="0" v-model="funds.amount" class="form-control" placeholder="Number of Coins"/>
+          </div>
 
-{{/*          <div class="form-group" id="public-key">*/}}
-{{/*            <label for="public-key">Public Key</label>*/}}
-{{/*            <textarea v-model="publicKey" class="form-control" rows="3" placeholder="Public Key"/>*/}}
-{{/*          </div>*/}}
+          <div class="form-group" id="public-key">
+            <label for="public-key">Public Key</label>
+            <textarea v-model="publicKey" class="form-control" rows="3" placeholder="Public Key"></textarea>
+          </div>
 
-{{/*          <div class="form-group" id="chparams">*/}}
-{{/*            <label for="chparams">Chameleon Hash Parameters</label>*/}}
-{{/*            <textarea v-model="chParams" class="form-control" id="funds-chparams" rows="3" placeholder="Chameleon Hash Parameters"/>*/}}
-{{/*          </div>*/}}
+          <div class="form-group" id="chparams">
+            <label for="chparams">Chameleon Hash Parameters</label>
+            <textarea v-model="chParams" class="form-control" rows="3" placeholder="Chameleon Hash Parameters"></textarea>
+          </div>
+
+          <div class="form-group" id="private-key">
+            <label for="private-key">Private Key</label>
+            <textarea v-model="privateKey" class="form-control" rows="3" placeholder="Private Key"></textarea>
+          </div>
+
+          <div class="form-group" id="data">
+            <label for="data">Data</label>
+            <textarea v-model="data" class="form-control" rows="3" placeholder="Transaction Payload Data"></textarea>
+          </div>
 
           <button v-on:click="saveTransaction" class="btn btn-primary">Create</button>
         </div>

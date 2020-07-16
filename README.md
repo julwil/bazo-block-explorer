@@ -26,12 +26,7 @@ If the terminal still displays the user ’postgres’ as the current user, it i
 ```sh
 $ go get github.com/bazo-blockchain/bazo-block-explorer
 ```
-Since the static HTML files do not get included in the compiled binary, the source folder has to be copied from Golang’s src directory to the bin directory, where the compiled block explorer binary is located. The following frame’s folder structure assumes a default Golang installation.
-```sh
-$ cd GODIRECTORY/src/github.com/bazo-blockchain/bazo-block-explorer
-$ sudo cp -r source/ ../../../../bin
-$ cd GODIRECTORY/bin
-```
+
 From the explorer’s directory, it can now be started using the following arguments:
 - DATA must either be "data" or "nodata", depending on whether the data retrieval mechanism should run. 
 - PORT on which the block-explorer should be reachable on localhost. 

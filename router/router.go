@@ -38,7 +38,7 @@ func InitializeRouter() *httprouter.Router {
 	router.GET("/logout", logoutFunc)
 	router.GET("/adminpanel", adminfunc)
 
-	router.ServeFiles("/source/*filepath", http.Dir("source"))
+	router.ServeFiles("/source/*filepath", http.Dir("./source"))
 
 	return router
 }

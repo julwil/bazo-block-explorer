@@ -36,7 +36,7 @@ var app = new Vue({
             if (response.data.content[0].detail.isRoot) {
               axios.post(`${app.baseUrl}/createConfigTx/${0}/${1}/${app.blocksize.blocksize}/${app.blocksize.fee}/${app.accountinfo.txcount}`).then(
                 function(response) {
-                  $("#myModal").modal()
+                  $("#transactionModal").modal()
                   console.log(response.data);
                   app.accountinfo.txhash = response.data.content[0].detail
                 }

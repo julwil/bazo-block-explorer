@@ -1,0 +1,36 @@
+{{define "signTxModal"}}
+
+<div class="modal fade" id="signTxModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Sign Transaction</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <div class="alert alert-success" role="alert" id="alert-success" style="display: none;">
+          Transaction successfully signed!
+        </div>
+
+        <div class="alert alert-danger" role="alert" id="alert-failed" style="display: none;">
+          Creation of transaction failed!
+        </div>
+
+        Enter Private Key
+          <div class="input-group">
+            <input type="text" minlength="64" maxlength="64" v-model="privateKey" class="form-control" type="text" name="root-key-field" placeholder="Private Key (64-bit)">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="button" v-on:click="signTxHandler">Sign</button>
+            </span>
+          </div>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>
+
+{{end}}

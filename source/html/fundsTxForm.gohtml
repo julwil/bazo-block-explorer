@@ -1,0 +1,44 @@
+{{define "fundsTxForm"}}
+
+    <template v-if="txType === 'Funds Tx'">
+        <div  id="funds-form">
+            <div class="form-group" id="funds-from">
+                <label for="funds-from">From</label>
+                <input type="text" v-model="funds.from" class="form-control" placeholder="Account Address"/>
+            </div>
+
+            <div class="form-group" id="funds-to">
+                <label for="funds-to">To</label>
+                <input type="text" v-model="funds.to" class="form-control" placeholder="Account Address"/>
+            </div>
+
+            <div class="form-group" id="funds-tx-count">
+                <label for="funds-from">Tx Count</label>
+                <input type="number" min="0" v-model="funds.txCount" class="form-control" placeholder="Number"/>
+            </div>
+
+            <div class="form-group" id="fee">
+                <label for="funds-from">Fee</label>
+                <input type="number" min="1" v-model="fee" class="form-control" placeholder="Number"/>
+            </div>
+
+            <div class="form-group" id="funds-amount">
+                <label for="funds-from">Amount</label>
+                <input type="number" min="0" v-model="funds.amount" class="form-control" placeholder="Number of Coins"/>
+            </div>
+
+            <div class="form-group" id="chparams">
+                <label for="chparams">Chameleon Hash Parameters</label>
+                <textarea v-model="chParams" class="form-control" rows="3"
+                          placeholder="Chameleon Hash Parameters"></textarea>
+            </div>
+
+            <div class="form-group" id="data">
+                <label for="data">Data</label>
+                <textarea v-model="data" class="form-control" rows="3"
+                          placeholder="Transaction Payload Data"></textarea>
+            </div>
+        </div>
+    </template>
+
+{{end}}

@@ -30,7 +30,7 @@ func RunDB() {
 		time.Sleep(time.Second * 120)
 	}
 	for 0 < 1 {
-		time.Sleep(time.Second * 30)
+		time.Sleep(time.Second * 10)
 		RefreshState()
 	}
 }

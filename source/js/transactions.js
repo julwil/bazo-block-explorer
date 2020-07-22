@@ -1,51 +1,111 @@
 var app = new Vue({
-    el: '#createTxModal',
+    el: '#transactions-vue-container',
     methods: {
-        saveTransaction: function () {
+        createAccountTx: function () {
             const headers = {
                 'Content-Type': 'text/plain'
             };
-            axios.post(`${app.baseUrl}/createFundsTx`, {
+            axios.post(`${this.baseUrl}/tx/acc`, {
+                rootwallet: this.account.rootWallet,
+                wallet: this.account.wallet,
+                chparams: this.chParams,
+                fee: parseInt(this.fee),
+                data: this.data,
+            }, {headers}).then((response) => this.createTxResponseHandler(response));
+        },
+
+        createFundsTx: function () {
+            const headers = {
+                'Content-Type': 'text/plain'
+            };
+            axios.post(`${this.baseUrl}/tx/funds`, {
                 from: this.funds.from,
                 to: this.funds.to,
-                amount: +this.funds.amount,
-                txcount: +this.funds.txCount,
+                amount: parseInt(this.funds.amount),
+                txcount: parseInt(this.funds.txCount),
+                fee: parseInt(this.fee),
                 chparams: this.chParams,
                 data: this.data,
-            }, {headers}).then((response) => {
-                $
-                const responseBody = response.data || {};
-                const data = responseBody.content[0];
-                const txHash = data.detail;
+            }, {headers}).then((response) => this.createTxResponseHandler(response));
+        },
 
-                const curve = new elliptic.ec('p256');
-                const privateKey = curve.keyFromPrivate(this.privateKey);
-                const signature = privateKey.sign(txHash);
+        createUpdateTx: function () {
+            alert(this.txType);
+        },
 
-                axios.post(`${app.baseUrl}/signFundsTx`, {
-                    hash: txHash,
-                    signature: signature.r.toJSON() + signature.s.toJSON()
-                }, {headers}).then((response) => {
-                    let elementId = '';
-                    response.status >= 300 ? elementId = 'alert-fail' : 'alert-success';
-                    $(`#${elementId}`).toggle();
-                })
-            });
+        createTxHandler: function () {
+            switch (this.txType) {
+                case 'Account Tx':
+                    return this.createAccountTx();
+                case 'Funds Tx':
+                    return this.createFundsTx();
+                case 'Update Tx':
+                    return this.createUpdateTx();
+                default:
+                    return;
+            }
+        },
+
+        signTxResponseHandler: function (response) {
+            const elementId = response.status >= 300 ? 'alert-fail' : 'alert-success';
+            $("#" + elementId).toggle();
+        },
+
+        createTxResponseHandler: function (response) {
+            const responseBody = response.data || {};
+            const data = responseBody.content[0];
+            this.txHash = data.detail;
+
+            $("#createTxModal").modal('hide');
+            $("#signTxModal").modal('show');
+        },
+
+        signTxHash: function (txHash, privateKeyString) {
+            const curve = new elliptic.ec('p256');
+            const privateKey = curve.keyFromPrivate(privateKeyString);
+            const signature = privateKey.sign(txHash);
+
+            return signature.r.toJSON() + signature.s.toJSON();
+        },
+
+        signTxHandler: function() {
+            if (this.privateKey.length === 0) {
+                $("#alert-failed").show();
+                return;
+            }
+
+            const headers = {
+                'Content-Type': 'text/plain'
+            };
+
+            const signature = this.signTxHash(this.txHash, this.privateKey);
+            axios.post(`${this.baseUrl}/tx/signature`, {
+                hash: this.txHash,
+                signature: signature
+            }, {headers})
+                .then((response) => this.signTxResponseHandler(response))
+
+            setTimeout(() => location.reload(), 3000);
         }
     },
     data: {
-        baseUrl: 'http://localhost:8010',
+        baseUrl: 'http://api.bazo.local',
         txType: '',
-        publicKey: '',
+        txHash: '',
         privateKey: '',
         chParams: '',
+        fee: 1,
+        data: '',
         funds: {
             from: '',
             to: '',
             txCount: '',
             amount: '',
         },
-        data: ''
+        account: {
+            rootWallet: '',
+            wallet: '',
+        }
     },
     delimiters: ["<%", "%>"]
 })

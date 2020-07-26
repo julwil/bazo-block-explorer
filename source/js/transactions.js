@@ -6,9 +6,9 @@ var app = new Vue({
                 'Content-Type': 'text/plain'
             };
             axios.post(`${this.baseUrl}/tx/acc`, {
-                rootwallet: this.account.rootWallet,
+                root_wallet: this.account.rootWallet,
                 wallet: this.account.wallet,
-                chparams: this.chParams,
+                ch_params: this.chParams,
                 fee: parseInt(this.fee),
                 data: this.data,
             }, {headers}).then((response) => this.createTxResponseHandler(response));
@@ -22,15 +22,25 @@ var app = new Vue({
                 from: this.funds.from,
                 to: this.funds.to,
                 amount: parseInt(this.funds.amount),
-                txcount: parseInt(this.funds.txCount),
+                tx_count: parseInt(this.funds.txCount),
                 fee: parseInt(this.fee),
-                chparams: this.chParams,
+                ch_params: this.chParams,
                 data: this.data,
             }, {headers}).then((response) => this.createTxResponseHandler(response));
         },
 
         createUpdateTx: function () {
-            alert(this.txType);
+            const headers = {
+                'Content-Type': 'text/plain'
+            };
+            axios.post(`${this.baseUrl}/tx/update`, {
+                tx_to_update: this.update.txToUpdate,
+                tx_issuer: this.update.txToUpdateIssuer,
+                update_data: this.update.updateData,
+                ch_params: this.chParams,
+                fee: parseInt(this.fee),
+                data: this.data,
+            }, {headers}).then((response) => this.createTxResponseHandler(response));
         },
 
         createTxHandler: function () {
@@ -105,6 +115,11 @@ var app = new Vue({
         account: {
             rootWallet: '',
             wallet: '',
+        },
+        update: {
+            txToUpdate: '',
+            txToUpdateIssuer: '',
+            updateData: '',
         }
     },
     delimiters: ["<%", "%>"]

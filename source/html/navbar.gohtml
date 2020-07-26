@@ -15,11 +15,12 @@
             Transactions
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="{{.UrlLevel}}/tx/funds">Funds Transactions</a>
-            <a class="dropdown-item" href="{{.UrlLevel}}/tx/acc">Account Creation Transactions</a>
-            <a class="dropdown-item" href="{{.UrlLevel}}/tx/update">Update Transactions</a>
-            <a class="dropdown-item" href="{{.UrlLevel}}/tx/config">System Configuration Transactions</a>
-            <a class="dropdown-item" href="{{.UrlLevel}}/tx/stake">Stake Transactions</a>
+            <a class="dropdown-item" href="{{.UrlLevel}}/tx/funds">Funds</a>
+            <a class="dropdown-item" href="{{.UrlLevel}}/tx/acc">Account</a>
+            <a class="dropdown-item" href="{{.UrlLevel}}/tx/update">Update</a>
+            <a class="dropdown-item" href="{{.UrlLevel}}/tx/agg">Aggregated Funds</a>
+            <a class="dropdown-item" href="{{.UrlLevel}}/tx/config">Configuration</a>
+            <a class="dropdown-item" href="{{.UrlLevel}}/tx/stake">Stake</a>
           </div>
         </li>
         <li class="nav-item">
@@ -39,9 +40,9 @@
 
     <nav class="navbar navbar-light bg-light">
       <div class="row">
-        <form class="col-sm-12" id="navSearch" action="{{.UrlLevel}}/search" method="post">
+        <form class="col-sm-12" id="navSearch" action="{{.UrlLevel}}/search" method="get">
             <div class="input-group" id="navSearchInput">
-              <input class="form-control" name="search-value" type="text" placeholder="Search through blocks, transactions and accounts..." aria-label="Search">
+              <input class="form-control" name="hash" type="text" placeholder="Search through blocks, transactions and accounts..." aria-label="Search">
               <span class="input-group-btn">
                 <button class="btn btn-primary" type="submit">Search</button>
               </span>

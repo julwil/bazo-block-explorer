@@ -62,17 +62,22 @@ func dropTables() {
 	connectToDB()
 	defer db.Close()
 	fmt.Println("Dropping Tables...")
-	sqlStatement := `drop table blocks;
-                   drop table fundstx;
-                   drop table acctx;
-                   drop table configtx;
-                   drop table staketx;
-                   drop table updatetx;
-                   drop table accounts;
-                   drop table parameters;
-                   drop table stats;
-                   drop table txhistory;`
-	db.Exec(sqlStatement)
+	sqlStatement := `drop table if exists blocks;
+                   drop table if exists fundstx;
+                   drop table if exists acctx;
+                   drop table if exists configtx;
+                   drop table if exists staketx;
+                   drop table if exists updatetx;
+                   drop table if exists aggtx;
+                   drop table if exists accounts;
+                   drop table if exists parameters;
+                   drop table if exists stats;
+                   drop table if exists txhistory;`
+	_, err := db.Exec(sqlStatement)
+	if err != nil {
+		panic(err)
+	}
+
 	fmt.Println("Dropped Tables")
 
 }
@@ -133,7 +138,19 @@ func createTables() {
                     signature char(128) not null,
                     data varchar(512) default null
                     );
-                    `
+                    
+                    create table aggtx (
+                    header bit(8),
+                    hash char(64) primary key,
+                    blockhash char(64) not null,
+                    amount bigint,
+                    fee bigint,
+                    sender char(128) not null,
+                    recipient char(128) not null,
+                    merkleRoot char(64) not null,
+                    aggTxData varchar(100)[],
+                    timestamp bigint not null
+                    );`
 
 	sqlStatement2 := `create table acctx(
                     header bit(8),
@@ -233,10 +250,26 @@ func ReturnOneBlock(UrlHash string) utilities.Block {
 	connectToDB()
 	defer db.Close()
 
-	sqlStatement := `SELECT hash, prevhash, timestamp, timestring, merkleroot, beneficiary, nrfundstx, nracctx, nrconfigtx, fundstxdata, acctxdata, configtxdata FROM blocks WHERE hash = $1;`
+	sqlStatement := `SELECT hash, prevHash, timestamp, timestring, merkleRoot, beneficiary, nrFundsTx, nrAccTx, nrConfigTx, nrUpdateTx, fundsTxData, accTxData, configTxData, updateTxData FROM blocks WHERE hash = $1;`
+
 	var returnedblock utilities.Block
 	row := db.QueryRow(sqlStatement, UrlHash)
-	switch err := row.Scan(&returnedblock.Hash, &returnedblock.PrevHash, &returnedblock.Timestamp, &returnedblock.TimeString, &returnedblock.MerkleRoot, &returnedblock.Beneficiary, &returnedblock.NrFundsTx, &returnedblock.NrAccTx, &returnedblock.NrConfigTx, &returnedblock.FundsTxDataString, &returnedblock.AccTxDataString, &returnedblock.ConfigTxDataString); err {
+	switch err := row.Scan(
+		&returnedblock.Hash,
+		&returnedblock.PrevHash,
+		&returnedblock.Timestamp,
+		&returnedblock.TimeString,
+		&returnedblock.MerkleRoot,
+		&returnedblock.Beneficiary,
+		&returnedblock.NrFundsTx,
+		&returnedblock.NrAccTx,
+		&returnedblock.NrConfigTx,
+		&returnedblock.NrUpdateTx,
+		&returnedblock.FundsTxDataString,
+		&returnedblock.AccTxDataString,
+		&returnedblock.ConfigTxDataString,
+		&returnedblock.UpdateTxDataString,
+	); err {
 	case sql.ErrNoRows:
 	case nil:
 		//convert tx-datastring into slice for all types of transactions
@@ -427,6 +460,64 @@ func ReturnOneUpdateTx(UrlHash string) utilities.Updatetx {
 	); err {
 	case sql.ErrNoRows:
 	case nil:
+		return returnedrow
+	default:
+		panic(err)
+	}
+
+	return returnedrow
+}
+
+func ReturnAllAggTx(UrlHash string) []utilities.Aggtx {
+	connectToDB()
+	defer db.Close()
+
+	sqlStatement := `SELECT hash, sender, recipient, amount FROM aggtx ORDER BY timestamp DESC LIMIT 100`
+	rows, err := db.Query(sqlStatement)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+	returnedrows := make([]utilities.Aggtx, 0)
+	for rows.Next() {
+		var returnedrow utilities.Aggtx
+		err = rows.Scan(&returnedrow.Hash, &returnedrow.From, &returnedrow.To, &returnedrow.Amount)
+		if err != nil {
+			panic(err)
+		}
+		returnedrows = append(returnedrows, returnedrow)
+	}
+	err = rows.Err()
+	if err != nil {
+		panic(err)
+	}
+	return returnedrows
+}
+
+func ReturnOneAggTx(UrlHash string) utilities.Aggtx {
+	connectToDB()
+	defer db.Close()
+
+	sqlStatement := `SELECT hash, blockhash, amount, fee, sender, recipient, merkleRoot, aggTxData, timestamp FROM aggtx WHERE hash = $1;`
+	var returnedrow utilities.Aggtx
+	row := db.QueryRow(sqlStatement, UrlHash)
+	switch err = row.Scan(
+		&returnedrow.Hash,
+		&returnedrow.BlockHash,
+		&returnedrow.Amount,
+		&returnedrow.Fee,
+		&returnedrow.From,
+		&returnedrow.To,
+		&returnedrow.MerkleRoot,
+		&returnedrow.AggTxDataString,
+		&returnedrow.Timestamp,
+	); err {
+	case sql.ErrNoRows:
+	case nil:
+		//convert tx-datastring into slice for all types of transactions
+		if len(returnedrow.AggTxDataString.String) > 0 {
+			returnedrow.AggTxData = strings.Split(returnedrow.AggTxDataString.String[1:len(returnedrow.AggTxDataString.String)-1], ",")
+		}
 		return returnedrow
 	default:
 		panic(err)
@@ -736,6 +827,33 @@ func WriteUpdateTx(tx utilities.Updatetx) {
 		tx.Timestamp,
 		tx.Signature,
 		tx.Data,
+	)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func WriteAggTx(tx utilities.Aggtx) {
+	connectToDB()
+	defer db.Close()
+
+	//sqlStatement = `
+	//INSERT INTO aggtx (hash, blockhash, amount, fee, sender, recipient, timestamp)
+	//VALUES ($1, $2, $3, $4, $5, $6, $7)`
+	//
+	sqlStatement = `
+    INSERT INTO aggtx (hash, blockhash, amount, fee, sender, recipient, merkleRoot, aggTxData, timestamp)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
+	_, err = db.Exec(sqlStatement,
+		tx.Hash,
+		tx.BlockHash,
+		tx.Amount,
+		tx.Fee,
+		tx.From,
+		tx.To,
+		tx.MerkleRoot,
+		pq.Array(tx.AggTxData),
+		tx.Timestamp,
 	)
 	if err != nil {
 		panic(err)

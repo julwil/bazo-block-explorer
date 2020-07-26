@@ -127,3 +127,23 @@ func ConvertUpdateTransaction(unconvertedTx *protocol.UpdateTx, unconvertedBlock
 
 	return convertedTx
 }
+
+func ConvertAggTransaction(unconvertedTx *protocol.AggTx, unconvertedBlockHash [32]byte, unconvertedTxHash [32]byte, blockTimestamp int64) Aggtx {
+	var convertedTx Aggtx
+
+	convertedTx.Hash = fmt.Sprintf("%x", unconvertedTxHash)
+	convertedTx.BlockHash = fmt.Sprintf("%x", unconvertedBlockHash)
+	convertedTx.Amount = unconvertedTx.Amount
+	convertedTx.Fee = unconvertedTx.Fee
+	convertedTx.From = fmt.Sprintf("%x", unconvertedTx.From)
+	convertedTx.To = fmt.Sprintf("%x", unconvertedTx.To)
+	convertedTx.Timestamp = blockTimestamp
+	convertedTx.MerkleRoot = fmt.Sprintf("%x", unconvertedTx.MerkleRoot)
+
+	for _, hash := range unconvertedTx.AggregatedTxSlice {
+		convertedTxHash := fmt.Sprintf("%x", hash)
+		convertedTx.AggTxData = append(convertedTx.AggTxData, convertedTxHash)
+	}
+
+	return convertedTx
+}

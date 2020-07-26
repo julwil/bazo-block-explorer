@@ -30,7 +30,7 @@ func RunDB() {
 		time.Sleep(time.Second * 120)
 	}
 	for 0 < 1 {
-		time.Sleep(time.Second * 10)
+		time.Sleep(time.Second * 3)
 		RefreshState()
 	}
 }
@@ -202,6 +202,10 @@ func reqTx(txType uint8, txHash [32]byte) interface{} {
 		var updateTx *protocol.UpdateTx
 		updateTx = updateTx.Decode(payload)
 		return updateTx
+	case p2p.AGGTX_RES:
+		var aggTx *protocol.AggTx
+		aggTx = aggTx.Decode(payload)
+		return aggTx
 	default:
 		panic(err)
 	}
@@ -272,6 +276,12 @@ func SaveBlockAndTransactions(oneBlock *protocol.Block) {
 
 		UpdateTxToUpdate(convertedTx)
 		WriteUpdateTx(convertedTx)
+	}
+
+	for _, aggTxHash := range oneBlock.AggTxData {
+		aggTx := reqTx(p2p.AGGTX_REQ, aggTxHash)
+		convertedTx := utilities.ConvertAggTransaction(aggTx.(*protocol.AggTx), oneBlock.Hash, aggTxHash, oneBlock.Timestamp)
+		WriteAggTx(convertedTx)
 	}
 
 	convertedBlock := utilities.ConvertBlock(oneBlock)

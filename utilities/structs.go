@@ -97,6 +97,20 @@ type Updatetx struct {
 	Data           string
 }
 
+type Aggtx struct {
+	Hash            string
+	BlockHash       string
+	Fee             uint64
+	Amount          uint64
+	From            string
+	To              string
+	MerkleRoot      string
+	AggTxDataString sql.NullString
+	AggTxData       []string
+	Timestamp       int64
+	UrlLevel        string
+}
+
 type Account struct {
 	Hash        string
 	Address     string
@@ -163,6 +177,11 @@ type Accsandurl struct {
 
 type Updatesandurl struct {
 	Txs      []Updatetx
+	UrlLevel string
+}
+
+type AggsAndUrl struct {
+	Txs      []Aggtx
 	UrlLevel string
 }
 

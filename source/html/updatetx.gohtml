@@ -16,7 +16,7 @@
     <section>
       <div class="container">
         <div class="table-title">
-          <h3>Transaction {{.Hash}}</h3>
+          <h3>Update Tx</h3>
         </div>
         <div class="data-table" id="transactions-table">
           <table class="table">
@@ -31,10 +31,10 @@
               </tr>
               <tr>
                 <th>Tx to update</th>
-                <td> <a href="{{.UrlLevel}}/tx/acc/{{.ToUpdateHash}}">{{.ToUpdateHash}}</a></td>
+                <td> <a href="{{.UrlLevel}}/search?hash={{.ToUpdateHash}}">{{.ToUpdateHash}}</a></td>
               </tr>
               <tr>
-                <th>Data to be updated</th>
+                <th>New data</th>
                 <td>{{.ToUpdateData}}</td>
               </tr>
               <tr>
@@ -42,7 +42,7 @@
                 <td>{{.Fee}}</td>
               </tr>
               <tr>
-                <th>Data</th>
+                <th>Reason</th>
                 <td>{{.Data}}</td>
               </tr>
               <tr>
@@ -56,7 +56,8 @@
       </div>
     </section>
 
-    {{template "scriptImports"}}
+
 
   </body>
+{{template "scriptImports"}}
 </html>

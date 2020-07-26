@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Ask the user for their github username
-echo This script will fix all imports related to bazo-client package.
+echo This script will fix all imports related to bazo-block-explorer project.
 echo Plese enter your github username.
 
 read USERNAME

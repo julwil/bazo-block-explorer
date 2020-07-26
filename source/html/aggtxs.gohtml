@@ -16,25 +16,25 @@
     <section>
       <div class="container">
         <div class="table-title">
-          <h3>Latest Stake Transactions</h3>
+          <h3>Latest Aggregation Transactions</h3>
         </div>
         <div class="data-table" id="transactions-table">
           <table class="table">
             <thead>
               <tr id="header-row">
                 <th>Hash</th>
-                <th>Account</th>
-                <th>Is Staking</th>
-                <th style="width: 10%;">Fee</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Amount</th>
               </tr>
             </thead>
             <tbody>
               {{range .Txs}}
               <tr>
-                <td> <a href="../../tx/funds/{{.Hash}}">{{.Hash}}</a></td>
-                <td> <a href="../../account/{{.Account}}">{{.Account}}</a></td>
-                <td>{{.IsStaking}}</td>
-                <td>{{.Fee}}</td>
+                <td> <a href="../../tx/agg/{{.Hash}}">{{.Hash}}</a></td>
+                <td> {{.From}}</td>
+                <td> {{.To}}</td>
+                <td> {{.Amount}}</td>
               </tr>
               {{end}}
             </tbody>

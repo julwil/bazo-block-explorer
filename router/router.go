@@ -26,6 +26,8 @@ func InitializeRouter() *httprouter.Router {
 	router.GET("/tx/acc/:hash", getOneAccTx)
 	router.GET("/tx/update", getAllUpdateTx)
 	router.GET("/tx/update/:hash", getOneUpdateTx)
+	router.GET("/tx/agg", getAllAggTx)
+	router.GET("/tx/agg/:hash", getOneAggTx)
 	router.GET("/tx/config", getAllConfigTx)
 	router.GET("/tx/config/:hash", getOneConfigTx)
 	router.GET("/tx/stake", getAllStakeTx)
@@ -33,7 +35,7 @@ func InitializeRouter() *httprouter.Router {
 	router.GET("/account/:hash", getAccount)
 	router.GET("/accounts", getTopAccounts)
 	router.GET("/stats", getStats)
-	router.POST("/search", searchForHash)
+	router.GET("/search", searchForHash)
 	router.POST("/login", loginFunc)
 	router.GET("/logout", logoutFunc)
 	router.GET("/adminpanel", adminfunc)
@@ -94,6 +96,19 @@ func getOneUpdateTx(w http.ResponseWriter, r *http.Request, params httprouter.Pa
 	tpl.ExecuteTemplate(w, "updatetx.gohtml", returnedtx)
 }
 
+func getAllAggTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	var txs utilities.AggsAndUrl
+	txs.Txs = data.ReturnAllAggTx(params.ByName("hash"))
+	txs.UrlLevel = "../.."
+	tpl.ExecuteTemplate(w, "aggtxs.gohtml", txs)
+}
+
+func getOneAggTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	returnedtx := data.ReturnOneAggTx(params.ByName("hash"))
+	returnedtx.UrlLevel = "../../.."
+	tpl.ExecuteTemplate(w, "aggtx.gohtml", returnedtx)
+}
+
 func getAllAccTx(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	var txs utilities.Accsandurl
 	txs.Txs = data.ReturnAllAccTx(params.ByName("hash"))
@@ -128,42 +143,46 @@ func getAllStakeTx(w http.ResponseWriter, r *http.Request, params httprouter.Par
 }
 
 func searchForHash(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	returnedaccountwithtxs := data.ReturnOneAccount(r.PostFormValue("search-value"))
+	queryValues := r.URL.Query()
+	hash := queryValues.Get("hash")
+
+	returnedaccountwithtxs := data.ReturnOneAccount(hash)
+	fmt.Printf("Query Parameter: %v", hash)
 	if returnedaccountwithtxs.Account.Hash != "" {
 		returnedaccountwithtxs.UrlLevel = ".."
 		tpl.ExecuteTemplate(w, "accountSearch.gohtml", returnedaccountwithtxs)
 		return
 	}
 
-	returnedconfigtx := data.ReturnOneConfigTx(r.PostFormValue("search-value"))
+	returnedconfigtx := data.ReturnOneConfigTx(hash)
 	if returnedconfigtx.Hash != "" {
 		returnedconfigtx.UrlLevel = ".."
 		tpl.ExecuteTemplate(w, "configtx.gohtml", returnedconfigtx)
 		return
 	}
 
-	returnedblock := data.ReturnOneBlock(r.PostFormValue("search-value"))
+	returnedblock := data.ReturnOneBlock(hash)
 	if returnedblock.Hash != "" {
 		returnedblock.UrlLevel = ".."
 		tpl.ExecuteTemplate(w, "blockSearch.gohtml", returnedblock)
 		return
 	}
 
-	returnedfundstx := data.ReturnOneFundsTx(r.PostFormValue("search-value"))
+	returnedfundstx := data.ReturnOneFundsTx(hash)
 	if returnedfundstx.Hash != "" {
 		returnedfundstx.UrlLevel = ".."
 		tpl.ExecuteTemplate(w, "fundstx.gohtml", returnedfundstx)
 		return
 	}
 
-	returnedacctx := data.ReturnOneAccTx(r.PostFormValue("search-value"))
+	returnedacctx := data.ReturnOneAccTx(hash)
 	if returnedacctx.Hash != "" {
 		returnedacctx.UrlLevel = ".."
 		tpl.ExecuteTemplate(w, "acctx.gohtml", returnedacctx)
 		return
 	}
 
-	returnedstaketx := data.ReturnOneStakeTx(r.PostFormValue("search-value"))
+	returnedstaketx := data.ReturnOneStakeTx(hash)
 	if returnedstaketx.Hash != "" {
 		returnedstaketx.UrlLevel = ".."
 		tpl.ExecuteTemplate(w, "staketx.gohtml", returnedstaketx)

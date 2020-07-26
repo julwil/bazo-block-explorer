@@ -3,8 +3,8 @@
     <template v-if="txType === 'Account Tx'" id="account-form" class="create-tx-form" hidden>
         <div id="account-form">
             <div class="form-group" id="account-rootwallet">
-                <label for="account-rootwallet">Root Wallet</label>
-                <textarea v-model="account.rootWallet" class="form-control" placeholder="Root Wallet" rows="3"></textarea>
+                <label for="account-rootwallet">Root Public Key</label>
+                <textarea v-model="account.rootWallet" class="form-control" placeholder="Root Public Wallet" rows="3"></textarea>
             </div>
 
             <div class="form-group" id="account-wallet">

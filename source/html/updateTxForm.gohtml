@@ -1,0 +1,39 @@
+{{define "updateTxForm"}}
+
+    <template v-if="txType === 'Update Tx'" id="update-form" hidden>
+        <div id="update-form">
+            <div class="form-group" id="txToUpdate">
+                <label for="txToUpdate">Tx to update</label>
+                <input type="text" v-model="update.txToUpdate" class="form-control" placeholder="32-byte hash"/>
+            </div>
+
+            <div class="form-group" id="txToUpdateIssuer">
+                <label for="txToUpdateIssuer">Address Tx Issuer</label>
+                <textarea v-model="update.txToUpdateIssuer" class="form-control" placeholder="Address (public key) of the tx issuer" rows="3"></textarea>
+            </div>
+
+            <div class="form-group" id="txToUpdateData">
+                <label for="txToUpdateData">New data</label>
+                <textarea rows="3" v-model="update.updateData" class="form-control" placeholder="New data"></textarea>
+            </div>
+
+            <div class="form-group" id="chparams">
+                <label for="chparams">Chameleon Hash Parameters</label>
+                <textarea v-model="chParams" class="form-control" rows="3"
+                          placeholder="Chameleon Hash Parameters"></textarea>
+            </div>
+
+            <div class="form-group" id="fee">
+                <label for="funds-from">Fee</label>
+                <input type="number" min="1" v-model="fee" class="form-control" placeholder="Number"/>
+            </div>
+
+            <div class="form-group" id="data">
+                <label for="data">Data</label>
+                <textarea v-model="data" class="form-control" rows="3"
+                          placeholder="Transaction Payload Data"></textarea>
+            </div>
+        </div>
+    </template>
+
+{{end}}

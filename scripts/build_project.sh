@@ -12,5 +12,5 @@ echo Building the project...
 go build > "/dev/null" 2>&1
 echo Done.
 
-echo You can now start the client. To start it follow the instructions in the README file.
+echo You can now start the explorer. To start it follow the instructions in the README file.
 echo Enjoy!

@@ -22,7 +22,10 @@ func main() {
 		}
 		//starts the router
 		fmt.Println("Listening...")
-		http.ListenAndServe(os.Args[2], requestRouter)
+		err := http.ListenAndServe(os.Args[2], requestRouter)
+		if err != nil {
+			fmt.Printf("%v", err)
+		}
 
 	} else {
 		fmt.Println("Incorrect number of arguments")

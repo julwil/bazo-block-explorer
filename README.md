@@ -16,7 +16,7 @@ $ psql
 ```
 The new database-user and his password has to be created. Additionally the database ’blockexplorerdb’ has to be created. Username and password of the new user can be chosen freely, however the database needs to be called ’blockexplorerdb’. The new user needs all privileges on the newly created database as well.
 ```sh
-$ CREATE ROLE user1 WITH LOGIN PASSWORD ’userpasswd’;
+$ CREATE ROLE user1 WITH LOGIN PASSWORD 'userpasswd';
 $ CREATE DATABASE blockexplorerdb;
 $ GRANT ALL PRIVILEGES ON DATABASE blockexplorerdb TO user1;
 $ \quit

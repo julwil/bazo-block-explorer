@@ -23,7 +23,7 @@
             <thead>
               <tr>
                 <th style="width: 30%;">Hash</th>
-                <td>{{.Hash}}</td>
+                <td><a href="{{.UrlLevel}}/update/{{.Hash}}">{{.Hash}}</a></td>
               </tr>
               <tr>
                 <th>Block</th>
@@ -55,8 +55,6 @@
         </div>
       </div>
     </section>
-
-
 
   </body>
 {{template "scriptImports"}}

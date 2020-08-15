@@ -1,4 +1,5 @@
 # Installation Guide
+##&#9888; BAZO was moved to [Docker](https://github.com/julwil/bazo-docker)
 ## Prerequisites
 The explorer requires a working installation of Golang (version 1.9.2 was used to develop the application). The most recent version can be found on their website, along with installation instructions. A go folder has to be created in the user’s home directory after installation.
 ```sh

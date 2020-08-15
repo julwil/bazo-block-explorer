@@ -147,7 +147,7 @@ func Connect(connectionString string) (conn net.Conn, err error) {
 
 func reqBlock(blockHash []byte) (block *protocol.Block) {
 	//request data using modified code from bazo's p2p messaging system
-	conn, err := Connect("localhost:8000") //hardcoded for now
+	conn, err := Connect("bazo-miner:8000") // Docker will resolve the correct IP for bazo-miner.
 	if err != nil {
 		var emptyBlock *protocol.Block
 		return emptyBlock
@@ -170,7 +170,7 @@ func reqBlock(blockHash []byte) (block *protocol.Block) {
 
 func reqTx(txType uint8, txHash [32]byte) interface{} {
 	//request data using modified code from bazo's p2p messaging system
-	conn, _ := Connect("localhost:8000") //hardcoded for now
+	conn, _ := Connect("bazo-miner:8000") // Docker will resolve the correct IP for bazo-miner.
 	packet := p2p.BuildPacket(txType, txHash[:])
 	conn.Write(packet)
 

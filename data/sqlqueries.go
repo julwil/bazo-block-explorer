@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	host   = "localhost"
+	host   = "psql" // Docker will resolve the correct IP for psql.
 	port   = 5432
 	dbname = "blockexplorerdb"
 )

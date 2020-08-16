@@ -127,7 +127,6 @@ func createTables() {
                     );
                     
                     create table updatetx (
-                    header bit(8),
                     hash char(64) primary key,
                     blockhash char(64) not null,
                     fee bigint not null,
